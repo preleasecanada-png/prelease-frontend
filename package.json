@@ -1,0 +1,48 @@
+{
+  "name": "prelease",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@dnd-kit/core": "^6.3.1",
+    "@dnd-kit/sortable": "^10.0.0",
+    "@dnd-kit/utilities": "^3.2.2",
+    "@fortawesome/fontawesome-svg-core": "^6.7.2",
+    "@fortawesome/free-solid-svg-icons": "^6.7.2",
+    "@fortawesome/react-fontawesome": "^0.2.2",
+    "@react-google-maps/api": "^2.20.8",
+    "@react-oauth/google": "^0.13.4",
+    "bootstrap": "^5.3.3",
+    "date-fns": "^4.1.0",
+    "google-map-react": "^2.2.1",
+    "js-cookie": "^3.0.5",
+    "lucide-react": "^0.576.0",
+    "moment": "^2.30.1",
+    "next": "14.2.5",
+    "next-nprogress-bar": "^2.3.13",
+    "react": "^18",
+    "react-audio-voice-recorder": "^2.2.0",
+    "react-dom": "^18",
+    "react-dropzone": "^14.3.8",
+    "react-hot-toast": "^2.6.0",
+    "react-icons": "^5.6.0",
+    "react-image-gallery": "^1.4.0",
+    "react-international-phone": "^4.3.0",
+    "react-map-gl": "^8.0.1",
+    "react-slick": "^0.30.2",
+    "slick-carousel": "^1.8.1"
+  },
+  "devDependencies": {
+    "@types/node": "22.5.2",
+    "@types/react": "18.3.5",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.5",
+    "laravel-echo": "^2.0.2",
+    "pusher-js": "^8.4.0"
+  }
+}
