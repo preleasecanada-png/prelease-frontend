@@ -70,7 +70,7 @@ const SignIn = () => {
                 toast.error(resJson.error);
             }
         } catch (error) {
-            toast.error(error);
+            toast.error(error?.message || 'Something went wrong');
         }
     }
 
