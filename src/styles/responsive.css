@@ -638,6 +638,45 @@
     display: none;
   }
 
+  .home-third-section {
+    margin-bottom: 40px !important;
+    padding: 40px 0 !important;
+  }
+
+  .home-third-section .custom_container,
+  .about-us-first-container {
+    flex-direction: column-reverse !important;
+    gap: 24px !important;
+    padding: 0 1rem !important;
+  }
+
+  .home-left-details {
+    width: 100% !important;
+    padding: 0 !important;
+  }
+
+  .home-left-details h2 {
+    font-size: 28px !important;
+  }
+
+  .home-left-details p {
+    font-size: 15px !important;
+  }
+
+  .home-left-details ul li {
+    font-size: 15px !important;
+  }
+
+  .home-left-image {
+    width: 100% !important;
+  }
+
+  .home-left-image img {
+    border-radius: 16px !important;
+    max-height: 300px !important;
+    object-fit: cover !important;
+  }
+
   .banner_image {
     display: none;
   }

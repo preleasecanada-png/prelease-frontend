@@ -2972,9 +2972,10 @@ input[type="checkbox"]:before {
   position: relative;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
+  justify-content: center;
   align-items: center;
   min-height: 570px;
+  padding-top: 80px;
 }
 
 .search_where.active {
@@ -3022,12 +3023,9 @@ input[type="checkbox"]:before {
 }
 
 .main_cont {
-  position: absolute;
+  position: relative;
   width: 100%;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  padding-top: 60px;
+  z-index: 2;
 }
 
 .head_wel {
