@@ -1,13 +1,19 @@
 import Link from 'next/link';
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 
 const HelpCenter = () => {
+  const [userName, setUserName] = useState('');
+
+  useEffect(() => {
+    const name = window.localStorage.getItem('user_name');
+    if (name) setUserName(name);
+  }, []);
   return (
     <>
       <div className="help-center">
         <div className="top_fade"></div>
         <header className="help-center-header">
-          <h1>Hi Roben, how can we help?</h1>
+          <h1>Hi{userName ? ` ${userName}` : ''}, how can we help?</h1>
           <p>Find answers to your questions about renting, listing properties, payments, and more.</p>
           <div className="help-center-search-box">
             <input type="text" placeholder="Search for help topics ....." />
