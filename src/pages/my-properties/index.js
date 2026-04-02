@@ -91,7 +91,7 @@ const MyProperties = () => {
 
   if (loading) {
     return (
-      <section className="container py-5">
+      <section className="container py-5" style={{ paddingTop: '120px' }}>
         <div className="text-center">
           <div className="spinner-border text-danger" role="status">
             <span className="visually-hidden">Loading...</span>
@@ -102,7 +102,7 @@ const MyProperties = () => {
   }
 
   return (
-    <section className="container py-5">
+    <section className="container py-5" style={{ paddingTop: '120px' }}>
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h1 style={{ fontSize: '28px', fontWeight: '700' }}>My Properties</h1>
         <Link href="/properties" style={{ backgroundColor: '#D80621', color: '#fff', padding: '10px 20px', borderRadius: '8px', fontWeight: '600', textDecoration: 'none', fontSize: '14px' }}>
