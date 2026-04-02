@@ -71,6 +71,33 @@ const MyProperties = () => {
     setDeletingImageId(null)
   }
 
+  const compressImage = (file, maxWidth = 1200, quality = 0.7) => {
+    return new Promise((resolve) => {
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        const img = new Image()
+        img.onload = () => {
+          const canvas = document.createElement('canvas')
+          let width = img.width
+          let height = img.height
+          if (width > maxWidth) {
+            height = (height * maxWidth) / width
+            width = maxWidth
+          }
+          canvas.width = width
+          canvas.height = height
+          const ctx = canvas.getContext('2d')
+          ctx.drawImage(img, 0, 0, width, height)
+          canvas.toBlob((blob) => {
+            resolve(new File([blob], file.name, { type: 'image/jpeg' }))
+          }, 'image/jpeg', quality)
+        }
+        img.src = e.target.result
+      }
+      reader.readAsDataURL(file)
+    })
+  }
+
   const handleNewImages = (e) => {
     const files = Array.from(e.target.files)
     setNewImages(prev => [...prev, ...files])
@@ -87,9 +114,10 @@ const MyProperties = () => {
       Object.entries(editForm).forEach(([key, val]) => {
         formData.append(key, val)
       })
-      newImages.forEach(file => {
-        formData.append('property_images[]', file)
-      })
+      for (const file of newImages) {
+        const compressed = await compressImage(file)
+        formData.append('property_images[]', compressed)
+      }
       const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_HOST}/property/${id}/update`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
@@ -268,7 +296,7 @@ const MyProperties = () => {
                           ${property.set_your_price || 0}<span style={{ fontSize: '14px', fontWeight: '400', color: '#6B7280' }}>/month</span>
                         </div>
                         <div className="d-flex gap-2">
-                          <Link href={`/property-detail/${property.slug}/${property.id}`} style={{ flex: 1, textAlign: 'center', padding: '8px', borderRadius: '6px', border: '1px solid #e5e7eb', color: '#374151', textDecoration: 'none', fontSize: '13px', fontWeight: '600' }}>
+                          <Link href={`/property-detail/${property.slug || 'property'}/${property.id}`} style={{ flex: 1, textAlign: 'center', padding: '8px', borderRadius: '6px', border: '1px solid #e5e7eb', color: '#374151', textDecoration: 'none', fontSize: '13px', fontWeight: '600' }}>
                             View
                           </Link>
                           <button onClick={() => startEdit(property)} style={{ flex: 1, padding: '8px', borderRadius: '6px', border: '1px solid #2563EB', color: '#2563EB', backgroundColor: '#fff', cursor: 'pointer', fontSize: '13px', fontWeight: '600' }}>
