@@ -1010,8 +1010,49 @@ html {
   opacity: 1 !important;
 }
 
+/* --- Destination Header --- */
+.destination-header {
+  padding: 30px 0 10px;
+  margin-bottom: 10px;
+  border-bottom: 2px solid #f1f5f9;
+}
+
+.destination-city-name {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  font-size: 36px !important;
+  font-weight: 700 !important;
+  color: #1e293b !important;
+  text-align: left !important;
+  padding: 0 !important;
+  margin: 0 0 6px 0 !important;
+  text-transform: capitalize;
+}
+
+.destination-city-name svg {
+  flex-shrink: 0;
+}
+
+.destination-property-count {
+  font-size: 16px;
+  color: #64748b;
+  font-weight: 400;
+  margin: 0;
+  padding-left: 36px;
+}
+
+@media (max-width: 768px) {
+  .destination-city-name {
+    font-size: 26px !important;
+  }
+  .destination-header {
+    padding: 20px 0 8px;
+  }
+}
+
 /* --- No Record Found Enhancement --- */
-.main_area_content h1 {
+.main_area_content h1:not(.destination-city-name) {
   font-size: 20px !important;
   color: #94a3b8 !important;
   font-weight: 500 !important;
