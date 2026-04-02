@@ -5,6 +5,8 @@ import { CreateApiContext } from '../../ContextApi/CreateApiContext';
 
 const Verification = memo(() => {
     const [email, setEmail] = useState('');
+    const [verified, setVerified] = useState(false);
+    const [countdown, setCountdown] = useState(5);
     const router = useRouter();
     const { locale } = useContext(CreateApiContext)
 
@@ -13,6 +15,27 @@ const Verification = memo(() => {
         setEmail(email);
     }, []);
 
+    useEffect(() => {
+        if (router.query.verified === 'true') {
+            setVerified(true);
+        }
+    }, [router.query]);
+
+    useEffect(() => {
+        if (verified) {
+            const timer = setInterval(() => {
+                setCountdown((prev) => {
+                    if (prev <= 1) {
+                        clearInterval(timer);
+                        router.push('/login');
+                        return 0;
+                    }
+                    return prev - 1;
+                });
+            }, 1000);
+            return () => clearInterval(timer);
+        }
+    }, [verified, router]);
 
     useLayoutEffect(() => {
         const token = window.localStorage.getItem("token");
@@ -20,6 +43,25 @@ const Verification = memo(() => {
             router.push('/');
         }
     }, [router]);
+
+    if (verified) {
+        return (
+            <section className='verif_main'>
+                <div className="container">
+                    <div className='verif_inner'>
+                        <div className='verif_banner'>
+                            <img className='banner' src="/images/main_bg.webp" alt="" />
+                        </div>
+                        <h2 className='verif_head' style={{ color: '#28a745' }}>Email Verified Successfully!</h2>
+                        <p style={{ fontSize: '18px', marginTop: '10px' }}>Your email has been verified. You can now log in to your account.</p>
+                        <p style={{ fontSize: '14px', color: '#666', marginTop: '10px' }}>Redirecting to login in {countdown} seconds...</p>
+                        <Link href="/login" style={{ display: 'inline-block', marginTop: '20px', padding: '12px 32px', background: '#D80621', color: '#fff', borderRadius: '8px', textDecoration: 'none', fontWeight: '600' }}>Go to Login</Link>
+                    </div>
+                </div>
+            </section>
+        );
+    }
+
     return (
         <>
             <section className='verif_main'>
