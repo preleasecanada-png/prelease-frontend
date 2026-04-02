@@ -2471,6 +2471,9 @@ input[type="checkbox"] {
 
 .content_area {
   width: 100%;
+  overflow: hidden;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 /* skelenton loader */
