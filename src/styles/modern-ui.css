@@ -517,6 +517,222 @@ html {
   box-shadow: 0 0 0 3px rgba(216, 6, 33, 0.08) !important;
 }
 
+/* --- How It Works Section --- */
+.hiw-section {
+  position: relative;
+  padding: 100px 0 80px;
+  background: linear-gradient(180deg, #f8f9fc 0%, #fff 100%);
+  overflow: hidden;
+}
+
+.hiw-bg-pattern {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: radial-gradient(circle at 1px 1px, rgba(216, 6, 33, 0.04) 1px, transparent 0);
+  background-size: 40px 40px;
+  pointer-events: none;
+}
+
+.hiw-header {
+  text-align: center;
+  margin-bottom: 64px;
+}
+
+.hiw-badge {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #D80621;
+  background: rgba(216, 6, 33, 0.06);
+  padding: 8px 20px;
+  border-radius: 50px;
+  margin-bottom: 16px;
+}
+
+.hiw-title {
+  font-size: 42px;
+  font-weight: 800;
+  color: #0a0a0a;
+  letter-spacing: -0.5px;
+  margin: 0;
+}
+
+.hiw-subtitle {
+  font-size: 16px;
+  color: #64748b;
+  max-width: 500px;
+  margin: 14px auto 0;
+  line-height: 1.7;
+}
+
+.hiw-timeline {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.hiw-timeline-line {
+  width: 60%;
+  max-width: 700px;
+  height: 3px;
+  background: linear-gradient(90deg, transparent 0%, #D80621 15%, #D80621 85%, transparent 100%);
+  border-radius: 2px;
+  opacity: 0.2;
+}
+
+.hiw-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 28px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.hiw-card {
+  position: relative;
+  text-align: center;
+  padding: 40px 24px 32px;
+  border-radius: 24px;
+  background: #fff;
+  border: 1px solid #eef2f7;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: default;
+  overflow: visible;
+}
+
+.hiw-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 25px 50px rgba(216, 6, 33, 0.08), 0 8px 24px rgba(0, 0, 0, 0.04);
+  border-color: rgba(216, 6, 33, 0.2);
+}
+
+.hiw-card-num {
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, #D80621, #6e0311);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 800;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(216, 6, 33, 0.3);
+}
+
+.hiw-card-icon-wrap {
+  margin-bottom: 20px;
+}
+
+.hiw-card-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 72px;
+  height: 72px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, rgba(216, 6, 33, 0.06) 0%, rgba(216, 6, 33, 0.02) 100%);
+  border: 1px solid rgba(216, 6, 33, 0.08);
+  transition: all 0.35s ease;
+}
+
+.hiw-card:hover .hiw-card-icon {
+  background: linear-gradient(135deg, rgba(216, 6, 33, 0.12) 0%, rgba(216, 6, 33, 0.04) 100%);
+  border-color: rgba(216, 6, 33, 0.15);
+  transform: scale(1.08);
+}
+
+.hiw-card-step {
+  font-size: 11px;
+  font-weight: 800;
+  color: #D80621;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  opacity: 0.8;
+}
+
+.hiw-card-title {
+  font-size: 22px;
+  font-weight: 800;
+  color: #0a0a0a;
+  margin: 0 0 10px;
+  letter-spacing: -0.3px;
+}
+
+.hiw-card-desc {
+  font-size: 14px;
+  color: #64748b;
+  line-height: 1.65;
+  margin: 0;
+}
+
+.hiw-card-arrow {
+  display: none;
+  position: absolute;
+  right: -20px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  opacity: 0.3;
+}
+
+@media (min-width: 992px) {
+  .hiw-card-arrow {
+    display: block;
+  }
+}
+
+@media (max-width: 991px) {
+  .hiw-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+  }
+
+  .hiw-title {
+    font-size: 34px;
+  }
+
+  .hiw-timeline {
+    display: none;
+  }
+}
+
+@media (max-width: 600px) {
+  .hiw-section {
+    padding: 60px 0;
+  }
+
+  .hiw-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    max-width: 360px;
+  }
+
+  .hiw-title {
+    font-size: 28px;
+  }
+
+  .hiw-card {
+    padding: 32px 20px 24px;
+  }
+
+  .hiw-card-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 16px;
+  }
+}
+
 /* --- Responsive Adjustments --- */
 @media (max-width: 991px) {
   .home-third-section .custom_container {

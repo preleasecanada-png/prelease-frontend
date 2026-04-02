@@ -93,42 +93,82 @@ export default function Home({ isScrolled }) {
       </section>
 
       {/* How it Works */}
-      <section style={{
-        padding: '80px 0',
-        background: '#fff',
-      }}>
-        <div className="container">
-          <div style={{ textAlign: 'center', marginBottom: '56px' }}>
-            <span style={{ fontSize: '13px', fontWeight: 700, letterSpacing: '3px', textTransform: 'uppercase', color: '#D80621' }}>{locale?.home?.simple_process || 'Simple Process'}</span>
-            <h2 style={{ fontSize: '38px', fontWeight: 800, color: '#0a0a0a', marginTop: '8px', letterSpacing: '-0.5px' }}>
+      <section className="hiw-section">
+        <div className="hiw-bg-pattern"></div>
+        <div className="container" style={{ position: 'relative', zIndex: 1 }}>
+          <div className="hiw-header">
+            <span className="hiw-badge">{locale?.home?.simple_process || 'Simple Process'}</span>
+            <h2 className="hiw-title">
               {locale?.home?.how_it || 'How It'} <span className="text-gradient">{locale?.home?.works || 'Works'}</span>
             </h2>
-            <p style={{ fontSize: '15px', color: '#64748b', maxWidth: '480px', margin: '12px auto 0', lineHeight: 1.7 }}>
+            <p className="hiw-subtitle">
               {locale?.home?.how_it_works_subtitle || 'Find your perfect home in Canada in just a few simple steps'}
             </p>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '32px', maxWidth: '1000px', margin: '0 auto' }}>
+
+          {/* Timeline connector (desktop only) */}
+          <div className="hiw-timeline">
+            <div className="hiw-timeline-line"></div>
+          </div>
+
+          <div className="hiw-grid">
             {[
-              { num: '01', title: locale?.home?.step_search || 'Search', desc: locale?.home?.step_search_desc || 'Browse verified properties across Canada with advanced filters', icon: '🔍', stepLabel: locale?.home?.step_01 || 'STEP 01' },
-              { num: '02', title: locale?.home?.step_apply || 'Apply', desc: locale?.home?.step_apply_desc || 'Submit your rental application with all required documents online', icon: '📋', stepLabel: locale?.home?.step_02 || 'STEP 02' },
-              { num: '03', title: locale?.home?.step_sign || 'Sign', desc: locale?.home?.step_sign_desc || 'Review and sign your lease agreement digitally and securely', icon: '✍️', stepLabel: locale?.home?.step_03 || 'STEP 03' },
-              { num: '04', title: locale?.home?.step_movein || 'Move In', desc: locale?.home?.step_movein_desc || 'Pay securely through the platform and move into your new home', icon: '🏡', stepLabel: locale?.home?.step_04 || 'STEP 04' },
+              {
+                num: '01',
+                title: locale?.home?.step_search || 'Search',
+                desc: locale?.home?.step_search_desc || 'Browse verified properties across Canada with advanced filters',
+                stepLabel: locale?.home?.step_01 || 'STEP 01',
+                icon: (
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#D80621" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
+                  </svg>
+                ),
+              },
+              {
+                num: '02',
+                title: locale?.home?.step_apply || 'Apply',
+                desc: locale?.home?.step_apply_desc || 'Submit your rental application with all required documents online',
+                stepLabel: locale?.home?.step_02 || 'STEP 02',
+                icon: (
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#D80621" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/>
+                  </svg>
+                ),
+              },
+              {
+                num: '03',
+                title: locale?.home?.step_sign || 'Sign',
+                desc: locale?.home?.step_sign_desc || 'Review and sign your lease agreement digitally and securely',
+                stepLabel: locale?.home?.step_03 || 'STEP 03',
+                icon: (
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#D80621" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><path d="m9 12 2 2 4-4"/>
+                  </svg>
+                ),
+              },
+              {
+                num: '04',
+                title: locale?.home?.step_movein || 'Move In',
+                desc: locale?.home?.step_movein_desc || 'Pay securely through the platform and move into your new home',
+                stepLabel: locale?.home?.step_04 || 'STEP 04',
+                icon: (
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#D80621" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+                  </svg>
+                ),
+              },
             ].map((step, i) => (
-              <div key={i} style={{
-                textAlign: 'center', padding: '36px 24px',
-                borderRadius: '20px', background: '#fafafa',
-                border: '1px solid #f1f5f9',
-                transition: 'all 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
-                cursor: 'default',
-                position: 'relative',
-              }}
-              onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-6px)'; e.currentTarget.style.boxShadow = '0 20px 40px rgba(0,0,0,0.08)'; e.currentTarget.style.borderColor = '#D80621'; }}
-              onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.borderColor = '#f1f5f9'; }}
-              >
-                <div style={{ fontSize: '36px', marginBottom: '12px' }}>{step.icon}</div>
-                <div style={{ fontSize: '12px', fontWeight: 800, color: '#D80621', letterSpacing: '2px', marginBottom: '6px' }}>{step.stepLabel}</div>
-                <h3 style={{ fontSize: '20px', fontWeight: 700, color: '#0a0a0a', marginBottom: '8px' }}>{step.title}</h3>
-                <p style={{ fontSize: '14px', color: '#64748b', lineHeight: 1.6, margin: 0 }}>{step.desc}</p>
+              <div key={i} className="hiw-card">
+                <div className="hiw-card-num">{step.num}</div>
+                <div className="hiw-card-icon-wrap">
+                  <div className="hiw-card-icon">{step.icon}</div>
+                </div>
+                <div className="hiw-card-step">{step.stepLabel}</div>
+                <h3 className="hiw-card-title">{step.title}</h3>
+                <p className="hiw-card-desc">{step.desc}</p>
+                {i < 3 && <div className="hiw-card-arrow">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#D80621" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                </div>}
               </div>
             ))}
           </div>
