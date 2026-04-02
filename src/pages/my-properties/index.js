@@ -8,6 +8,8 @@ const MyProperties = () => {
   const [loading, setLoading] = useState(true)
   const [editingId, setEditingId] = useState(null)
   const [editForm, setEditForm] = useState({})
+  const [newImages, setNewImages] = useState([])
+  const [deletingImageId, setDeletingImageId] = useState(null)
 
   useEffect(() => {
     fetchMyProperties()
@@ -27,6 +29,7 @@ const MyProperties = () => {
 
   const startEdit = (property) => {
     setEditingId(property.id)
+    setNewImages([])
     setEditForm({
       title: property.title || '',
       description: property.description || '',
@@ -44,12 +47,48 @@ const MyProperties = () => {
     setEditForm(prev => ({ ...prev, [name]: value }))
   }
 
+  const deleteImage = async (imageId) => {
+    setDeletingImageId(imageId)
+    try {
+      const token = localStorage.getItem('token')
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_HOST}/property/image/${imageId}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      const data = await res.json()
+      if (data?.status === 200) {
+        toast.success('Image deleted')
+        setProperties(prev => prev.map(p => ({
+          ...p,
+          property_images: p.property_images?.filter(img => img.id !== imageId)
+        })))
+      } else {
+        toast.error('Failed to delete image')
+      }
+    } catch (err) {
+      toast.error('Something went wrong')
+    }
+    setDeletingImageId(null)
+  }
+
+  const handleNewImages = (e) => {
+    const files = Array.from(e.target.files)
+    setNewImages(prev => [...prev, ...files])
+  }
+
+  const removeNewImage = (index) => {
+    setNewImages(prev => prev.filter((_, i) => i !== index))
+  }
+
   const saveEdit = async (id) => {
     try {
       const token = localStorage.getItem('token')
       const formData = new FormData()
       Object.entries(editForm).forEach(([key, val]) => {
         formData.append(key, val)
+      })
+      newImages.forEach(file => {
+        formData.append('property_images[]', file)
       })
       const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_HOST}/property/${id}/update`, {
         method: 'POST',
@@ -60,6 +99,7 @@ const MyProperties = () => {
       if (data?.status === 200) {
         toast.success('Property updated!')
         setEditingId(null)
+        setNewImages([])
         fetchMyProperties()
       } else {
         toast.error(data?.error || 'Failed to update')
@@ -148,6 +188,40 @@ const MyProperties = () => {
                 <div style={{ padding: '16px', flex: 1, display: 'flex', flexDirection: 'column' }}>
                   {editingId === property.id ? (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                      {/* Existing Images */}
+                      <div>
+                        <label style={{ fontSize: '12px', fontWeight: '600', color: '#374151', marginBottom: '6px', display: 'block' }}>Current Images</label>
+                        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                          {property.property_images?.map(img => (
+                            <div key={img.id} style={{ position: 'relative', width: '70px', height: '70px', borderRadius: '8px', overflow: 'hidden', border: '1px solid #e5e7eb' }}>
+                              <img src={imageBaseUrl(img.original)} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                              <button
+                                onClick={() => deleteImage(img.id)}
+                                disabled={deletingImageId === img.id}
+                                style={{ position: 'absolute', top: '2px', right: '2px', width: '20px', height: '20px', borderRadius: '50%', backgroundColor: 'rgba(220,38,38,0.9)', color: '#fff', border: 'none', cursor: 'pointer', fontSize: '12px', lineHeight: '1', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0 }}
+                              >
+                                {deletingImageId === img.id ? '...' : '✕'}
+                              </button>
+                            </div>
+                          ))}
+                          {property.property_images?.length === 0 && <span style={{ fontSize: '12px', color: '#9CA3AF' }}>No images</span>}
+                        </div>
+                      </div>
+                      {/* New Images */}
+                      <div>
+                        <label style={{ fontSize: '12px', fontWeight: '600', color: '#374151', marginBottom: '6px', display: 'block' }}>Add Images</label>
+                        <input type="file" accept="image/*" multiple onChange={handleNewImages} style={{ fontSize: '12px' }} />
+                        {newImages.length > 0 && (
+                          <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginTop: '6px' }}>
+                            {newImages.map((file, i) => (
+                              <div key={i} style={{ position: 'relative', width: '60px', height: '60px', borderRadius: '6px', overflow: 'hidden', border: '2px solid #059669' }}>
+                                <img src={URL.createObjectURL(file)} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                <button onClick={() => removeNewImage(i)} style={{ position: 'absolute', top: '1px', right: '1px', width: '18px', height: '18px', borderRadius: '50%', backgroundColor: 'rgba(0,0,0,0.6)', color: '#fff', border: 'none', cursor: 'pointer', fontSize: '10px', lineHeight: '1', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0 }}>✕</button>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
                       <input className="form-control form-control-sm" name="title" value={editForm.title} onChange={handleEditChange} placeholder="Title" />
                       <div className="row g-2">
                         <div className="col-6">
