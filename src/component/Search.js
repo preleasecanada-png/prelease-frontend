@@ -418,7 +418,7 @@
 //                       <span>{locale?.home?.search}</span>
 //                     </button>
 //                     <button className='search_with_ai'>
-//                       <img src="/images/shineStar.png" alt="" />
+//                       <img src="/images/shinestar.png" alt="" />
 //                     </button>
 //                   </div>
 //                 </div>
@@ -911,7 +911,7 @@ const Search = () => {
               <span>Search</span>
             </button>
             <button className='search_with_ai'>
-              <img src="/images/shineStar.png" alt="" />
+              <img src="/images/shinestar.png" alt="" />
             </button>
           </div>
           {/* search button */}
