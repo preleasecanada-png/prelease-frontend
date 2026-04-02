@@ -517,6 +517,114 @@ html {
   box-shadow: 0 0 0 3px rgba(216, 6, 33, 0.08) !important;
 }
 
+/* --- Popular Destinations Section --- */
+.pop-dest-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-top: 24px;
+}
+
+.pop-dest-card {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid #eef2f7;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+}
+
+.pop-dest-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  border-color: rgba(216, 6, 33, 0.2);
+  text-decoration: none;
+  color: inherit;
+}
+
+.pop-dest-img-wrap {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+}
+
+.pop-dest-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.pop-dest-card:hover .pop-dest-img-wrap img {
+  transform: scale(1.08);
+}
+
+.pop-dest-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  top: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.55) 100%);
+  display: flex;
+  align-items: flex-end;
+  padding: 16px 20px;
+}
+
+.pop-dest-city-name {
+  font-size: 28px;
+  font-weight: 900;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  line-height: 1.1;
+}
+
+.pop-dest-info {
+  padding: 16px 20px 20px;
+}
+
+.pop-dest-info h3 {
+  font-size: 17px;
+  font-weight: 700;
+  color: #0a0a0a;
+  margin: 0 0 6px;
+}
+
+.pop-dest-info p {
+  font-size: 13.5px;
+  color: #64748b;
+  line-height: 1.55;
+  margin: 0;
+}
+
+@media (max-width: 991px) {
+  .pop-dest-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+}
+
+@media (max-width: 600px) {
+  .pop-dest-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .pop-dest-img-wrap {
+    height: 180px;
+  }
+
+  .pop-dest-city-name {
+    font-size: 22px;
+  }
+}
+
 /* --- How It Works Section --- */
 .hiw-section {
   position: relative;

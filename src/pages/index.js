@@ -50,14 +50,34 @@ export default function Home({ isScrolled }) {
 
       <section className='main_area_content'>
         <div className='content_area'>
-          {/* <section className='section-two'>
-            <h2 className='cont_heading'><strong>{locale?.home?.popular}</strong> {locale?.home?.destinations}</h2>
-
-            <div className='placecard_grid'>
-              <DestinationCard />
+          {/* Popular Destinations */}
+          <section className='section-two' style={{ marginBottom: '40px' }}>
+            <h2 className='cont_heading'><strong>{locale?.home?.popular || 'Popular'}</strong> {locale?.home?.destinations || 'Destinations'}</h2>
+            <div className="pop-dest-grid">
+              {[
+                { name: 'Toronto', slug: 'toronto', img: '/images/destinations/toronto.jpg', desc: 'Known for its vibrant communities and multicultural environment.' },
+                { name: 'Montreal', slug: 'montreal', img: '/images/destinations/montreal.jpg', desc: 'A blend of European charm and North American dynamism.' },
+                { name: 'Vancouver', slug: 'vancouver', img: '/images/destinations/vancouver.jpg', desc: 'Stunning mountains meet the Pacific in this coastal gem.' },
+                { name: 'Calgary', slug: 'calgary', img: '/images/destinations/calgary.jpg', desc: 'Gateway to the Rockies with a booming urban lifestyle.' },
+                { name: 'Ottawa', slug: 'ottawa', img: '/images/destinations/ottawa.jpg', desc: "Canada's capital city, rich in history and culture." },
+                { name: 'Quebec City', slug: 'quebec', img: '/images/destinations/quebec.jpg', desc: 'Old-world charm with cobblestone streets and French heritage.' },
+              ].map((city, i) => (
+                <Link href={`/destination/${city.slug}`} key={i} className="pop-dest-card">
+                  <div className="pop-dest-img-wrap">
+                    <img src={city.img} alt={city.name} />
+                    <div className="pop-dest-overlay">
+                      <span className="pop-dest-city-name">{city.name}</span>
+                    </div>
+                  </div>
+                  <div className="pop-dest-info">
+                    <h3>{city.name}</h3>
+                    <p>{city.desc}</p>
+                  </div>
+                </Link>
+              ))}
             </div>
+          </section>
 
-          </section> */}
           <section className='section-two'>
             <h2 className='cont_heading'><strong>{locale?.home?.featured}</strong> {locale?.home?.places}</h2>
 
