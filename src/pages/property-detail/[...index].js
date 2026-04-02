@@ -18,19 +18,25 @@ const PropertyDetail = memo(() => {
     const [showReserverButton, setshowReserverButton] = useState(false)
 
     useEffect(() => {
-        const pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_APP_KEY, {
-            cluster: process.env.NEXT_PUBLIC_PUSHER_APP_CLUSTER,
-        });
+        if (!process.env.NEXT_PUBLIC_PUSHER_APP_KEY) return;
+        let pusher;
+        try {
+            pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_APP_KEY, {
+                cluster: process.env.NEXT_PUBLIC_PUSHER_APP_CLUSTER || 'us2',
+            });
 
-        const channel = pusher.subscribe("simple-alert");
-        channel.bind("alert-event", function (data) {
-            alert(data.message);
-        });
+            const channel = pusher.subscribe("simple-alert");
+            channel.bind("alert-event", function (data) {
+                alert(data.message);
+            });
 
-        return () => {
-            channel.unbind_all();
-            channel.unsubscribe();
-        };
+            return () => {
+                channel.unbind_all();
+                channel.unsubscribe();
+            };
+        } catch (e) {
+            console.warn('Pusher init failed:', e.message);
+        }
     }, []);
 
 
