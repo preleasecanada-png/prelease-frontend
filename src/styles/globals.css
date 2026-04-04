@@ -1961,16 +1961,16 @@ button[disabled] {
 }
 .describe-hea {
   color: #000;
-  font-weight: 600;
-  font-size: 48px;
+  font-weight: 700;
+  font-size: 32px;
+  text-align: center;
 }
 .describe-place-btns {
   width: 100%;
-  display: flex;
-  flex-wrap: wrap;
-  /* max-width: 1200px; */
-  max-width: 62.5vw;
-  gap: 20px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  max-width: 700px;
+  gap: 14px;
 }
 .text-limit {
   color: #000;
@@ -2046,20 +2046,23 @@ button[disabled] {
   font-weight: 500;
 }
 .describe-place-btn {
-  border-radius: 50px;
+  border-radius: 14px;
   display: flex;
   align-items: center;
-  font-size: 23px;
+  font-size: 15px;
   font-weight: 600;
-  border: 2px solid #0000002e;
-  /* padding: 18px 40px; */
-  /* width: 185px; */
-  gap: 15px;
+  border: 2px solid #e0e0e0;
+  gap: 10px;
   cursor: pointer;
-  flex-basis: 23%;
-  width: 14vw;
-  height: 4.5vw;
-  padding-left: 20px;
+  padding: 14px 16px;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.describe-place-btn:hover {
+  border-color: #D80621;
+  box-shadow: 0 4px 12px rgba(216, 6, 33, 0.1);
 }
 .describe-place-btn.active svg path {
   fill: #ffffff !important;
@@ -2209,8 +2212,8 @@ button[disabled] {
   color: #000;
 }
 .describe-place-btn.active {
-  border: 2px solid #a284e5;
-  background: #b493fe;
+  border: 2px solid #D80621;
+  background: linear-gradient(135deg, #D80621, #ff4d6d);
   color: #fff;
 }
 .describe-out-place {
@@ -2404,8 +2407,14 @@ button[disabled] {
   display: contents;
 }
 .describe-place-btn svg {
-  height: 2.604vw;
-  width: 2.604vw;
+  height: 28px;
+  width: 28px;
+  min-width: 28px;
+}
+@media (max-width: 600px) {
+  .describe-place-btns { grid-template-columns: repeat(2, 1fr); }
+  .describe-place-btn { font-size: 13px; padding: 12px; }
+  .describe-hea { font-size: 28px; }
 }
 .about-place-right-images .right-top-1 > img {
   width: 190px;
