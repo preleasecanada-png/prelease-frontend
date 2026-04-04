@@ -110,19 +110,35 @@ const MyProperties = () => {
   const saveEdit = async (id) => {
     try {
       const token = localStorage.getItem('token')
-      const formData = new FormData()
-      Object.entries(editForm).forEach(([key, val]) => {
-        formData.append(key, val)
-      })
-      for (const file of newImages) {
-        const compressed = await compressImage(file)
-        formData.append('property_images[]', compressed)
+      let fetchOptions = {}
+
+      if (newImages.length > 0) {
+        const formData = new FormData()
+        Object.entries(editForm).forEach(([key, val]) => {
+          formData.append(key, val)
+        })
+        for (const file of newImages) {
+          const compressed = await compressImage(file)
+          formData.append('property_images[]', compressed)
+        }
+        fetchOptions = {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${token}` },
+          body: formData,
+        }
+      } else {
+        fetchOptions = {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+          },
+          body: JSON.stringify(editForm),
+        }
       }
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_HOST}/property/${id}/update`, {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
-        body: formData,
-      })
+
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_HOST}/property/${id}/update`, fetchOptions)
       const data = await res.json()
       if (data?.status === 200) {
         toast.success('Property updated!')
@@ -130,9 +146,10 @@ const MyProperties = () => {
         setNewImages([])
         fetchMyProperties()
       } else {
-        toast.error(data?.error || 'Failed to update')
+        toast.error(data?.error || data?.message || 'Failed to update')
       }
     } catch (err) {
+      console.error('Update error:', err)
       toast.error('Something went wrong')
     }
   }
