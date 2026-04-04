@@ -9,6 +9,18 @@ const ChatPopup = ({ setShowChatModal, placeDetail }) => {
   const { messages, sendMessage, fetchChats, stopListening } = useContext(ChatContext);
   const chatEndRef = useRef(null);
 
+  const myName = typeof window !== 'undefined' ? localStorage.getItem('user_name') || '' : '';
+  const myPicture = typeof window !== 'undefined' ? localStorage.getItem('user_picture') || '' : '';
+
+  const getAvatarUrl = (picture, name) => {
+    if (picture && picture.startsWith('http')) return picture;
+    if (picture) return `${process.env.NEXT_PUBLIC_BASE_LOCAL_IMAGE_URL}/${picture}`;
+    return `https://ui-avatars.com/api/?name=${encodeURIComponent(name || 'U')}&background=D80621&color=fff`;
+  };
+
+  const landlordPic = getAvatarUrl(placeDetail?.user?.picture, placeDetail?.user?.first_name || placeDetail?.user?.user_name);
+  const myAvatarUrl = getAvatarUrl(myPicture, myName);
+
   const handleClose = () => {
     setIsClosing(true);
     setTimeout(() => {
@@ -69,18 +81,27 @@ const ChatPopup = ({ setShowChatModal, placeDetail }) => {
             <div className="chat_landload_detail">
               <div className="d-flex landload-img-status">
                 <div className="landlord_image">
-                  <img src="/images/chat/chat-landload-icon.webp" alt="Landlord" />
+                  <img src={landlordPic} alt="Landlord" />
                   <img src="/images/chat/check.webp" alt="Verified" />
                 </div>
                 <div className="landlord_info">
-                  <p className="landlord_name">{placeDetail?.user?.user_name} <span>host</span></p>
+                  <p className="landlord_name">{placeDetail?.user?.first_name || placeDetail?.user?.user_name} <span>host</span></p>
                   <span className="landlord_status">Online Now</span>
                 </div>
               </div>
               <div className="landload_price">
                 <span>{placeDetail?.title}</span>
-                <span>2 Bedrooms . 2 Beds</span>
-                <span>${placeDetail?.set_your_price} for 1 night</span>
+                <span>{placeDetail?.how_many_bedrooms ? `${placeDetail.how_many_bedrooms} Bedrooms` : ''}{placeDetail?.how_many_bathroom ? ` · ${placeDetail.how_many_bathroom} Bathrooms` : ''}</span>
+                <span>${placeDetail?.set_your_price} /month</span>
+              </div>
+            </div>
+
+            {/* Current user info */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 15px', borderBottom: '1px solid rgba(0,0,0,0.08)' }}>
+              <img src={myAvatarUrl} alt="Me" style={{ width: 36, height: 36, borderRadius: '50%', objectFit: 'cover' }} />
+              <div>
+                <p style={{ margin: 0, fontSize: 14, fontWeight: 600 }}>{myName || 'Me'}</p>
+                <span style={{ fontSize: 12, color: '#07A537' }}>You</span>
               </div>
             </div>
 
@@ -92,6 +113,18 @@ const ChatPopup = ({ setShowChatModal, placeDetail }) => {
                   key={idx}
                   className={`message ${msg.system ? 'message_yellow' : msg.sender === 'tenant' ? 'message_right' : 'message_left'}`}
                 >
+                  {!msg.system && (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
+                      <img
+                        src={msg.sender === 'tenant' ? myAvatarUrl : landlordPic}
+                        alt=""
+                        style={{ width: 20, height: 20, borderRadius: '50%', objectFit: 'cover' }}
+                      />
+                      <span style={{ fontSize: 11, fontWeight: 600, opacity: 0.7 }}>
+                        {msg.sender === 'tenant' ? (myName || 'Me') : (placeDetail?.user?.first_name || placeDetail?.user?.user_name || 'Host')}
+                      </span>
+                    </div>
+                  )}
                   <p>{msg.text || msg.message}</p>
                   <span className="message_time">
                     {new Date(msg.created_at || msg.time || Date.now()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
