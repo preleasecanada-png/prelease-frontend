@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useRef, useContext } from 'react';
+import React, { useState, useEffect, useRef, useContext, useCallback } from 'react';
 import { authFetch } from '@/Helper/helper';
 import toast from 'react-hot-toast';
+import Pusher from 'pusher-js';
 
 const FloatingChatWidget = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -12,17 +13,95 @@ const FloatingChatWidget = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef(null);
-  const pollRef = useRef(null);
+  const pusherRef = useRef(null);
+  const selectedConvRef = useRef(null);
+  const isOpenRef = useRef(false);
+
+  // Keep refs in sync
+  useEffect(() => { selectedConvRef.current = selectedConversation; }, [selectedConversation]);
+  useEffect(() => { isOpenRef.current = isOpen; }, [isOpen]);
+
+  const playNotificationSound = useCallback(() => {
+    try {
+      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const oscillator = audioCtx.createOscillator();
+      const gainNode = audioCtx.createGain();
+      oscillator.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+      oscillator.type = 'sine';
+      oscillator.frequency.setValueAtTime(880, audioCtx.currentTime);
+      oscillator.frequency.setValueAtTime(1100, audioCtx.currentTime + 0.1);
+      gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+      oscillator.start(audioCtx.currentTime);
+      oscillator.stop(audioCtx.currentTime + 0.4);
+    } catch (e) { /* audio not available */ }
+  }, []);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
+    const userId = localStorage.getItem('user_id');
     setIsLoggedIn(!!token);
-    if (token) {
-      fetchUnreadCount();
-      // Poll unread count every 10 seconds
-      const interval = setInterval(fetchUnreadCount, 10000);
-      return () => clearInterval(interval);
+    if (!token || !userId) return;
+
+    fetchUnreadCount();
+    // Fallback poll every 30s (in case Pusher disconnects)
+    const interval = setInterval(fetchUnreadCount, 30000);
+
+    // Real-time Pusher subscription
+    try {
+      const pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_APP_KEY, {
+        cluster: process.env.NEXT_PUBLIC_PUSHER_APP_CLUSTER || 'us2',
+      });
+      pusherRef.current = pusher;
+
+      const channel = pusher.subscribe(`chat-notify.${userId}`);
+      channel.bind('App\\Events\\ChatEvent', (data) => {
+        // New message received!
+        playNotificationSound();
+        setUnreadCount(prev => prev + 1);
+
+        // Show toast notification
+        toast('New message received!', {
+          icon: '💬',
+          duration: 3000,
+          style: { background: '#D80621', color: '#fff' },
+        });
+
+        // If conversation with this sender is open, add message in real-time
+        const senderId = String(data.message?.sender_id);
+        const currentConv = selectedConvRef.current;
+        if (currentConv && String(currentConv.user.id) === senderId) {
+          setMessages(prev => [...prev, {
+            id: data.message.id,
+            text: data.message.text,
+            sender: 'other',
+            created_at: data.message.created_at,
+          }]);
+          // Mark as read immediately
+          authFetch('/chats/mark-read', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ user_id: senderId })
+          }).then(() => fetchUnreadCount());
+        }
+
+        // Refresh conversations if widget is open
+        if (isOpenRef.current && !selectedConvRef.current) {
+          fetchConversations();
+        }
+      });
+    } catch (e) {
+      console.error('Pusher init failed:', e);
     }
+
+    return () => {
+      clearInterval(interval);
+      if (pusherRef.current) {
+        pusherRef.current.disconnect();
+        pusherRef.current = null;
+      }
+    };
   }, []);
 
   const fetchUnreadCount = async () => {
