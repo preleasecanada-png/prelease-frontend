@@ -330,7 +330,7 @@ const FloatingChatWidget = () => {
           </div>
 
           {/* Content */}
-          <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0, overflow: 'hidden' }}>
             {!selectedConversation ? (
               // Conversations List
               <div style={{ flex: 1, overflow: 'auto' }}>
@@ -410,7 +410,8 @@ const FloatingChatWidget = () => {
               <>
                 <div style={{ 
                   flex: 1, 
-                  overflow: 'auto', 
+                  overflowY: 'auto', 
+                  minHeight: 0,
                   padding: '16px',
                   display: 'flex',
                   flexDirection: 'column',
