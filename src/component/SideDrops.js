@@ -43,6 +43,9 @@ const SideDrops = memo(() => {
                 window.localStorage.removeItem('email');
                 window.localStorage.removeItem('user_picture');
                 window.localStorage.removeItem('user_name');
+                window.localStorage.removeItem('user_id');
+                window.localStorage.removeItem('role');
+                window.dispatchEvent(new Event('logout'));
                 setToken('');
                 setUserPicture('');
                 setUserName('');

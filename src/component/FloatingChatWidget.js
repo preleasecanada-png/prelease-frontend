@@ -38,6 +38,24 @@ const FloatingChatWidget = () => {
     } catch (e) { /* audio not available */ }
   }, []);
 
+  // Listen for logout event to hide widget and clean up
+  useEffect(() => {
+    const handleLogout = () => {
+      setIsLoggedIn(false);
+      setIsOpen(false);
+      setConversations([]);
+      setMessages([]);
+      setSelectedConversation(null);
+      setUnreadCount(0);
+      if (pusherRef.current) {
+        pusherRef.current.disconnect();
+        pusherRef.current = null;
+      }
+    };
+    window.addEventListener('logout', handleLogout);
+    return () => window.removeEventListener('logout', handleLogout);
+  }, []);
+
   useEffect(() => {
     const token = localStorage.getItem('token');
     const userId = localStorage.getItem('user_id');
