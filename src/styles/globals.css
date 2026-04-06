@@ -7790,7 +7790,8 @@ select.input {
   .drp_title { font-size: 24px; }
 
   /* AI Assistant mobile */
-  .ai-assistant-window { width: calc(100vw - 16px); right: 8px; bottom: 8px; height: 520px; }
+  .ai-assistant-window { width: calc(100vw - 16px); left: 8px; right: 8px; bottom: 8px; height: 85vh; max-height: 600px; border-radius: 16px; }
+  .ai-assistant-btn { bottom: 16px; left: 16px; width: 50px; height: 50px; }
   .ai-suggestions { padding: 6px 10px; }
   .ai-suggestion-chip { font-size: 11px; padding: 5px 10px; }
 }
