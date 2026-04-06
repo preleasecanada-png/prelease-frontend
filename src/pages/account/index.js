@@ -21,11 +21,14 @@ const Account = () => {
 
   useEffect(() => {
     fetchUsersLists();
-    if (users && users?.length > 0) {
-      const host = users?.filter((item) => item.id == userId);
-      setHost(host[0]);
+  }, []);
+
+  useEffect(() => {
+    if (users && users?.length > 0 && userId) {
+      const found = users?.filter((item) => item.id == userId);
+      if (found?.length > 0) setHost(found[0]);
     }
-  }, [host]);
+  }, [users, userId]);
 
   const handleLogout = async (e) => {
     e.preventDefault();
@@ -64,7 +67,7 @@ const Account = () => {
             )}
           </div>
           <div className='account-session-profile-detail'>
-            <h1>{`${host?.first_name}  ${host?.last_name} `}</h1>
+            <h1>{`${host?.first_name || ''}  ${host?.last_name || ''}`}</h1>
             <span>{host?.email ?? null}</span>
           </div>
         </div>
