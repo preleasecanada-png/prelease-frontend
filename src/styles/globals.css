@@ -9077,6 +9077,162 @@ select.input {
 .bg-check-progress { background: #e0f2fe; color: #0284c7; }
 .bg-check-declined { background: #fef2f2; color: #dc2626; }
 
+/* ═══════════════════════════════════════════════ */
+/*          PAYMENT PLAN SELECTOR                  */
+/* ═══════════════════════════════════════════════ */
+
+.pay-plan-section {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+.pay-plan-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.pay-plan-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  cursor: pointer;
+  background: #fff;
+  transition: border-color 0.15s, background 0.15s;
+}
+.pay-plan-card:hover { border-color: #fca5a5; }
+.pay-plan-selected { border-color: #D80621; background: #fef2f2; }
+.pay-plan-disabled { opacity: 0.55; cursor: not-allowed; }
+.pay-plan-disabled:hover { border-color: #e5e7eb; }
+.pay-plan-card input[type="radio"] { margin-top: 4px; flex-shrink: 0; }
+.pay-plan-card-content { flex: 1; }
+.pay-plan-card-title { font-weight: 700; font-size: 15px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.pay-plan-card-desc { font-size: 12px; color: #64748b; margin-bottom: 12px; }
+.pay-plan-savings {
+  background: #ecfdf5; color: #059669;
+  padding: 2px 8px; border-radius: 10px;
+  font-size: 11px; font-weight: 700;
+}
+.pay-plan-unavailable {
+  background: #fef2f2; color: #dc2626;
+  padding: 2px 8px; border-radius: 10px;
+  font-size: 11px; font-weight: 600;
+}
+.pay-plan-details { margin-bottom: 8px; }
+.pay-plan-details > div {
+  display: flex; justify-content: space-between;
+  font-size: 12px; padding: 3px 0;
+  color: #475569;
+}
+.pay-plan-installment {
+  display: flex; justify-content: space-between;
+  font-size: 13px; font-weight: 600;
+  padding: 6px 0; border-top: 1px dashed #e0e0e0;
+  color: #0284c7;
+}
+.pay-plan-total {
+  display: flex; justify-content: space-between;
+  font-size: 15px; font-weight: 700;
+  padding: 8px 0; border-top: 2px solid #1e293b;
+  margin-top: 4px;
+}
+.pay-plan-extra {
+  font-size: 11px; color: #d97706;
+  background: #fffbeb; padding: 4px 8px;
+  border-radius: 6px; margin-top: 6px; text-align: center;
+}
+.pay-plan-action {
+  display: flex; gap: 16px; align-items: flex-end;
+  padding-top: 16px; border-top: 1px solid #f0f0f0;
+}
+
+/* ═══════════════════════════════════════════════ */
+/*          PAYMENTS TABLE                         */
+/* ═══════════════════════════════════════════════ */
+
+.pay-table-wrap {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  overflow-x: auto;
+}
+.pay-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.pay-table th {
+  background: #f8fafc;
+  padding: 10px 12px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #64748b;
+  font-weight: 600;
+  border-bottom: 1px solid #e5e7eb;
+  white-space: nowrap;
+}
+.pay-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #f5f5f5;
+  vertical-align: middle;
+}
+.pay-table tbody tr:hover { background: #fafafa; }
+.pay-row-overdue { background: #fef2f2 !important; }
+.pay-row-overdue:hover { background: #fee2e2 !important; }
+
+.pay-type-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+}
+.pay-type-full { background: #f0f9ff; color: #0284c7; }
+.pay-type-monthly { background: #f5f3ff; color: #7c3aed; }
+
+.pay-status-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.pay-status-completed { background: #ecfdf5; color: #059669; }
+.pay-status-pending { background: #fffbeb; color: #d97706; }
+.pay-status-processing { background: #e0f2fe; color: #0284c7; }
+.pay-status-failed { background: #fef2f2; color: #dc2626; }
+.pay-status-refunded { background: #f3f4f6; color: #6b7280; }
+
+.pay-overdue-tag {
+  display: inline-block;
+  font-size: 9px; font-weight: 800;
+  color: #dc2626; background: #fee2e2;
+  padding: 1px 6px; border-radius: 4px;
+  margin-top: 2px;
+}
+.pay-upcoming-tag {
+  display: inline-block;
+  font-size: 9px; font-weight: 800;
+  color: #d97706; background: #fef3c7;
+  padding: 1px 6px; border-radius: 4px;
+  margin-top: 2px;
+}
+
+@media (max-width: 767px) {
+  .pay-plan-grid { grid-template-columns: 1fr; }
+  .pay-plan-action { flex-direction: column; }
+  .pay-plan-section { padding: 16px; }
+  .pay-table { font-size: 12px; }
+  .pay-table th, .pay-table td { padding: 8px 6px; }
+}
+
 /* ═══════════════════════════════════════════════════════════ */
 /*          COMPREHENSIVE MOBILE RESPONSIVE STYLES            */
 /* ═══════════════════════════════════════════════════════════ */

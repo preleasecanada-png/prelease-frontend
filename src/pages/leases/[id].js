@@ -10,6 +10,7 @@ const LeaseDetail = () => {
   const [lease, setLease] = useState(null)
   const [loading, setLoading] = useState(true)
   const [role, setRole] = useState('renter')
+  const [toggling, setToggling] = useState(false)
 
   useEffect(() => {
     const userRole = localStorage.getItem('role')
@@ -47,6 +48,25 @@ const LeaseDetail = () => {
     } catch (err) {
       toast.error('Something went wrong')
     }
+  }
+
+  const handleToggleMonthly = async () => {
+    setToggling(true)
+    try {
+      const token = localStorage.getItem('token')
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_HOST}/payments/toggle-monthly/${id}`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      const data = await res.json()
+      if (data?.status === 200) {
+        toast.success(data.message)
+        fetchLease()
+      } else {
+        toast.error(data?.message || 'Failed')
+      }
+    } catch (err) { toast.error('Something went wrong') }
+    setToggling(false)
   }
 
   const handleTerminate = async () => {
@@ -171,11 +191,39 @@ const LeaseDetail = () => {
             </div>
           </div>
 
+          {/* Monthly Payment Toggle (landlord only) */}
+          {role === 'landlord' && (lease.status === 'active' || lease.status === 'pending_renter_signature' || lease.status === 'pending_landlord_signature') && (
+            <div className="lease-card">
+              <div className="lease-card-body">
+                <h6 style={{ fontWeight: 700, marginBottom: '8px' }}>Monthly Payments</h6>
+                <p style={{ fontSize: '12px', color: '#64748b', marginBottom: '12px' }}>
+                  Allow the tenant to pay in monthly installments instead of one lump sum. Monthly plans have higher support fees ($125/mo) and commission (7%) to compensate for the additional risk.
+                </p>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <span style={{ fontSize: '14px', fontWeight: 600 }}>
+                    {lease.landlord_allows_monthly ? '✅ Enabled' : '❌ Disabled'}
+                  </span>
+                  <button className="btn btn-sm" disabled={toggling} onClick={handleToggleMonthly}
+                    style={{ background: lease.landlord_allows_monthly ? '#fef2f2' : '#ecfdf5', color: lease.landlord_allows_monthly ? '#dc2626' : '#059669', border: '1px solid', borderColor: lease.landlord_allows_monthly ? '#fca5a5' : '#86efac', borderRadius: '8px', fontWeight: 600, fontSize: '13px' }}>
+                    {toggling ? '...' : lease.landlord_allows_monthly ? 'Disable' : 'Enable'}
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Payment Plan Badge */}
+          {lease.payment_plan && lease.payment_plan !== 'full_upfront' && (
+            <div style={{ background: '#f5f3ff', border: '1px solid #ddd6fe', borderRadius: '10px', padding: '12px', marginBottom: '12px', textAlign: 'center' }}>
+              <span style={{ fontSize: '13px', fontWeight: 700, color: '#7c3aed' }}>📅 Monthly Payment Plan Active</span>
+            </div>
+          )}
+
           {lease.status === 'active' && (
             <>
               <Link href={`/payments?lease_id=${lease.id}`} className="btn w-100 mb-3"
                 style={{ background: '#D80621', color: '#fff', fontWeight: 700, padding: '12px', borderRadius: '8px', textDecoration: 'none', display: 'block', textAlign: 'center' }}>
-                Make Payment
+                {role === 'renter' ? 'Make Payment' : 'View Payments'}
               </Link>
               <button className="btn btn-outline-danger w-100" onClick={handleTerminate}
                 style={{ borderRadius: '8px', padding: '12px' }}>
