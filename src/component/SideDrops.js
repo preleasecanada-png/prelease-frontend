@@ -49,7 +49,7 @@ const SideDrops = memo(() => {
                 setToken('');
                 setUserPicture('');
                 setUserName('');
-                router.push('/sign-up');
+                router.push('/login');
             } else {
                 console.log('error');
             }

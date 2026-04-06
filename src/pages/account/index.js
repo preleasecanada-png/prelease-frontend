@@ -42,7 +42,7 @@ const Account = () => {
       if (res.status == 200) {
         window.localStorage.removeItem('token');
         window.localStorage.removeItem('email');
-        router.push('/sign-up');
+        router.push('/login');
       } else {
         console.log('error');
       }
