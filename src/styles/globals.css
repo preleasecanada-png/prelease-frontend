@@ -8941,3 +8941,122 @@ select.input {
 .rpt-table tbody tr:hover {
   background: #f8fafc;
 }
+
+/* ═══════════════════════════════════════════════ */
+/*          LEASE DETAIL                          */
+/* ═══════════════════════════════════════════════ */
+
+.lease-sig-timeline {
+  display: flex;
+  gap: 0;
+  margin-bottom: 28px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 20px 24px;
+}
+.lease-sig-step {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  position: relative;
+}
+.lease-sig-step:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 30%;
+  height: 2px;
+  background: #e0e0e0;
+}
+.lease-sig-step.lease-sig-done:not(:last-child)::after { background: #059669; }
+.lease-sig-dot {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: #f0f0f0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700; color: #999;
+  flex-shrink: 0;
+}
+.lease-sig-done .lease-sig-dot { background: #059669; color: #fff; }
+.lease-sig-waiting .lease-sig-dot { background: #fef3c7; color: #f59e0b; }
+.lease-sig-info { display: flex; flex-direction: column; }
+.lease-sig-label { font-size: 13px; font-weight: 600; color: #1e293b; }
+.lease-sig-date { font-size: 11px; color: #64748b; }
+
+.lease-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+.lease-card-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid #f0f0f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.lease-card-body { padding: 20px; }
+
+.lease-status-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.lease-status-active { background: #ecfdf5; color: #059669; }
+.lease-status-pending_renter_signature,
+.lease-status-pending_landlord_signature { background: #fef3c7; color: #d97706; }
+.lease-status-terminated { background: #fef2f2; color: #DC2626; }
+
+.lease-info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 16px;
+}
+.lease-info-label { display: block; font-size: 11px; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px; }
+.lease-info-val { font-size: 15px; font-weight: 600; color: #1e293b; }
+
+.lease-document {
+  white-space: pre-wrap;
+  font-family: 'Courier New', monospace;
+  font-size: 12.5px;
+  line-height: 1.6;
+  background: #fafafa;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 20px;
+  max-height: 500px;
+  overflow-y: auto;
+  color: #1e293b;
+  margin: 0;
+}
+
+.lease-pay-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  font-size: 13px;
+  border-bottom: 1px solid #f5f5f5;
+}
+.lease-pay-total {
+  border-top: 2px solid #1e293b;
+  border-bottom: none;
+  font-weight: 700;
+  font-size: 15px;
+  padding-top: 10px;
+  margin-top: 4px;
+}
+
+@media (max-width: 768px) {
+  .lease-sig-timeline { flex-direction: column; gap: 12px; }
+  .lease-sig-step:not(:last-child)::after { display: none; }
+}
