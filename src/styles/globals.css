@@ -236,6 +236,22 @@ button[disabled] {
   color: #D80621;
   border-color: #D80621;
 }
+.property-validation-errors {
+  margin: 12px 35px 0;
+  padding: 12px 16px;
+  background: #fff5f5;
+  border: 1px solid #D80621;
+  border-radius: 10px;
+}
+.property-validation-error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #D80621;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 4px 0;
+}
 .propertity-back {
   color: #000;
   font-weight: 600;

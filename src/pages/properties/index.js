@@ -57,6 +57,50 @@ const Property = () => {
     postal: '',
   });
   const [showSpecificLocation, setShowSpecificLocation] = useState(false);
+  const [validationErrors, setValidationErrors] = useState([]);
+
+  const getStepValidation = (s) => {
+    switch (s) {
+      case 3:
+        if (!DescribePlaceName) return ['Please select a property type.'];
+        break;
+      case 5: {
+        const errs = [];
+        if (!addressData.country) errs.push('Country is required.');
+        if (!addressData.address) errs.push('Address is required.');
+        if (!addressData.street) errs.push('Street is required.');
+        if (!addressData.city) errs.push('City is required.');
+        return errs;
+      }
+      case 6: {
+        const errs = [];
+        if (guests < 1) errs.push('At least 1 guest is required.');
+        if (bedrooms < 1) errs.push('At least 1 bedroom is required.');
+        if (bathrooms < 1) errs.push('At least 1 bathroom is required.');
+        return errs;
+      }
+      case 10:
+        if (AllAmenities.length === 0) return ['Please select at least 1 amenity.'];
+        break;
+      case 11:
+        if (uploadedImages.length === 0) return ['Please upload at least 1 photo.'];
+        break;
+      case 12: {
+        const errs = [];
+        if (!title.trim()) errs.push('Title is required.');
+        if (!description.trim()) errs.push('Description is required.');
+        return errs;
+      }
+      case 15:
+        if (price < 1) return ['Price must be at least $1.'];
+        break;
+      default:
+        break;
+    }
+    return [];
+  };
+
+  const isStepValid = (s) => getStepValidation(s).length === 0;
 
   useEffect(() => {
     if (amenities?.length == 0) fetchAmenities();
@@ -66,11 +110,37 @@ const Property = () => {
     if (countries?.length === 0) fetchCountries();
   }, []);
 
+  const handleNext = () => {
+    const errors = getStepValidation(step);
+    if (errors.length > 0) {
+      setValidationErrors(errors);
+      return;
+    }
+    setValidationErrors([]);
+    setStep(step + 1);
+  };
+
   const handleSubmit = async (e) => {
     if (e.target.textContent == 'Exit') {
       route.push('/');
       return;
     }
+    const allErrors = [];
+    if (!title.trim()) allErrors.push('Title is required.');
+    if (!description.trim()) allErrors.push('Description is required.');
+    if (!DescribePlaceName) allErrors.push('Property type is required.');
+    if (!addressData.city) allErrors.push('City is required.');
+    if (guests < 1) allErrors.push('At least 1 guest is required.');
+    if (bedrooms < 1) allErrors.push('At least 1 bedroom is required.');
+    if (bathrooms < 1) allErrors.push('At least 1 bathroom is required.');
+    if (AllAmenities.length === 0) allErrors.push('At least 1 amenity is required.');
+    if (uploadedImages.length === 0) allErrors.push('At least 1 photo is required.');
+    if (price < 1) allErrors.push('Price must be at least $1.');
+    if (allErrors.length > 0) {
+      setValidationErrors(allErrors);
+      return;
+    }
+    setValidationErrors([]);
     const formData = new FormData();
     let user_id = window.localStorage.getItem('user_id');
     formData.append('title', title);
@@ -112,8 +182,12 @@ const Property = () => {
         method: 'POST',
         body: formData,
       });
+      const data = await response.json();
       if (response.status == 200) {
         route.push('/');
+      } else if (response.status == 422 && data?.errors) {
+        const serverErrors = Object.values(data.errors).flat();
+        setValidationErrors(serverErrors);
       }
     } catch (error) {
       console.error('Error:', error);
@@ -188,13 +262,22 @@ const Property = () => {
             </div>
             <button
               className='get-started-btn'
-              onClick={step >= 17 ? handleSubmit : () => setStep(step + 1)}
-              disabled={(step === 3 && !DescribePlaceName) || (step === 5 && (!addressData.country || !addressData.address || !addressData.street || !addressData.city))}
+              onClick={step >= 17 ? handleSubmit : handleNext}
             >
               {getButtonText()}
             </button>
           </div>
-          {step != 1 ? <div onClick={() => setStep(step - 1)} className="propertity-back-btn">Back</div> : ''}
+          {validationErrors.length > 0 && (
+            <div className='property-validation-errors'>
+              {validationErrors.map((err, i) => (
+                <div key={i} className='property-validation-error'>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#D80621" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                  {err}
+                </div>
+              ))}
+            </div>
+          )}
+          {step != 1 ? <div onClick={() => { setValidationErrors([]); setStep(step - 1); }} className="propertity-back-btn">Back</div> : ''}
         </div>
       </div>
     </>
