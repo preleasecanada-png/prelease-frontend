@@ -4,6 +4,7 @@ import React, { useCallback, useContext, useEffect, useLayoutEffect, useState } 
 import { CreateApiContext } from '../../ContextApi/CreateApiContext';
 import toast from 'react-hot-toast';
 import { GoogleLogin } from '@react-oauth/google';
+import Script from 'next/script';
 
 const eyeIcons = {
     open: '/images/eye-open.svg',
@@ -104,36 +105,107 @@ const SignIn = () => {
 
     const handleSuccess = async (credentialResponse) => {
         try {
-            const token = credentialResponse.credential; // ID token from Google
+            const token = credentialResponse.credential;
 
             const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_HOST}/google-login`, {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ token })
             });
 
             const data = await res.json();
-            console.log(data);
 
             if (res.ok) {
-                localStorage.setItem("token", data.token);
-                localStorage.setItem("email", data.user.email);
-                localStorage.setItem("user_id", data.user.id);
-                localStorage.setItem("role", data.user.role);
-                localStorage.setItem("user_picture", data.user.picture || '');
-                localStorage.setItem("user_name", data.user.first_name || '');
-                document.cookie = `token=${data.token}; path=/; max-age=86400`;
-                document.cookie = `role=${data.user.role}; path=/; max-age=86400`;
-                router.push('/');
+                handleSocialLoginSuccess(data);
             } else {
-                console.error("Google login failed:", data.error);
+                toast.error(data.error || 'Google login failed');
             }
-
         } catch (error) {
-            console.error("Error in Google login:", error);
+            toast.error('Error during Google login');
         }
+    };
+
+    const handleSocialLoginSuccess = (data) => {
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("email", data.user.email);
+        localStorage.setItem("user_id", data.user.id);
+        localStorage.setItem("role", data.user.role);
+        localStorage.setItem("user_picture", data.user.picture || '');
+        localStorage.setItem("user_name", data.user.first_name || '');
+        document.cookie = `token=${data.token}; path=/; max-age=86400`;
+        document.cookie = `role=${data.user.role}; path=/; max-age=86400`;
+        router.push('/');
+    };
+
+    const handleFacebookLogin = () => {
+        if (!window.FB) {
+            toast.error('Facebook SDK not loaded yet. Please try again.');
+            return;
+        }
+        window.FB.login((response) => {
+            if (response.authResponse) {
+                const accessToken = response.authResponse.accessToken;
+                sendFacebookToken(accessToken);
+            } else {
+                toast.error('Facebook login was cancelled');
+            }
+        }, { scope: 'email,public_profile' });
+    };
+
+    const sendFacebookToken = async (accessToken) => {
+        try {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_HOST}/facebook-login`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ token: accessToken })
+            });
+            const data = await res.json();
+            if (res.ok) {
+                handleSocialLoginSuccess(data);
+            } else {
+                toast.error(data.error || 'Facebook login failed');
+            }
+        } catch (error) {
+            toast.error('Error during Facebook login');
+        }
+    };
+
+    const handleAppleLogin = () => {
+        if (!window.AppleID) {
+            toast.error('Apple Sign In not loaded yet. Please try again.');
+            return;
+        }
+        window.AppleID.auth.init({
+            clientId: process.env.NEXT_PUBLIC_APPLE_CLIENT_ID,
+            scope: 'name email',
+            redirectURI: window.location.origin + '/login',
+            usePopup: true,
+        });
+        window.AppleID.auth.signIn().then(async (response) => {
+            try {
+                const idToken = response.authorization.id_token;
+                const firstName = response?.user?.name?.firstName || '';
+                const lastName = response?.user?.name?.lastName || '';
+
+                const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_HOST}/apple-login`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ token: idToken, first_name: firstName, last_name: lastName })
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    handleSocialLoginSuccess(data);
+                } else {
+                    toast.error(data.error || 'Apple login failed');
+                }
+            } catch (error) {
+                toast.error('Error during Apple login');
+            }
+        }).catch((error) => {
+            if (error?.error !== 'popup_closed_by_user') {
+                toast.error('Apple login was cancelled');
+            }
+        });
     };
 
     return (
@@ -180,15 +252,32 @@ const SignIn = () => {
                         <span></span>
                     </div>
                     <div className='social_login'>
-                        <button><img src="/images/apple.webp" alt="" /></button>
-                        {/* <button><img src="/images/google.webp" alt="" /></button> */}
-                        {/* <button onClick={handleGoogleLogin} disabled={loading}><img src="/images/google.webp" alt="Google Login" /></button> */}
+                        <button onClick={handleAppleLogin} title="Sign in with Apple"><img src="/images/apple.webp" alt="Apple" /></button>
                         <GoogleLogin
-                        onSuccess={handleSuccess}
-                        onError={() => console.log('Login Failed')}
+                            onSuccess={handleSuccess}
+                            onError={() => toast.error('Google login failed')}
                         />
-                        <button><img src="/images/twit.webp" alt="" /></button>
+                        <button onClick={handleFacebookLogin} title="Sign in with Facebook">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                        </button>
                     </div>
+
+                    <Script
+                        src="https://connect.facebook.net/en_US/sdk.js"
+                        strategy="lazyOnload"
+                        onLoad={() => {
+                            window.FB.init({
+                                appId: process.env.NEXT_PUBLIC_FACEBOOK_APP_ID,
+                                cookie: true,
+                                xfbml: false,
+                                version: 'v19.0'
+                            });
+                        }}
+                    />
+                    <Script
+                        src="https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js"
+                        strategy="lazyOnload"
+                    />
                     <div className='dont_row'>
                         <span>{locale?.sign_in?.dont_have_an_account_yet}?</span>
                         <Link href="/sign-up">{locale?.home?.sign_up}</Link>
