@@ -25,6 +25,8 @@ const FindHome = () => {
     property_type: '',
     city: '',
     sort_by: '',
+    start_date: '',
+    end_date: '',
   })
 
   useEffect(() => {
@@ -65,6 +67,8 @@ const FindHome = () => {
       property_type: '',
       city: '',
       sort_by: '',
+      start_date: '',
+      end_date: '',
     }
     setFilters(empty)
     setSelectedAmenities([])
@@ -191,6 +195,27 @@ const FindHome = () => {
                   placeholder="10000"
                   value={filters.max_price}
                   onChange={e => setFilters({ ...filters, max_price: e.target.value })}
+                  style={inputStyle}
+                />
+              </div>
+
+              {/* Move-in Date */}
+              <div>
+                <label style={{ fontSize: '13px', fontWeight: 600, color: '#000', display: 'block', marginBottom: '6px' }}>Move-in After</label>
+                <input
+                  type="date"
+                  value={filters.start_date}
+                  onChange={e => setFilters({ ...filters, start_date: e.target.value })}
+                  style={inputStyle}
+                />
+              </div>
+              <div>
+                <label style={{ fontSize: '13px', fontWeight: 600, color: '#000', display: 'block', marginBottom: '6px' }}>Move-out Before</label>
+                <input
+                  type="date"
+                  value={filters.end_date}
+                  min={filters.start_date || undefined}
+                  onChange={e => setFilters({ ...filters, end_date: e.target.value })}
                   style={inputStyle}
                 />
               </div>

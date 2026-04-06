@@ -14,6 +14,72 @@ import toast from 'react-hot-toast';
 import Pusher from "pusher-js";
 import { ChatContext } from '@/ContextApi/ChatContext';
 
+const AvailabilityCalendar = ({ bookedDates = [] }) => {
+    const [viewDate, setViewDate] = useState(() => new Date());
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const isBooked = (date) => {
+        return bookedDates.some(b => {
+            const start = new Date(b.move_in_date);
+            const end = new Date(b.move_out_date);
+            start.setHours(0, 0, 0, 0);
+            end.setHours(0, 0, 0, 0);
+            return date >= start && date <= end;
+        });
+    };
+
+    const renderMonth = (year, month) => {
+        const firstDay = new Date(year, month, 1).getDay();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        const monthName = new Date(year, month).toLocaleString('en', { month: 'long', year: 'numeric' });
+        const cells = [];
+        for (let i = 0; i < firstDay; i++) cells.push(<div key={`e${i}`} className="avail-cell avail-empty" />);
+        for (let d = 1; d <= daysInMonth; d++) {
+            const date = new Date(year, month, d);
+            date.setHours(0, 0, 0, 0);
+            const isPast = date < today;
+            const booked = !isPast && isBooked(date);
+            const isToday = date.getTime() === today.getTime();
+            let cls = 'avail-cell';
+            if (isPast) cls += ' avail-past';
+            else if (booked) cls += ' avail-booked';
+            else cls += ' avail-free';
+            if (isToday) cls += ' avail-today';
+            cells.push(<div key={d} className={cls}>{d}</div>);
+        }
+        return (
+            <div className="avail-month">
+                <div className="avail-month-title">{monthName}</div>
+                <div className="avail-weekdays">
+                    {['Su','Mo','Tu','We','Th','Fr','Sa'].map(d => <div key={d} className="avail-weekday">{d}</div>)}
+                </div>
+                <div className="avail-grid">{cells}</div>
+            </div>
+        );
+    };
+
+    const y = viewDate.getFullYear();
+    const m = viewDate.getMonth();
+    const prevMonth = () => setViewDate(new Date(y, m - 1, 1));
+    const nextMonth = () => setViewDate(new Date(y, m + 1, 1));
+    const m2 = m + 1 > 11 ? 0 : m + 1;
+    const y2 = m + 1 > 11 ? y + 1 : y;
+
+    return (
+        <div>
+            <div className="avail-nav">
+                <button onClick={prevMonth} className="avail-nav-btn">&larr;</button>
+                <button onClick={nextMonth} className="avail-nav-btn">&rarr;</button>
+            </div>
+            <div className="avail-months-row">
+                {renderMonth(y, m)}
+                {renderMonth(y2, m2)}
+            </div>
+        </div>
+    );
+};
+
 const PropertyDetail = memo(() => {
     const [showReserverButton, setshowReserverButton] = useState(false)
 
@@ -44,7 +110,7 @@ const PropertyDetail = memo(() => {
     const [childCount, setChildCount] = useState(0);
     const [infrontCount, setInfrontCount] = useState(0);
     const [petsCount, setPetsCount] = useState(0);
-    const { fetchPlaceDetail, placeDetail, hostVerification, hostReviewStats } = useContext(CreateApiContext);
+    const { fetchPlaceDetail, placeDetail, hostVerification, hostReviewStats, bookedDates } = useContext(CreateApiContext);
     const router = useRouter();
     const { index } = router.query;
     const [startDate, setStartDate] = useState('');
@@ -787,10 +853,16 @@ const PropertyDetail = memo(() => {
                 )}
             </div>
 
-            {/* <div className='custom_container detail_location'>
-                <h2>Where you’ll be</h2>
-                <p>Toronto, Ontario, Canada</p>
-            </div> */}
+            {/* Availability Calendar */}
+            <div className="custom_container" style={{ marginBottom: '40px' }}>
+                <h2 style={{ fontSize: '22px', fontWeight: 700, marginBottom: '20px' }}>Availability</h2>
+                <AvailabilityCalendar bookedDates={bookedDates} />
+                <div style={{ display: 'flex', gap: '20px', marginTop: '12px', fontSize: '13px', color: '#666' }}>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><span style={{ width: 14, height: 14, borderRadius: 3, background: '#fff', border: '1px solid #ddd', display: 'inline-block' }} /> Available</span>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><span style={{ width: 14, height: 14, borderRadius: 3, background: '#fee2e2', border: '1px solid #fca5a5', display: 'inline-block' }} /> Booked</span>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><span style={{ width: 14, height: 14, borderRadius: 3, background: '#f3f4f6', border: '1px solid #ddd', display: 'inline-block' }} /> Past</span>
+                </div>
+            </div>
 
             <>
                 <div className="custom_container host-section-wrapper">
