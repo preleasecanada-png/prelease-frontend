@@ -128,8 +128,16 @@ const PlaceCard = memo((props) => {
                         <Link href={`/property-detail/${place?.slug || 'property'}/${place?.id}`} className="place_card_title">
                             <h2>{place?.title}</h2>
                             <p>Hosted by {place?.user?.first_name}</p>
-                            {/* <span>{place?.currency} {place?.set_your_price} per guest</span> */}
-                            <span>$ {place?.set_your_price} per guest</span>
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
+                                <span>$ {place?.set_your_price} per guest</span>
+                                {place?.avg_rating && (
+                                    <span className="place-card-rating">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="#D80621" stroke="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                                        {place.avg_rating}
+                                        <span style={{ fontWeight: 400, color: '#666', fontSize: '12px' }}>({place.review_count})</span>
+                                    </span>
+                                )}
+                            </div>
                         </Link>
                     </div >
             )) : <h1>No Record found</h1>)

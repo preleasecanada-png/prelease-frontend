@@ -44,7 +44,7 @@ const PropertyDetail = memo(() => {
     const [childCount, setChildCount] = useState(0);
     const [infrontCount, setInfrontCount] = useState(0);
     const [petsCount, setPetsCount] = useState(0);
-    const { fetchPlaceDetail, placeDetail } = useContext(CreateApiContext);
+    const { fetchPlaceDetail, placeDetail, hostVerification, hostReviewStats } = useContext(CreateApiContext);
     const router = useRouter();
     const { index } = router.query;
     const [startDate, setStartDate] = useState('');
@@ -800,33 +800,64 @@ const PropertyDetail = memo(() => {
                         <div className="host-card-top">
                             <div className="host-avatar-wrap">
                                 <img
-                                    src="https://i.pravatar.cc/150?img=47"
-                                    alt="Riya James"
+                                    src={placeDetail?.user?.picture
+                                        ? (placeDetail.user.picture.startsWith('http') ? placeDetail.user.picture : `${process.env.NEXT_PUBLIC_BASE_LOCAL_IMAGE_URL}/${placeDetail.user.picture}`)
+                                        : `https://ui-avatars.com/api/?name=${encodeURIComponent((placeDetail?.user?.first_name || 'H') + ' ' + (placeDetail?.user?.last_name || ''))}&background=D80621&color=fff&size=150`}
+                                    alt={placeDetail?.user?.first_name || 'Host'}
                                 />
-                                <div className="host-verified">
-                                    <svg viewBox="0 0 12 12"><path d="M2 6l3 3 5-5" stroke="#fff" strokeWidth="1.8" fill="none" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                                </div>
+                                {hostVerification?.identity === 'verified' && (
+                                    <div className="host-verified">
+                                        <svg viewBox="0 0 12 12"><path d="M2 6l3 3 5-5" stroke="#fff" strokeWidth="1.8" fill="none" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                                    </div>
+                                )}
                             </div>
                             <div>
-                                <p className="host-name">Riya James</p>
-                                <p className="host-label">Host</p>
+                                <p className="host-name">{placeDetail?.user?.first_name || 'Host'} {placeDetail?.user?.last_name?.[0] ? placeDetail.user.last_name[0] + '.' : ''}</p>
+                                <p className="host-label">{hostVerification?.is_fully_verified ? 'Verified Host' : 'Host'}</p>
                             </div>
                         </div>
+
+                        {/* Verification Badges */}
+                        {(hostVerification?.identity === 'verified' || hostVerification?.address === 'verified' || hostVerification?.landlord_ownership === 'verified') && (
+                            <>
+                                <div className="card-divider" />
+                                <div className="host-badges">
+                                    {hostVerification?.identity === 'verified' && (
+                                        <span className="host-badge host-badge-verified">
+                                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#198754" strokeWidth="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                                            ID Verified
+                                        </span>
+                                    )}
+                                    {hostVerification?.address === 'verified' && (
+                                        <span className="host-badge host-badge-verified">
+                                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#198754" strokeWidth="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                                            Address
+                                        </span>
+                                    )}
+                                    {hostVerification?.landlord_ownership === 'verified' && (
+                                        <span className="host-badge host-badge-verified">
+                                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#198754" strokeWidth="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                                            Owner
+                                        </span>
+                                    )}
+                                </div>
+                            </>
+                        )}
 
                         <div className="card-divider" />
 
                         {/* Stats */}
                         <div className="host-stats">
                             <div className="host-stat">
-                                <span className="host-stat-value">343</span>
+                                <span className="host-stat-value">{hostReviewStats?.total_reviews || 0}</span>
                                 <span className="host-stat-label">Reviews</span>
                             </div>
                             <div className="host-stat">
-                                <span className="host-stat-value">4.19</span>
+                                <span className="host-stat-value">{hostReviewStats?.avg_rating || '—'}</span>
                                 <span className="host-stat-label">Rating</span>
                             </div>
                             <div className="host-stat">
-                                <span className="host-stat-value">6 Mos</span>
+                                <span className="host-stat-value">{hostReviewStats?.hosting_months > 12 ? Math.floor(hostReviewStats.hosting_months / 12) + ' Yr' : (hostReviewStats?.hosting_months || 0) + ' Mo'}</span>
                                 <span className="host-stat-label">Hosting</span>
                             </div>
                         </div>
@@ -837,22 +868,31 @@ const PropertyDetail = memo(() => {
                         <div className="host-details">
                             <p className="host-details-title">Host details</p>
 
-                            <div className="host-detail-row">
-                                <div className='host-detail-row-dot'></div>
-                                <span>Response rate: 100%</span>
-                            </div>
+                            {hostVerification?.is_fully_verified && (
+                                <div className="host-detail-row">
+                                    <div className='host-detail-row-dot' style={{ background: '#198754' }}></div>
+                                    <span>Fully verified account</span>
+                                </div>
+                            )}
 
                             <div className="host-detail-row">
                                 <div className='host-detail-row-dot'></div>
-                                <span>Responds within an hour</span>
+                                <span>Member since {hostReviewStats?.hosting_since || 'recently'}</span>
                             </div>
+
+                            {hostReviewStats?.total_reviews > 0 && (
+                                <div className="host-detail-row">
+                                    <div className='host-detail-row-dot'></div>
+                                    <span>{hostReviewStats.total_reviews} review{hostReviewStats.total_reviews !== 1 ? 's' : ''} from tenants</span>
+                                </div>
+                            )}
                         </div>
 
                         <div className="card-divider" />
 
                         {/* Button */}
                         <div className="host-card-footer">
-                            <button className="btn-message">Message Host</button>
+                            <button className="btn-message" onClick={() => { if (isLoggedIn) setShowChatModal(true); else toast.error('Please log in to message the host.'); }}>Message Host</button>
                         </div>
                     </div>
 

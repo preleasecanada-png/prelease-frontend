@@ -28,6 +28,8 @@ const ContextApiState = (props) => {
     const [loader, setLoader] = useState(false);
     const [destinations, setDestinations] = useState([]);
     const [placeDetail, setPlaceDetail] = useState({});
+    const [hostVerification, setHostVerification] = useState({});
+    const [hostReviewStats, setHostReviewStats] = useState({});
     const [amenities, setAmenities] = useState([]);
     const [properties, setProperties] = useState([]);
     const [wishLists, setWishLists] = useState([]);
@@ -70,6 +72,8 @@ const ContextApiState = (props) => {
             setLoader(false);
             if (response?.status === 200) {
                 setPlaceDetail(response?.placeDetail);
+                setHostVerification(response?.host_verification || {});
+                setHostReviewStats(response?.host_review_stats || {});
             } else {
                 console.error("API Error:", response);
             }
@@ -196,7 +200,7 @@ const ContextApiState = (props) => {
 
     return (
         <>
-            <CreateApiContext.Provider value={{ loader, setLoader, locale, setLocale: handleSetLocale, fetchDestination, destinations, fetchPlaceDetail, placeDetail, fetchAmenities, amenities, properties, fetchProperties, fetchWishLists, wishLists, fetchUsersLists, users, fetchCountries, countries, addressData, setAddressData, }}>
+            <CreateApiContext.Provider value={{ loader, setLoader, locale, setLocale: handleSetLocale, fetchDestination, destinations, fetchPlaceDetail, placeDetail, hostVerification, hostReviewStats, fetchAmenities, amenities, properties, fetchProperties, fetchWishLists, wishLists, fetchUsersLists, users, fetchCountries, countries, addressData, setAddressData, }}>
                 {props.children}
             </CreateApiContext.Provider>
         </>

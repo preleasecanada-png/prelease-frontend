@@ -8292,3 +8292,49 @@ select.input {
   line-height: 1.5;
 }
 .cost-insurance-note svg { flex-shrink: 0; margin-top: 2px; }
+
+/* ═══════════════════════════════════════════════ */
+/*           HOST VERIFICATION BADGES             */
+/* ═══════════════════════════════════════════════ */
+
+.host-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 0 4px;
+}
+.host-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.host-badge-verified {
+  background: #d1e7dd;
+  color: #198754;
+  border: 1px solid #a3cfbb;
+}
+
+/* PlaceCard review badge */
+.place-card-rating {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #222;
+  margin-top: 4px;
+}
+.place-card-rating svg { flex-shrink: 0; }
+.place-card-verified-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #198754;
+  margin-left: 4px;
+  vertical-align: middle;
+}
