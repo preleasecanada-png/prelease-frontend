@@ -2,6 +2,7 @@ import PlaceCard from '@/component/PlaceCard'
 import { CreateApiContext } from '@/ContextApi/CreateApiContext';
 import React, { useContext, useEffect, useState } from 'react'
 import { useRouter } from "next/router";
+import { imageBaseUrl } from '@/Helper/helper'
 
 const PROPERTY_TYPES = [
   'Apartment', 'House', 'Condo', 'Townhouse', 'Studio', 'Loft', 'Duplex', 'Room'
@@ -10,58 +11,72 @@ const PROPERTY_TYPES = [
 const CITIES = ['Montreal', 'Edmonton', 'Ottawa', 'Toronto', 'Vancouver']
 
 const FindHome = () => {
-  const { properties, fetchProperties, loader } = useContext(CreateApiContext);
+  const { properties, fetchProperties, loader, fetchAmenities, amenities } = useContext(CreateApiContext);
   const router = useRouter();
   const [filtersOpen, setFiltersOpen] = useState(false)
+  const [selectedAmenities, setSelectedAmenities] = useState([])
 
   const [filters, setFilters] = useState({
     min_price: '',
     max_price: '',
     min_bedrooms: '',
     min_bathrooms: '',
+    min_guests: '',
     property_type: '',
     city: '',
     sort_by: '',
   })
 
   useEffect(() => {
+    if (amenities?.length === 0) fetchAmenities();
+  }, [])
+
+  useEffect(() => {
     if (!router.isReady) return;
     const merged = { ...router.query }
-    if (filters.min_price) merged.min_price = filters.min_price
-    if (filters.max_price) merged.max_price = filters.max_price
-    if (filters.min_bedrooms) merged.min_bedrooms = filters.min_bedrooms
-    if (filters.min_bathrooms) merged.min_bathrooms = filters.min_bathrooms
-    if (filters.property_type) merged.property_type = filters.property_type
-    if (filters.city) merged.city = filters.city
-    if (filters.sort_by) merged.sort_by = filters.sort_by
+    Object.entries(filters).forEach(([k, v]) => { if (v) merged[k] = v })
+    if (selectedAmenities.length > 0) merged.amenities = selectedAmenities.join(',')
     fetchProperties(merged);
   }, [router.isReady, router.query]);
 
-  const applyFilters = () => {
+  const buildQuery = (f, amenIds) => {
     const merged = { ...router.query }
-    Object.entries(filters).forEach(([key, val]) => {
+    Object.entries(f).forEach(([key, val]) => {
       if (val) merged[key] = val
       else delete merged[key]
     })
-    fetchProperties(merged)
+    if (amenIds && amenIds.length > 0) merged.amenities = amenIds.join(',')
+    else delete merged.amenities
+    return merged
+  }
+
+  const applyFilters = () => {
+    fetchProperties(buildQuery(filters, selectedAmenities))
     setFiltersOpen(false)
   }
 
   const resetFilters = () => {
-    setFilters({
+    const empty = {
       min_price: '',
       max_price: '',
       min_bedrooms: '',
       min_bathrooms: '',
+      min_guests: '',
       property_type: '',
       city: '',
       sort_by: '',
-    })
+    }
+    setFilters(empty)
+    setSelectedAmenities([])
     fetchProperties(router.query)
     setFiltersOpen(false)
   }
 
-  const activeFilterCount = Object.values(filters).filter(v => v !== '').length
+  const toggleAmenity = (id) => {
+    setSelectedAmenities(prev => prev.includes(id) ? prev.filter(a => a !== id) : [...prev, id])
+  }
+
+  const activeFilterCount = Object.values(filters).filter(v => v !== '').length + selectedAmenities.length
 
   return (
     <>
@@ -231,7 +246,47 @@ const FindHome = () => {
                   {CITIES.map(c => <option key={c} value={c}>{c}</option>)}
                 </select>
               </div>
+
+              {/* Min Guests */}
+              <div>
+                <label style={{ fontSize: '13px', fontWeight: 600, color: '#000', display: 'block', marginBottom: '6px' }}>Min Guests</label>
+                <select
+                  value={filters.min_guests}
+                  onChange={e => setFilters({ ...filters, min_guests: e.target.value })}
+                  style={inputStyle}
+                >
+                  <option value="">Any</option>
+                  {[1, 2, 3, 4, 5, 6, 8, 10].map(n => <option key={n} value={n}>{n}+</option>)}
+                </select>
+              </div>
             </div>
+
+            {/* Amenities */}
+            {amenities?.length > 0 && (
+              <div style={{ marginTop: '1.5rem' }}>
+                <label style={{ fontSize: '13px', fontWeight: 600, color: '#000', display: 'block', marginBottom: '10px' }}>Amenities</label>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                  {amenities.map(a => {
+                    const isActive = selectedAmenities.includes(a.id)
+                    return (
+                      <button key={a.id} onClick={() => toggleAmenity(a.id)} style={{
+                        display: 'flex', alignItems: 'center', gap: '6px',
+                        padding: '7px 14px', borderRadius: '50px',
+                        border: isActive ? '2px solid #D80621' : '1px solid #ddd',
+                        background: isActive ? '#fff0f2' : '#fff',
+                        color: isActive ? '#D80621' : '#444',
+                        fontSize: '13px', fontWeight: isActive ? 600 : 500,
+                        cursor: 'pointer', transition: 'all 0.2s',
+                      }}>
+                        {a.image && <img src={imageBaseUrl(a.image)} alt="" style={{ width: '16px', height: '16px', objectFit: 'contain' }} />}
+                        {a.name}
+                        {isActive && <span style={{ marginLeft: '2px' }}>✓</span>}
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+            )}
 
             <div style={{ display: 'flex', gap: '12px', marginTop: '1.5rem' }}>
               <button onClick={applyFilters} style={{
