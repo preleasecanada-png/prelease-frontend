@@ -95,11 +95,13 @@ const AIAssistantWidget = () => {
       });
 
       const data = await res.json();
+      console.log('AI response:', res.status, data);
 
       if (data?.reply) {
         setMessages(prev => [...prev, { role: 'assistant', content: data.reply }]);
       } else {
-        setMessages(prev => [...prev, { role: 'assistant', content: "Sorry, I couldn't process your request. Please try again." }]);
+        const errMsg = data?.error || data?.message || "Sorry, I couldn't process your request. Please try again.";
+        setMessages(prev => [...prev, { role: 'assistant', content: errMsg }]);
       }
     } catch (err) {
       setMessages(prev => [...prev, { role: 'assistant', content: "Connection error. Please try again." }]);
