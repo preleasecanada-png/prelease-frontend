@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from 'react'
-import { authFetch } from '@/Helper/helper'
+import React, { useEffect, useState, useRef } from 'react'
+import { authFetch, imageBaseUrl } from '@/Helper/helper'
 import toast from 'react-hot-toast'
 import Link from 'next/link'
+
+const STATUS_STEPS = ['pending', 'in_progress', 'completed']
 
 const Maintenance = () => {
   const [requests, setRequests] = useState([])
@@ -9,6 +11,11 @@ const Maintenance = () => {
   const [showForm, setShowForm] = useState(false)
   const [role, setRole] = useState('')
   const [leases, setLeases] = useState([])
+  const [statusFilter, setStatusFilter] = useState('all')
+  const [photos, setPhotos] = useState([])
+  const [previews, setPreviews] = useState([])
+  const [lightbox, setLightbox] = useState({ open: false, src: '' })
+  const fileRef = useRef(null)
   const [form, setForm] = useState({
     property_id: '',
     landlord_id: '',
@@ -67,6 +74,25 @@ const Maintenance = () => {
     setForm(prev => ({ ...prev, [name]: value }))
   }
 
+  const handlePhotoChange = (e) => {
+    const files = Array.from(e.target.files)
+    if (photos.length + files.length > 5) {
+      toast.error('Maximum 5 photos allowed')
+      return
+    }
+    setPhotos(prev => [...prev, ...files])
+    const newPreviews = files.map(f => URL.createObjectURL(f))
+    setPreviews(prev => [...prev, ...newPreviews])
+  }
+
+  const removePhoto = (idx) => {
+    setPhotos(prev => prev.filter((_, i) => i !== idx))
+    setPreviews(prev => {
+      URL.revokeObjectURL(prev[idx])
+      return prev.filter((_, i) => i !== idx)
+    })
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     if (!form.property_id || !form.landlord_id) {
@@ -76,16 +102,22 @@ const Maintenance = () => {
     setSubmitting(true)
     try {
       const token = localStorage.getItem('token')
+      const formData = new FormData()
+      Object.entries(form).forEach(([k, v]) => { if (v) formData.append(k, v) })
+      photos.forEach(p => formData.append('photos[]', p))
+
       const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_HOST}/maintenance`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify(form),
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData,
       })
       const data = await res.json()
       if (data?.status === 200) {
         toast.success('Maintenance request submitted!')
         setShowForm(false)
         setForm({ property_id: '', landlord_id: '', lease_id: '', title: '', description: '', category: 'general', priority: 'medium' })
+        setPhotos([])
+        setPreviews([])
         fetchRequests()
       } else if (data?.errors) {
         toast.error(Object.values(data.errors)[0][0])
@@ -147,6 +179,9 @@ const Maintenance = () => {
     }
   }
 
+  const filteredRequests = statusFilter === 'all' ? requests : requests.filter(r => r.status === statusFilter)
+  const counts = { all: requests.length, pending: requests.filter(r => r.status === 'pending').length, in_progress: requests.filter(r => r.status === 'in_progress').length, completed: requests.filter(r => r.status === 'completed').length }
+
   if (loading) {
     return (
       <section className="container py-5">
@@ -173,6 +208,25 @@ const Maintenance = () => {
                 {showForm ? 'Cancel' : '+ New Request'}
               </button>
             )}
+          </div>
+
+          {/* Status Filter Tabs */}
+          <div className="maint-tabs">
+            {[
+              { key: 'all', label: 'All' },
+              { key: 'pending', label: 'Pending' },
+              { key: 'in_progress', label: 'In Progress' },
+              { key: 'completed', label: 'Completed' },
+            ].map(tab => (
+              <button
+                key={tab.key}
+                onClick={() => setStatusFilter(tab.key)}
+                className={`maint-tab ${statusFilter === tab.key ? 'maint-tab-active' : ''}`}
+              >
+                {tab.label}
+                <span className="maint-tab-count">{counts[tab.key] || 0}</span>
+              </button>
+            ))}
           </div>
 
           {showForm && (
@@ -219,6 +273,27 @@ const Maintenance = () => {
                     <label className="form-label fw-semibold">Description *</label>
                     <textarea className="form-control" name="description" value={form.description} onChange={handleChange} rows="4" placeholder="Describe the issue in detail..." required />
                   </div>
+
+                  {/* Photo Upload */}
+                  <div className="col-12">
+                    <label className="form-label fw-semibold">Photos <span style={{ fontWeight: 400, color: '#999' }}>(up to 5, optional)</span></label>
+                    <div className="maint-photo-upload-area">
+                      {previews.map((src, i) => (
+                        <div key={i} className="maint-photo-thumb">
+                          <img src={src} alt={`preview ${i}`} />
+                          <button type="button" className="maint-photo-remove" onClick={() => removePhoto(i)}>×</button>
+                        </div>
+                      ))}
+                      {photos.length < 5 && (
+                        <button type="button" className="maint-photo-add" onClick={() => fileRef.current?.click()}>
+                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#999" strokeWidth="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                          <span>Add Photo</span>
+                        </button>
+                      )}
+                      <input ref={fileRef} type="file" accept="image/*" multiple hidden onChange={handlePhotoChange} />
+                    </div>
+                  </div>
+
                   <div className="col-12">
                     <button type="submit" disabled={submitting} style={{ backgroundColor: '#D80621', color: '#fff', border: 'none', padding: '12px 32px', borderRadius: '8px', fontWeight: '600', cursor: 'pointer' }}>
                       {submitting ? 'Submitting...' : 'Submit Request'}
@@ -229,7 +304,7 @@ const Maintenance = () => {
             </div>
           )}
 
-          {requests.length === 0 ? (
+          {filteredRequests.length === 0 ? (
             <div className="text-center py-5">
               <div style={{ fontSize: '48px', marginBottom: '16px' }}>🔧</div>
               <h5 className="text-muted">No maintenance requests</h5>
@@ -238,9 +313,9 @@ const Maintenance = () => {
               </p>
             </div>
           ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              {requests.map(req => (
-                <div key={req.id} style={{ border: '1px solid #e5e7eb', borderRadius: '12px', padding: '20px', backgroundColor: '#fff' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              {filteredRequests.map(req => (
+                <div key={req.id} className="maint-card">
                   <div className="d-flex justify-content-between align-items-start mb-2">
                     <div className="d-flex align-items-center gap-2">
                       <span style={{ fontSize: '24px' }}>{getCategoryIcon(req.category)}</span>
@@ -260,25 +335,66 @@ const Maintenance = () => {
                       </span>
                     </div>
                   </div>
+
                   <p style={{ color: '#6B7280', fontSize: '14px', margin: '8px 0' }}>{req.description}</p>
+
+                  {/* Photos Gallery */}
+                  {req.photos && req.photos.length > 0 && (
+                    <div className="maint-photo-gallery">
+                      {req.photos.map((photo, i) => (
+                        <div key={i} className="maint-photo-thumb maint-photo-view" onClick={() => setLightbox({ open: true, src: imageBaseUrl(photo) })}>
+                          <img src={imageBaseUrl(photo)} alt={`issue photo ${i + 1}`} />
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Status Timeline */}
+                  <div className="maint-timeline">
+                    {STATUS_STEPS.map((step, i) => {
+                      const currentIdx = req.status === 'cancelled' ? -1 : STATUS_STEPS.indexOf(req.status)
+                      const isActive = i <= currentIdx
+                      const isCurrent = i === currentIdx
+                      return (
+                        <div key={step} className="maint-timeline-step">
+                          <div className={`maint-timeline-dot ${isActive ? 'maint-dot-active' : ''} ${isCurrent ? 'maint-dot-current' : ''}`}>
+                            {isActive && i < currentIdx && (
+                              <svg width="10" height="10" viewBox="0 0 12 12"><path d="M2 6l3 3 5-5" stroke="#fff" strokeWidth="2" fill="none" strokeLinecap="round" /></svg>
+                            )}
+                          </div>
+                          {i < STATUS_STEPS.length - 1 && <div className={`maint-timeline-line ${i < currentIdx ? 'maint-line-active' : ''}`} />}
+                          <span className={`maint-timeline-label ${isActive ? 'maint-label-active' : ''}`}>{step.replace('_', ' ')}</span>
+                        </div>
+                      )
+                    })}
+                    {req.status === 'cancelled' && (
+                      <div className="maint-timeline-step">
+                        <div className="maint-timeline-dot" style={{ background: '#6B7280' }} />
+                        <span className="maint-timeline-label" style={{ color: '#6B7280' }}>cancelled</span>
+                      </div>
+                    )}
+                  </div>
+
                   {req.landlord_response && (
                     <div style={{ backgroundColor: '#F0FDF4', padding: '12px', borderRadius: '8px', marginTop: '8px' }}>
                       <strong style={{ fontSize: '13px', color: '#059669' }}>Landlord Response:</strong>
                       <p style={{ margin: '4px 0 0', fontSize: '14px' }}>{req.landlord_response}</p>
                     </div>
                   )}
+
                   <div className="d-flex justify-content-between align-items-center mt-3">
                     <span style={{ fontSize: '12px', color: '#9CA3AF' }}>
                       {role === 'host' ? `Tenant: ${req.tenant?.first_name || 'N/A'} ${req.tenant?.last_name || ''}` : `Submitted: ${new Date(req.created_at).toLocaleDateString()}`}
+                      {req.resolved_at && ` | Resolved: ${new Date(req.resolved_at).toLocaleDateString()}`}
                     </span>
                     {role === 'host' && req.status !== 'completed' && req.status !== 'cancelled' && (
                       <div className="d-flex gap-2">
                         {req.status === 'pending' && (
-                          <button onClick={() => updateStatus(req.id, 'in_progress', 'We are looking into this.')} style={{ fontSize: '13px', padding: '6px 12px', borderRadius: '6px', border: '1px solid #2563EB', color: '#2563EB', backgroundColor: '#fff', cursor: 'pointer', fontWeight: '600' }}>
+                          <button onClick={() => updateStatus(req.id, 'in_progress', 'We are looking into this.')} className="maint-action-btn maint-action-progress">
                             Start Work
                           </button>
                         )}
-                        <button onClick={() => { const r = prompt('Response to tenant (optional):'); updateStatus(req.id, 'completed', r || 'Issue has been resolved.'); }} style={{ fontSize: '13px', padding: '6px 12px', borderRadius: '6px', border: '1px solid #059669', color: '#059669', backgroundColor: '#fff', cursor: 'pointer', fontWeight: '600' }}>
+                        <button onClick={() => { const r = prompt('Response to tenant (optional):'); updateStatus(req.id, 'completed', r || 'Issue has been resolved.'); }} className="maint-action-btn maint-action-complete">
                           Mark Completed
                         </button>
                       </div>
@@ -290,6 +406,14 @@ const Maintenance = () => {
           )}
         </div>
       </div>
+
+      {/* Lightbox */}
+      {lightbox.open && (
+        <div className="maint-lightbox" onClick={() => setLightbox({ open: false, src: '' })}>
+          <button className="maint-lightbox-close" onClick={() => setLightbox({ open: false, src: '' })}>×</button>
+          <img src={lightbox.src} alt="Full size" onClick={e => e.stopPropagation()} />
+        </div>
+      )}
     </section>
   )
 }
