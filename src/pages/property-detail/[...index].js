@@ -565,6 +565,46 @@ const PropertyDetail = memo(() => {
                                                     </div>
                                                 </div>
                                             </div>
+                                            {/* Cost Simulator */}
+                                            {placeDetail?.set_your_price && (
+                                                <div className="cost-simulator">
+                                                    <h6 className="cost-simulator-title">Cost Breakdown</h6>
+                                                    <div className="cost-line">
+                                                        <span>Monthly rent</span>
+                                                        <span>${Number(placeDetail?.set_your_price || 0).toLocaleString()}</span>
+                                                    </div>
+                                                    <div className="cost-line">
+                                                        <span>Rent × {tenure} months</span>
+                                                        <span>${(Number(placeDetail?.set_your_price || 0) * parseInt(tenure)).toLocaleString()}</span>
+                                                    </div>
+                                                    <div className="cost-line">
+                                                        <span>Support fee <small className="cost-info-tag">$100/mo</small></span>
+                                                        <span>${(100 * parseInt(tenure)).toLocaleString()}</span>
+                                                    </div>
+                                                    <div className="cost-line">
+                                                        <span>Commission <small className="cost-info-tag">5%</small></span>
+                                                        <span>${Math.round(Number(placeDetail?.set_your_price || 0) * parseInt(tenure) * 0.05).toLocaleString()}</span>
+                                                    </div>
+                                                    <div className="cost-line">
+                                                        <span>Insurance <small className="cost-info-tag">est.</small></span>
+                                                        <span>${Math.round(Number(placeDetail?.set_your_price || 0) * parseInt(tenure) * 0.02).toLocaleString()}</span>
+                                                    </div>
+                                                    <div className="cost-line cost-total">
+                                                        <span>Estimated Total</span>
+                                                        <span>${(
+                                                            Number(placeDetail?.set_your_price || 0) * parseInt(tenure)
+                                                            + 100 * parseInt(tenure)
+                                                            + Math.round(Number(placeDetail?.set_your_price || 0) * parseInt(tenure) * 0.05)
+                                                            + Math.round(Number(placeDetail?.set_your_price || 0) * parseInt(tenure) * 0.02)
+                                                        ).toLocaleString()}</span>
+                                                    </div>
+                                                    <div className="cost-insurance-note">
+                                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#D80621" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                                                        <span>Insurance protects your deposit and belongings during your lease. The exact amount is confirmed at lease signing.</span>
+                                                    </div>
+                                                </div>
+                                            )}
+
                                             <div className="propertyBookActionSection">
                                                 <div className="rl9oqx-0 bPqYRi">
                                                     <button type="submit" disabled={showReserverButton} className="sc-1i8u282-0 sc-gzVnrw evBpSJ" _css="border-radius:,0.375rem,;background-color:,function(e){return e.theme.colors.heartRed},;font-family:,function(e){return e.theme.colors.primary},;text-transform:uppercase;letter-spacing:,0.0875rem,;line-height:,0.8125rem,;min-height:,3.5rem,;font-weight:,function(e){return e.theme.fonts.semiBoldWeight},;width:100%;font-size:,0.875rem,;border-color:,function(e){return e.theme.colors.heartRed},;,function(e){return e.disabled&amp;&amp;&quot;\n    background-color: &quot;.concat(e.theme.colors.alto,&quot;;\n    border-color: &quot;).concat(e.theme.colors.alto,&quot;;\n    pointer-events: none;\n    color: &quot;).concat(e.theme.colors.primaryText,&quot;;\n  &quot;)},:hover{background-color:,function(e){return e.theme.colors.burntUmber},;border-color:,function(e){return e.theme.colors.burntUmber},;}">

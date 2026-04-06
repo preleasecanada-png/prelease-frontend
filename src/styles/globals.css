@@ -8231,3 +8231,64 @@ select.input {
   .app-renter-details { font-size: 11px; gap: 4px 10px; }
   .app-meta-row { font-size: 11px; }
 }
+
+/* ═══════════════════════════════════════════════ */
+/*              COST SIMULATOR                    */
+/* ═══════════════════════════════════════════════ */
+
+.cost-simulator {
+  margin: 16px 0 0;
+  padding: 20px;
+  background: #fafafa;
+  border: 1px solid #eee;
+  border-radius: 12px;
+}
+.cost-simulator-title {
+  font-weight: 700;
+  font-size: 15px;
+  margin-bottom: 14px;
+  color: #222;
+}
+.cost-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 7px 0;
+  font-size: 14px;
+  color: #444;
+  border-bottom: 1px solid #f0f0f0;
+}
+.cost-line:last-of-type { border-bottom: none; }
+.cost-line span:last-child { font-weight: 600; color: #222; }
+.cost-total {
+  margin-top: 8px;
+  padding-top: 12px;
+  border-top: 2px solid #D80621;
+  border-bottom: none;
+  font-size: 16px;
+  font-weight: 700;
+}
+.cost-total span:last-child { color: #D80621; font-size: 18px; }
+.cost-info-tag {
+  display: inline-block;
+  background: #e7f1ff;
+  color: #0d6efd;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  margin-left: 4px;
+}
+.cost-insurance-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-top: 14px;
+  padding: 10px 12px;
+  background: #fff5f5;
+  border-radius: 8px;
+  font-size: 12px;
+  color: #666;
+  line-height: 1.5;
+}
+.cost-insurance-note svg { flex-shrink: 0; margin-top: 2px; }
