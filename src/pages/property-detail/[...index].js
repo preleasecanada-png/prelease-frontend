@@ -681,6 +681,13 @@ const PropertyDetail = memo(() => {
                                                             Apply to Rent
                                                         </Link>
                                                     )}
+                                                    {!showReserverButton && isLoggedIn && (
+                                                        <button type="button" onClick={(e) => { e.preventDefault(); setShowChatModal(true); }}
+                                                            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', width: '100%', marginTop: '12px', padding: '14px', borderRadius: '6px', border: '2px solid #1e293b', background: '#fff', color: '#1e293b', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.0875rem', fontSize: '0.875rem', cursor: 'pointer', transition: 'all 0.2s' }}>
+                                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                                                            Message Host
+                                                        </button>
+                                                    )}
 
                                                     {/* <button type="submit" className="sc-1i8u282-0 sc-gzVnrw evBpSJ" _css="border-radius:,0.375rem,;background-color:,function(e){return e.theme.colors.heartRed},;font-family:,function(e){return e.theme.colors.primary},;text-transform:uppercase;letter-spacing:,0.0875rem,;line-height:,0.8125rem,;min-height:,3.5rem,;font-weight:,function(e){return e.theme.fonts.semiBoldWeight},;width:100%;font-size:,0.875rem,;border-color:,function(e){return e.theme.colors.heartRed},;,function(e){return e.disabled&amp;&amp;&quot;\n    background-color: &quot;.concat(e.theme.colors.alto,&quot;;\n    border-color: &quot;).concat(e.theme.colors.alto,&quot;;\n    pointer-events: none;\n    color: &quot;).concat(e.theme.colors.primaryText,&quot;;\n  &quot;)},:hover{background-color:,function(e){return e.theme.colors.burntUmber},;border-color:,function(e){return e.theme.colors.burntUmber},;}">
                                                         <Link href='#'>

@@ -9,8 +9,22 @@ const Notifications = () => {
   const [unreadCount, setUnreadCount] = useState(0)
 
   useEffect(() => {
-    fetchNotifications()
+    triggerProactiveAndFetch()
   }, [])
+
+  const triggerProactiveAndFetch = async () => {
+    try {
+      const token = localStorage.getItem('token')
+      if (token) {
+        await fetch(`${process.env.NEXT_PUBLIC_BASE_API_HOST}/notifications/proactive`, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+      }
+    } catch (err) {
+      console.warn('Proactive notifications failed:', err)
+    }
+    fetchNotifications()
+  }
 
   const fetchNotifications = async () => {
     try {
