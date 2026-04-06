@@ -9076,3 +9076,214 @@ select.input {
 .bg-check-pending { background: #fef3c7; color: #d97706; }
 .bg-check-progress { background: #e0f2fe; color: #0284c7; }
 .bg-check-declined { background: #fef2f2; color: #dc2626; }
+
+/* ═══════════════════════════════════════════════════════════ */
+/*          COMPREHENSIVE MOBILE RESPONSIVE STYLES            */
+/* ═══════════════════════════════════════════════════════════ */
+
+/* ---- Global mobile overrides ---- */
+@media (max-width: 767px) {
+  .container { padding-left: 16px; padding-right: 16px; }
+  .section-spacing { padding-top: 1.5rem; padding-bottom: 1.5rem; }
+  h1.display-4, .display-4 { font-size: 1.75rem !important; }
+  h1.fw-bold { font-size: 1.5rem; }
+  .lead { font-size: 0.95rem; }
+  .row.g-4 { --bs-gutter-y: 0.75rem; --bs-gutter-x: 0.75rem; }
+
+  /* Side navigation / hamburger menu */
+  .side-drops-content { width: 85vw !important; max-width: 320px; }
+
+  /* Hide desktop-only elements on mobile */
+  .d-none-mobile { display: none !important; }
+}
+
+/* ---- Property Detail Page ---- */
+@media (max-width: 767px) {
+  .gallery_sec .container { padding: 0; }
+  .gallery_sec img { border-radius: 0 !important; }
+
+  .sc-1hh5wos-3 { padding: 16px !important; }
+  .propertyBookActionSection { position: relative !important; }
+
+  /* Booking form sticky → normal */
+  .property_details_sec .col-lg-4 { position: relative !important; }
+  .property_details_sec .col-lg-4 > div { position: relative !important; top: auto !important; }
+
+  /* Cost simulator */
+  .cost-simulator { padding: 14px !important; }
+  .cost-simulator-title { font-size: 15px !important; }
+  .cost-line { font-size: 13px; }
+
+  /* Availability calendar */
+  .avail-months-row { flex-direction: column; gap: 16px; }
+  .avail-grid { font-size: 12px; }
+  .avail-cell { width: 32px; height: 32px; font-size: 11px; }
+}
+
+/* ---- Find Home / Search ---- */
+@media (max-width: 767px) {
+  .find-home-filter-bar { flex-direction: column; gap: 10px; }
+  .find-home-filter-bar select,
+  .find-home-filter-bar input {
+    width: 100% !important;
+    min-width: unset !important;
+    font-size: 14px !important;
+  }
+  .find-home-grid { grid-template-columns: 1fr !important; }
+
+  /* Property cards in grid */
+  .property-card-enhanced { flex-direction: column; }
+  .property-card-enhanced img { height: 180px; border-radius: 12px 12px 0 0; }
+}
+
+/* ---- Dashboard ---- */
+@media (max-width: 767px) {
+  .row.g-4.mb-5 .col-md-4,
+  .row.g-4.mb-5 .col-md-3 { flex: 0 0 50%; max-width: 50%; }
+
+  /* Admin dashboard stat cards */
+  .admin-stat-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 10px !important; }
+  .admin-chart-container { padding: 14px !important; }
+  .admin-chart-bar-label { font-size: 10px !important; }
+}
+
+/* ---- Applications Page ---- */
+@media (max-width: 767px) {
+  .app-card { flex-direction: column; }
+  .app-card-thumb { width: 100%; min-height: 120px; max-height: 160px; }
+  .app-card-body { padding: 12px; }
+  .app-card-actions {
+    flex-direction: row;
+    border-left: none;
+    border-top: 1px solid #f0f0f0;
+    flex-wrap: wrap;
+    padding: 10px;
+    gap: 6px;
+  }
+  .app-action-btn { font-size: 12px; padding: 6px 12px; flex: 1; min-width: 80px; text-align: center; }
+  .app-status-tabs { overflow-x: auto; flex-wrap: nowrap; -webkit-overflow-scrolling: touch; }
+  .app-tab-btn { white-space: nowrap; font-size: 13px; }
+  .app-renter-details { flex-wrap: wrap; gap: 6px; }
+  .app-meta-row { flex-wrap: wrap; gap: 6px; }
+
+  /* Stats row */
+  .row.g-3.mb-4 .col { flex: 0 0 50%; max-width: 50%; }
+  .row.g-3.mb-4 .col:last-child { flex: 0 0 100%; max-width: 100%; }
+
+  /* Modal */
+  .app-modal { width: calc(100vw - 32px) !important; max-width: 100% !important; margin: 16px; }
+}
+
+/* ---- Leases ---- */
+@media (max-width: 767px) {
+  .lease-sig-timeline { flex-direction: column; gap: 14px; padding: 16px; }
+  .lease-sig-step:not(:last-child)::after { display: none; }
+  .lease-info-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .lease-document { font-size: 11px; padding: 14px; max-height: 350px; }
+  .lease-card-header { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .lease-pay-row { font-size: 13px; }
+}
+
+/* ---- Maintenance ---- */
+@media (max-width: 767px) {
+  .maint-filter-tabs { overflow-x: auto; flex-wrap: nowrap; padding-bottom: 4px; }
+  .maint-filter-tabs button { white-space: nowrap; font-size: 12px; }
+  .maint-card { padding: 14px !important; }
+  .maint-status-timeline { gap: 8px; }
+  .maint-status-timeline .maint-tl-step { font-size: 11px; }
+  .maint-photos { gap: 6px; }
+  .maint-photos img { width: 60px; height: 60px; }
+}
+
+/* ---- Notifications ---- */
+@media (max-width: 767px) {
+  .notif-card { padding: 12px !important; }
+  .notif-card h6 { font-size: 14px; }
+  .notif-card p { font-size: 12px; }
+  .notif-actions { flex-direction: column; gap: 6px; }
+  .notif-actions button { width: 100%; }
+}
+
+/* ---- Reports ---- */
+@media (max-width: 767px) {
+  .rpt-cards { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .rpt-card { padding: 12px; }
+  .rpt-card-val { font-size: 17px; }
+  .rpt-row { flex-direction: column; }
+  .rpt-table { font-size: 12px; }
+  .rpt-table th, .rpt-table td { padding: 8px 6px; }
+  .rpt-section { padding: 14px; }
+}
+
+/* ---- Forms (global) ---- */
+@media (max-width: 767px) {
+  .form-control, .form-select {
+    font-size: 16px !important; /* prevents iOS zoom on focus */
+    padding: 10px 12px;
+  }
+  textarea.form-control { font-size: 16px !important; }
+
+  /* Buttons full-width on mobile */
+  .btn-mobile-full { width: 100% !important; }
+}
+
+/* ---- Property Cards / Listings ---- */
+@media (max-width: 767px) {
+  .card-list-container { gap: 12px; }
+  .enhanced-card, .EnhancedCard { border-radius: 10px !important; }
+  .property-img-wrapper { height: 180px !important; }
+  .badge-enhanced { font-size: 10px; padding: 3px 8px; }
+}
+
+/* ---- Chat Popup ---- */
+@media (max-width: 767px) {
+  .chat_popup {
+    width: 100vw !important;
+    height: 100vh !important;
+    max-height: 100vh !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    border-radius: 0 !important;
+  }
+  .chat_header { border-radius: 0 !important; }
+  .chat_body { max-height: calc(100vh - 140px) !important; }
+}
+
+/* ---- Payments / Checkout ---- */
+@media (max-width: 767px) {
+  .payment-summary-card { padding: 14px !important; }
+  .payment-breakdown-row { font-size: 13px; }
+}
+
+/* ---- Account / Profile ---- */
+@media (max-width: 767px) {
+  .profile-picture-section { flex-direction: column; align-items: center; text-align: center; }
+  .profile-picture-section img { width: 80px; height: 80px; }
+}
+
+/* ---- My Properties (host) ---- */
+@media (max-width: 767px) {
+  .my-prop-grid { grid-template-columns: 1fr !important; }
+  .my-prop-card { flex-direction: column; }
+  .my-prop-card img { width: 100%; height: 160px; border-radius: 10px 10px 0 0; }
+  .my-prop-actions { flex-wrap: wrap; gap: 6px; }
+  .my-prop-actions button { flex: 1; min-width: 80px; font-size: 12px; }
+}
+
+/* ---- Onboarding ---- */
+@media (max-width: 767px) {
+  .onb-welcome { width: calc(100vw - 32px); padding: 24px 20px; }
+  .onb-welcome h2 { font-size: 20px; }
+  .onb-checklist { width: calc(100vw - 32px); right: 16px; bottom: 8px; }
+  .onb-tip { left: 8px; right: 8px; max-width: none; bottom: 8px; }
+}
+
+/* ---- Small phone (max-width: 374px) ---- */
+@media (max-width: 374px) {
+  .container { padding-left: 12px; padding-right: 12px; }
+  .rpt-cards { grid-template-columns: 1fr; }
+  .lease-info-grid { grid-template-columns: 1fr; }
+  .row.g-3.mb-4 .col { flex: 0 0 100%; max-width: 100%; }
+  .app-action-btn { font-size: 11px; padding: 5px 8px; }
+  .avail-cell { width: 28px; height: 28px; font-size: 10px; }
+}
