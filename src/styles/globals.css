@@ -7700,7 +7700,7 @@ select.input {
   /* Home page */
   .Mainheading { font-size: 28px; margin-top: 1rem; }
   .Mainheading img { height: 24px; }
-  .main_section { min-height: 400px; padding-top: 70px; }
+  .main_section { min-height: 400px; padding-top: 100px; }
   .head_wel { font-size: 16px; }
   .store_area img { height: 36px; }
   .nav_lnks { display: none; }
