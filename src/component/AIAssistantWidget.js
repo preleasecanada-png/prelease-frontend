@@ -149,11 +149,7 @@ const AIAssistantWidget = () => {
           className="ai-assistant-btn"
           title="Prelease AI Assistant"
         >
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M12 2a8 8 0 0 1 8 8v1a8 8 0 0 1-3.07 6.3L12 22l-4.93-4.7A8 8 0 0 1 4 11v-1a8 8 0 0 1 8-8z"/>
-            <circle cx="12" cy="10" r="3"/>
-            <path d="M9 10h.01M15 10h.01"/>
-          </svg>
+          <img src="/images/shinestar.png" alt="AI" width="28" height="28" style={{ objectFit: 'contain' }} />
           <span className="ai-assistant-btn-badge">AI</span>
         </button>
       )}
@@ -165,10 +161,7 @@ const AIAssistantWidget = () => {
           <div className="ai-assistant-header">
             <div className="ai-assistant-header-left">
               <div className="ai-assistant-avatar">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
-                  <path d="M12 2a8 8 0 0 1 8 8v1a8 8 0 0 1-3.07 6.3L12 22l-4.93-4.7A8 8 0 0 1 4 11v-1a8 8 0 0 1 8-8z"/>
-                  <circle cx="12" cy="10" r="3"/>
-                </svg>
+                <img src="/images/shinestar.png" alt="AI" width="20" height="20" style={{ objectFit: 'contain' }} />
               </div>
               <div>
                 <div className="ai-assistant-title">Prelease AI</div>
@@ -191,10 +184,7 @@ const AIAssistantWidget = () => {
               <div key={i} className={`ai-msg ${msg.role === 'user' ? 'ai-msg-user' : 'ai-msg-assistant'}`}>
                 {msg.role === 'assistant' && (
                   <div className="ai-msg-avatar-sm">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
-                      <path d="M12 2a8 8 0 0 1 8 8v1a8 8 0 0 1-3.07 6.3L12 22l-4.93-4.7A8 8 0 0 1 4 11v-1a8 8 0 0 1 8-8z"/>
-                      <circle cx="12" cy="10" r="3"/>
-                    </svg>
+                    <img src="/images/shinestar.png" alt="AI" width="14" height="14" style={{ objectFit: 'contain' }} />
                   </div>
                 )}
                 <div
@@ -206,10 +196,7 @@ const AIAssistantWidget = () => {
             {loading && (
               <div className="ai-msg ai-msg-assistant">
                 <div className="ai-msg-avatar-sm">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
-                    <path d="M12 2a8 8 0 0 1 8 8v1a8 8 0 0 1-3.07 6.3L12 22l-4.93-4.7A8 8 0 0 1 4 11v-1a8 8 0 0 1 8-8z"/>
-                    <circle cx="12" cy="10" r="3"/>
-                  </svg>
+                  <img src="/images/shinestar.png" alt="AI" width="14" height="14" style={{ objectFit: 'contain' }} />
                 </div>
                 <div className="ai-msg-bubble ai-msg-bubble-assistant ai-typing">
                   <span></span><span></span><span></span>
