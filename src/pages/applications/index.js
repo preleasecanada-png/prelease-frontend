@@ -22,12 +22,72 @@ const Applications = () => {
   const [rejectId, setRejectId] = useState(null)
   const [rejectReason, setRejectReason] = useState('')
   const [actionLoading, setActionLoading] = useState(null)
+  const [bgChecks, setBgChecks] = useState({})
+  const [bgCheckModal, setBgCheckModal] = useState(null)
+  const [bgCheckType, setBgCheckType] = useState('credit')
 
   useEffect(() => {
     const userRole = localStorage.getItem('role')
     if (userRole === 'host') setRole('landlord')
     fetchApplications(userRole === 'host' ? 'landlord' : 'renter')
+    fetchBgChecks()
   }, [])
+
+  const fetchBgChecks = async () => {
+    try {
+      const token = localStorage.getItem('token')
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_HOST}/background-checks`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      const data = await res.json()
+      if (data?.status === 200 && data.data) {
+        const map = {}
+        data.data.forEach(c => { map[c.rental_application_id] = c })
+        setBgChecks(map)
+      }
+    } catch (err) { console.warn('bg checks fetch failed', err) }
+  }
+
+  const requestBgCheck = async (appId) => {
+    setActionLoading('bg_' + appId)
+    try {
+      const token = localStorage.getItem('token')
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_HOST}/background-checks/request`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ rental_application_id: appId, check_type: bgCheckType }),
+      })
+      const data = await res.json()
+      if (data?.status === 200) {
+        toast.success('Background check requested!')
+        setBgChecks(prev => ({ ...prev, [appId]: data.data }))
+        setBgCheckModal(null)
+      } else {
+        toast.error(data?.message || 'Failed to request')
+      }
+    } catch (err) { toast.error('Request failed') }
+    setActionLoading(null)
+  }
+
+  const handleBgConsent = async (checkId, action) => {
+    setActionLoading('consent_' + checkId)
+    try {
+      const token = localStorage.getItem('token')
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_HOST}/background-checks/${checkId}/consent`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ action }),
+      })
+      const data = await res.json()
+      if (data?.status === 200) {
+        toast.success(action === 'approve' ? 'Consent given. Check in progress.' : 'Check declined.')
+        fetchBgChecks()
+      } else {
+        toast.error(data?.message || 'Failed')
+      }
+    } catch (err) { toast.error('Failed') }
+    setActionLoading(null)
+  }
 
   const fetchApplications = async (r) => {
     try {
@@ -279,10 +339,40 @@ const Applications = () => {
                       🔍 Review
                     </button>
                   )}
+                  {role === 'landlord' && !bgChecks[app.id] && (app.status === 'submitted' || app.status === 'under_review') && (
+                    <button className="app-action-btn" style={{ background: '#f0f9ff', color: '#0284c7', border: '1px solid #bae6fd', fontSize: '12px' }} onClick={() => setBgCheckModal(app.id)}>
+                      🔍 Background Check
+                    </button>
+                  )}
+                  {bgChecks[app.id] && <BgCheckBadge check={bgChecks[app.id]} role={role} onConsent={handleBgConsent} loading={actionLoading} />}
                 </div>
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Background Check Modal */}
+      {bgCheckModal && (
+        <div className="app-modal-overlay" onClick={() => setBgCheckModal(null)}>
+          <div className="app-modal" onClick={e => e.stopPropagation()}>
+            <h5 className="fw-bold mb-3">Request Background Check</h5>
+            <p className="text-muted" style={{ fontSize: '14px' }}>Select the type of verification to request. The tenant will be asked for consent before the check is processed.</p>
+            <div className="d-flex flex-column gap-2 mb-3">
+              {[{ k: 'credit', l: 'Credit Check', d: 'Verify credit score and financial history', p: '$25' }, { k: 'criminal', l: 'Criminal Background', d: 'Check Canadian police databases', p: '$25' }, { k: 'both', l: 'Both Checks', d: 'Credit + Criminal background', p: '$45' }].map(opt => (
+                <label key={opt.k} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px', border: bgCheckType === opt.k ? '2px solid #D80621' : '1px solid #e5e7eb', borderRadius: '10px', cursor: 'pointer', background: bgCheckType === opt.k ? '#fef2f2' : '#fff' }}>
+                  <input type="radio" name="bgtype" checked={bgCheckType === opt.k} onChange={() => setBgCheckType(opt.k)} style={{ accentColor: '#D80621' }} />
+                  <div style={{ flex: 1 }}><div style={{ fontWeight: 600, fontSize: '14px' }}>{opt.l}</div><div style={{ fontSize: '12px', color: '#666' }}>{opt.d}</div></div>
+                  <span style={{ fontWeight: 700, color: '#D80621' }}>{opt.p}</span>
+                </label>
+              ))}
+            </div>
+            <p style={{ fontSize: '12px', color: '#999', marginBottom: '12px' }}>The tenant will receive a notification and must provide explicit consent before the check is initiated.</p>
+            <div className="d-flex gap-2 justify-content-end">
+              <button className="btn btn-outline-secondary" style={{ borderRadius: '10px' }} onClick={() => setBgCheckModal(null)}>Cancel</button>
+              <button className="btn text-white" style={{ background: '#D80621', borderRadius: '10px' }} disabled={actionLoading} onClick={() => requestBgCheck(bgCheckModal)}>Request Check</button>
+            </div>
+          </div>
         </div>
       )}
 
@@ -316,6 +406,41 @@ const Applications = () => {
       )}
     </section>
   )
+}
+
+const BgCheckBadge = ({ check, role, onConsent, loading }) => {
+  const s = check.status
+  if (s === 'pending_consent' && role === 'renter') {
+    return (
+      <div style={{ background: '#fffbeb', border: '1px solid #fde68a', borderRadius: '8px', padding: '8px 10px', fontSize: '12px', marginTop: '4px' }}>
+        <div style={{ fontWeight: 700, marginBottom: '4px' }}>🔒 Background Check Requested</div>
+        <div style={{ color: '#666', marginBottom: '6px' }}>Type: {check.check_type} | Fee: ${check.fee_amount} (paid by {check.fee_paid_by})</div>
+        <div style={{ display: 'flex', gap: '6px' }}>
+          <button className="app-action-btn app-action-approve" style={{ fontSize: '11px', padding: '4px 10px' }} disabled={loading} onClick={() => onConsent(check.id, 'approve')}>Give Consent</button>
+          <button className="app-action-btn app-action-reject" style={{ fontSize: '11px', padding: '4px 10px' }} disabled={loading} onClick={() => onConsent(check.id, 'decline')}>Decline</button>
+        </div>
+      </div>
+    )
+  }
+  if (s === 'pending_consent') return <span className="bg-check-badge bg-check-pending">⏳ Awaiting Consent</span>
+  if (s === 'in_progress') return <span className="bg-check-badge bg-check-progress">⏳ Check In Progress</span>
+  if (s === 'declined') return <span className="bg-check-badge bg-check-declined">❌ Check Declined</span>
+  if (s === 'completed') {
+    const ratingColor = { excellent: '#059669', good: '#0284c7', fair: '#d97706', poor: '#dc2626' }
+    return (
+      <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '8px', padding: '8px 10px', fontSize: '12px', marginTop: '4px' }}>
+        <div style={{ fontWeight: 700, marginBottom: '2px' }}>✅ Background Check Complete</div>
+        {check.credit_score && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '2px' }}>
+            <span>Credit: <strong style={{ color: ratingColor[check.credit_rating] || '#333' }}>{check.credit_score}</strong></span>
+            <span style={{ background: (ratingColor[check.credit_rating] || '#333') + '20', color: ratingColor[check.credit_rating] || '#333', padding: '1px 8px', borderRadius: '10px', fontWeight: 700, fontSize: '11px', textTransform: 'uppercase' }}>{check.credit_rating}</span>
+          </div>
+        )}
+        {check.criminal_result && <div>Criminal: <strong style={{ color: check.criminal_result === 'clear' ? '#059669' : '#dc2626' }}>{check.criminal_result === 'clear' ? 'Clear' : 'Flagged'}</strong></div>}
+      </div>
+    )
+  }
+  return null
 }
 
 export default Applications

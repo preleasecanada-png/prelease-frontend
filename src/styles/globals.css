@@ -9060,3 +9060,19 @@ select.input {
   .lease-sig-timeline { flex-direction: column; gap: 12px; }
   .lease-sig-step:not(:last-child)::after { display: none; }
 }
+
+/* ═══════════════════════════════════════════════ */
+/*          BACKGROUND CHECK BADGES               */
+/* ═══════════════════════════════════════════════ */
+
+.bg-check-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  margin-top: 4px;
+}
+.bg-check-pending { background: #fef3c7; color: #d97706; }
+.bg-check-progress { background: #e0f2fe; color: #0284c7; }
+.bg-check-declined { background: #fef2f2; color: #dc2626; }
