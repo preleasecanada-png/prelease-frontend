@@ -92,7 +92,9 @@ function App({ Component, pageProps }) {
             <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_CLIENT_ID}>
           {pathname !== '/properties' ? <Header isScrolled={isScrolled} /> : ''}
           {/* <Header isScrolled={isScrolled} />  */}
-          <Component {...pageProps} isScrolled={isScrolled} />
+          <div className={pathname !== '/' && pathname !== '/properties' && pathname !== '/login' && pathname !== '/sign-up' && pathname !== '/forget-password' && pathname !== '/reset-password' && pathname !== '/verification' ? 'page-content-offset' : ''}>
+            <Component {...pageProps} isScrolled={isScrolled} />
+          </div>
           {pathname !== '/properties' && pathname !== '/chats' ? <Footer /> : ''}
             </GoogleOAuthProvider>
           </ChatProvider>

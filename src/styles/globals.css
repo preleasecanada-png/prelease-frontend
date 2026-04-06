@@ -3123,6 +3123,29 @@ input[type="checkbox"]:before {
   z-index: -1;
 }
 
+/* page content offset for fixed header */
+.page-content-offset {
+  padding-top: 85px;
+}
+
+@media (max-width: 1440px) {
+  .page-content-offset {
+    padding-top: 75px;
+  }
+}
+
+@media (max-width: 991px) {
+  .page-content-offset {
+    padding-top: 70px;
+  }
+}
+
+@media (max-width: 767px) {
+  .page-content-offset {
+    padding-top: 65px;
+  }
+}
+
 /* header css  */
 .Header_u {
   display: flex;
