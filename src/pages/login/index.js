@@ -24,9 +24,12 @@ const SignIn = () => {
     }, [isPasswordVisible]);
 
     useEffect(() => {
-        window.localStorage.setItem("token", '');
-        window.localStorage.setItem("email", '');
-        window.localStorage.setItem("user_id", '');
+        const existingToken = window.localStorage.getItem("token");
+        if (!existingToken) {
+            window.localStorage.setItem("token", '');
+            window.localStorage.setItem("email", '');
+            window.localStorage.setItem("user_id", '');
+        }
     }, []);
 
     useEffect(() => {
@@ -52,7 +55,6 @@ const SignIn = () => {
             });
             const resJson = await res.json();
             if (res.status === 200) {
-                router.push('/');
                 window.localStorage.setItem('token', resJson.token);
                 window.localStorage.setItem('email', email);
                 window.localStorage.setItem('user_id', resJson.user_id);
@@ -64,6 +66,7 @@ const SignIn = () => {
                 setEmail("");
                 setPassword("");
                 toast.success(resJson.message);
+                router.push('/');
             } else if (res?.status === 422) {
                 toast.error(resJson.error);
             } else {
@@ -115,13 +118,15 @@ const SignIn = () => {
             console.log(data);
 
             if (res.ok) {
-                router.push('/');
                 localStorage.setItem("token", data.token);
                 localStorage.setItem("email", data.user.email);
                 localStorage.setItem("user_id", data.user.id);
                 localStorage.setItem("role", data.user.role);
                 localStorage.setItem("user_picture", data.user.picture || '');
                 localStorage.setItem("user_name", data.user.first_name || '');
+                document.cookie = `token=${data.token}; path=/; max-age=86400`;
+                document.cookie = `role=${data.user.role}; path=/; max-age=86400`;
+                router.push('/');
             } else {
                 console.error("Google login failed:", data.error);
             }

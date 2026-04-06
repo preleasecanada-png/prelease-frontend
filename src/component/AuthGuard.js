@@ -1,10 +1,9 @@
 'use client';
-import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 
 const protectedRoutes = {
-  "/properties": ["Landload", "host", "Landlord"], // landlord/host can access
+  "/properties": ["Landload", "host", "Landlord", "admin"],
 };
 
 const AuthGuard = ({ children }) => {
@@ -28,8 +27,8 @@ const AuthGuard = ({ children }) => {
   useEffect(() => {
     if (!mounted || !isReady) return;
 
-    const token = Cookies.get("token");
-    const role = Cookies.get("role"); // get role from cookies
+    const token = localStorage.getItem("token");
+    const role = localStorage.getItem("role");
     const matchedRoute = getProtectedRoute(pathname);
 
     if (!matchedRoute) return; // route is public
@@ -41,7 +40,7 @@ const AuthGuard = ({ children }) => {
 
     const allowedRoles = protectedRoutes[matchedRoute];
     if (!allowedRoles.includes(role)) {
-      router.replace("/unauthorized"); // or /login
+      router.replace("/");
       return;
     }
   }, [pathname, router, mounted, isReady]);
