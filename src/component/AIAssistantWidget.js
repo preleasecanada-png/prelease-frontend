@@ -127,8 +127,13 @@ const AIAssistantWidget = () => {
 
   const formatMessage = (text) => {
     if (!text) return '';
-    let formatted = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    // Markdown links [text](url)
+    let formatted = text.replace(/\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/g, '<a href="$2" target="_blank" rel="noopener" style="color:#D80621;text-decoration:underline;font-weight:600;">$1</a>');
+    // Bold
+    formatted = formatted.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    // Newlines
     formatted = formatted.replace(/\n/g, '<br/>');
+    // List items
     formatted = formatted.replace(/- (.*?)(?=<br\/>|$)/g, '<span style="display:block;padding-left:12px;">• $1</span>');
     return formatted;
   };
