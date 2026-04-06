@@ -21,6 +21,7 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 import AuthGuard from '@/component/AuthGuard';
 import FloatingChatWidget from '@/component/FloatingChatWidget';
 import AIAssistantWidget from '@/component/AIAssistantWidget';
+import OnboardingGuide from '@/component/OnboardingGuide';
 const urbanist = Urbanist({
   weight: ['200', '300', '400', '500', '600', '700', '800', '900'],
   subsets: ['latin'],
@@ -101,6 +102,7 @@ function App({ Component, pageProps }) {
         </ContextApiState>
         <FloatingChatWidget />
         <AIAssistantWidget />
+        <OnboardingGuide />
         <Toaster position="bottom-center" />
       </main>
       </AuthGuard>
