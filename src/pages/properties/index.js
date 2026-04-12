@@ -230,7 +230,7 @@ const Property = () => {
             <img className='pro-logo' src="/images/fav.png" alt="" />
           </Link>
           <div>
-            <button className='pro-exit-btn' type='submit' onClick={handleSubmit}>{step == 1 ? 'Exit' : 'Save & exit'}</button>
+            <button className='pro-exit-btn' type='button' onClick={() => route.push('/')}>Exit</button>
           </div>
         </div>
         <div className='propertity-main'>
