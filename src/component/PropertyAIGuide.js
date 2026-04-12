@@ -170,6 +170,10 @@ const PropertyAIGuide = ({ currentStep }) => {
     const [isTyping, setIsTyping] = useState(false);
     const [displayedAdvice, setDisplayedAdvice] = useState('');
     const messagesEndRef = useRef(null);
+    const [position, setPosition] = useState({ x: 0, y: 0 });
+    const [isDragging, setIsDragging] = useState(false);
+    const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+    const dragRef = useRef(null);
 
     const stepData = stepTips[currentStep] || stepTips[1];
 
@@ -197,15 +201,55 @@ const PropertyAIGuide = ({ currentStep }) => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [displayedAdvice]);
 
+    const handleMouseDown = (e) => {
+        if (e.button !== 0) return;
+        setIsDragging(true);
+        const rect = dragRef.current.getBoundingClientRect();
+        setDragOffset({
+            x: e.clientX - rect.left,
+            y: e.clientY - rect.top,
+        });
+        e.preventDefault();
+    };
+
+    const handleMouseMove = (e) => {
+        if (!isDragging) return;
+        const x = e.clientX - dragOffset.x;
+        const y = e.clientY - dragOffset.y;
+        setPosition({ x, y });
+    };
+
+    const handleMouseUp = () => {
+        setIsDragging(false);
+    };
+
+    useEffect(() => {
+        if (isDragging) {
+            window.addEventListener('mousemove', handleMouseMove);
+            window.addEventListener('mouseup', handleMouseUp);
+            return () => {
+                window.removeEventListener('mousemove', handleMouseMove);
+                window.removeEventListener('mouseup', handleMouseUp);
+            };
+        }
+    }, [isDragging, dragOffset]);
+
     if (!isOpen) {
         return (
             <button
                 onClick={() => setIsOpen(true)}
+                onMouseDown={handleMouseDown}
                 style={{
-                    position: 'fixed', bottom: '24px', right: '24px', zIndex: 9999,
+                    position: 'fixed',
+                    left: position.x || 'auto',
+                    top: position.y || 'auto',
+                    bottom: position.y ? 'auto' : '24px',
+                    right: position.x ? 'auto' : '24px',
+                    transform: position.x || position.y ? 'translate(0, 0)' : 'translate(0, 0)',
+                    zIndex: 9999,
                     width: '56px', height: '56px', borderRadius: '50%',
                     background: 'linear-gradient(135deg, #D80621, #ff4d6d)',
-                    border: 'none', cursor: 'pointer',
+                    border: 'none', cursor: isDragging ? 'grabbing' : 'grab',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     boxShadow: '0 4px 20px rgba(216,6,33,0.4)',
                     animation: 'pulse-guide 2s infinite',
@@ -222,16 +266,23 @@ const PropertyAIGuide = ({ currentStep }) => {
     if (isMinimized) {
         return (
             <div
+                onMouseDown={handleMouseDown}
                 style={{
-                    position: 'fixed', bottom: '24px', right: '24px', zIndex: 9999,
+                    position: 'fixed',
+                    left: position.x || 'auto',
+                    top: position.y || 'auto',
+                    bottom: position.y ? 'auto' : '24px',
+                    right: position.x ? 'auto' : '24px',
+                    zIndex: 9999,
                     background: '#fff', borderRadius: '16px',
                     boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
                     padding: '12px 16px',
                     display: 'flex', alignItems: 'center', gap: '10px',
-                    cursor: 'pointer', maxWidth: '280px',
+                    cursor: isDragging ? 'grabbing' : 'grab',
+                    maxWidth: '280px',
                     border: '1px solid #f0f0f0',
                 }}
-                onClick={() => setIsMinimized(false)}
+                onClick={(e) => { if (!isDragging) setIsMinimized(false); }}
             >
                 <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'linear-gradient(135deg, #D80621, #ff4d6d)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2"><path d="M12 2a7 7 0 0 1 7 7c0 3.5-2.5 6-4 7.5V18h-6v-1.5C7.5 15 5 12.5 5 9a7 7 0 0 1 7-7z"/></svg>
@@ -245,8 +296,13 @@ const PropertyAIGuide = ({ currentStep }) => {
     }
 
     return (
-        <div style={{
-            position: 'fixed', bottom: '24px', right: '24px', zIndex: 9999,
+        <div ref={dragRef} style={{
+            position: 'fixed',
+            left: position.x || 'auto',
+            top: position.y || 'auto',
+            bottom: position.y ? 'auto' : '24px',
+            right: position.x ? 'auto' : '24px',
+            zIndex: 9999,
             width: '360px', maxHeight: '520px',
             background: '#fff', borderRadius: '20px',
             boxShadow: '0 12px 48px rgba(0,0,0,0.15)',
@@ -254,12 +310,16 @@ const PropertyAIGuide = ({ currentStep }) => {
             overflow: 'hidden',
             border: '1px solid #f0f0f0',
         }}>
-            {/* Header */}
-            <div style={{
-                background: 'linear-gradient(135deg, #D80621, #ff4d6d)',
-                padding: '16px 18px',
-                display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-            }}>
+            {/* Header - Drag Handle */}
+            <div
+                onMouseDown={handleMouseDown}
+                style={{
+                    background: 'linear-gradient(135deg, #D80621, #ff4d6d)',
+                    padding: '16px 18px',
+                    display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                    cursor: isDragging ? 'grabbing' : 'grab',
+                    userSelect: 'none',
+                }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                     <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'rgba(255,255,255,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2"><path d="M12 2a7 7 0 0 1 7 7c0 3.5-2.5 6-4 7.5V18h-6v-1.5C7.5 15 5 12.5 5 9a7 7 0 0 1 7-7z"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>
@@ -270,8 +330,8 @@ const PropertyAIGuide = ({ currentStep }) => {
                     </div>
                 </div>
                 <div style={{ display: 'flex', gap: '6px' }}>
-                    <button onClick={() => setIsMinimized(true)} style={{ background: 'rgba(255,255,255,0.2)', border: 'none', color: '#fff', width: '28px', height: '28px', borderRadius: '50%', cursor: 'pointer', fontSize: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>—</button>
-                    <button onClick={() => setIsOpen(false)} style={{ background: 'rgba(255,255,255,0.2)', border: 'none', color: '#fff', width: '28px', height: '28px', borderRadius: '50%', cursor: 'pointer', fontSize: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>×</button>
+                    <button onMouseDown={(e) => e.stopPropagation()} onClick={() => setIsMinimized(true)} style={{ background: 'rgba(255,255,255,0.2)', border: 'none', color: '#fff', width: '28px', height: '28px', borderRadius: '50%', cursor: 'pointer', fontSize: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>—</button>
+                    <button onMouseDown={(e) => e.stopPropagation()} onClick={() => setIsOpen(false)} style={{ background: 'rgba(255,255,255,0.2)', border: 'none', color: '#fff', width: '28px', height: '28px', borderRadius: '50%', cursor: 'pointer', fontSize: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>×</button>
                 </div>
             </div>
 

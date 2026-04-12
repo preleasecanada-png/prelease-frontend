@@ -101,7 +101,7 @@ function App({ Component, pageProps }) {
           </ChatProvider>
         </ContextApiState>
         <FloatingChatWidget />
-        <AIAssistantWidget />
+        {pathname !== '/properties' && <AIAssistantWidget />}
         <OnboardingGuide />
         <Toaster position="bottom-center" />
       </main>
