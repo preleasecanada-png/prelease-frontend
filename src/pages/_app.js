@@ -102,7 +102,7 @@ function App({ Component, pageProps }) {
         </ContextApiState>
         <FloatingChatWidget />
         {pathname !== '/properties' && <AIAssistantWidget />}
-        <OnboardingGuide />
+        {pathname !== '/properties' && <OnboardingGuide />}
         <Toaster position="bottom-center" />
       </main>
       </AuthGuard>
