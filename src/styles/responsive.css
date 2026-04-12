@@ -905,7 +905,7 @@
   }
 
   .open_map {
-    left: 38%;
+    margin: 15px auto;
   }
 
   .ealdZV {
@@ -1016,7 +1016,7 @@
   }
 
   .open_map {
-    left: 34%;
+    margin: 20px auto;
   }
 }
 

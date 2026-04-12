@@ -836,35 +836,31 @@ const Search = () => {
   const Countries = [
     {
       name: 'I’m flexible',
-      image: 'flex.jpg',
-    },
-    {
-      name: 'Canada',
       image: 'canada.webp',
     },
     {
-      name: 'United Arab Emirates',
-      image: 'arab.jpg',
+      name: 'Toronto',
+      image: 'destinations/toronto.jpg',
     },
     {
-      name: 'Europe',
-      image: 'europe.jpg',
+      name: 'Vancouver',
+      image: 'destinations/vancouver.jpg',
     },
     {
-      name: 'Africa',
-      image: 'flex.jpg',
+      name: 'Montreal',
+      image: 'destinations/montreal.jpg',
     },
     {
-      name: 'United Kingdom',
-      image: 'u-king.jpg',
+      name: 'Ottawa',
+      image: 'destinations/ottawa.jpg',
     },
     {
-      name: 'Asia',
-      image: 'flex.jpg',
+      name: 'Edmonton',
+      image: 'destinations/calgary.jpg',
     },
     {
-      name: 'United States',
-      image: 'u-state.jpg',
+      name: 'Quebec',
+      image: 'destinations/quebec.jpg',
     }
   ];
 

@@ -58,7 +58,7 @@ export default function Home({ isScrolled }) {
                 { name: 'Toronto', slug: 'toronto', img: '/images/destinations/toronto.jpg', desc: 'Known for its vibrant communities and multicultural environment.' },
                 { name: 'Montreal', slug: 'montreal', img: '/images/destinations/montreal.jpg', desc: 'A blend of European charm and North American dynamism.' },
                 { name: 'Vancouver', slug: 'vancouver', img: '/images/destinations/vancouver.jpg', desc: 'Stunning mountains meet the Pacific in this coastal gem.' },
-                { name: 'Calgary', slug: 'calgary', img: '/images/destinations/calgary.jpg', desc: 'Gateway to the Rockies with a booming urban lifestyle.' },
+                { name: 'Edmonton', slug: 'edmonton', img: '/images/destinations/calgary.jpg', desc: 'Gateway to the Rockies with a booming urban lifestyle.' },
                 { name: 'Ottawa', slug: 'ottawa', img: '/images/destinations/ottawa.jpg', desc: "Canada's capital city, rich in history and culture." },
                 { name: 'Quebec City', slug: 'quebec', img: '/images/destinations/quebec.jpg', desc: 'Old-world charm with cobblestone streets and French heritage.' },
               ].map((city, i) => (
@@ -78,6 +78,11 @@ export default function Home({ isScrolled }) {
             </div>
           </section>
 
+          <button className='open_map' onClick={() => setMapOpen(true)}>
+            {locale?.home?.show_map}
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path d="M384 476.1L192 421.2l0-385.3L384 90.8l0 385.3zm32-1.2l0-386.5L543.1 37.5c15.8-6.3 32.9 5.3 32.9 22.3l0 334.8c0 9.8-6 18.6-15.1 22.3L416 474.8zM15.1 95.1L160 37.2l0 386.5L32.9 474.5C17.1 480.8 0 469.2 0 452.2L0 117.4c0-9.8 6-18.6 15.1-22.3z" /></svg>
+          </button>
+
           <section className='section-two'>
             <h2 className='cont_heading'><strong>{locale?.home?.featured}</strong> {locale?.home?.places}</h2>
 
@@ -90,10 +95,6 @@ export default function Home({ isScrolled }) {
             </div>
           </section>
         </div>
-        <button className='open_map' onClick={() => setMapOpen(true)}>
-          {locale?.home?.show_map}
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path d="M384 476.1L192 421.2l0-385.3L384 90.8l0 385.3zm32-1.2l0-386.5L543.1 37.5c15.8-6.3 32.9 5.3 32.9 22.3l0 334.8c0 9.8-6 18.6-15.1 22.3L416 474.8zM15.1 95.1L160 37.2l0 386.5L32.9 474.5C17.1 480.8 0 469.2 0 452.2L0 117.4c0-9.8 6-18.6 15.1-22.3z" /></svg>
-        </button>
 
         <div className={`map_area ${mapOpen ? 'd-flex' : 'd-none'}`}>
           <button className='close_map' onClick={() => setMapOpen(false)}>

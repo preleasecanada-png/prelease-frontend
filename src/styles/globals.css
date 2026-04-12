@@ -3327,11 +3327,14 @@ input[type="checkbox"]:before {
   opacity: 0;
   transition: opacity 0.3s ease-in-out;
   position: absolute;
+  left: 0;
+  right: 0;
+  margin: auto;
+  text-align: center;
 }
 
 .visible {
   opacity: 1;
-  position: relative;
 }
 
 .store_area {
@@ -3684,10 +3687,11 @@ input[type="checkbox"]:before {
 }
 
 .open_map {
-  position: fixed;
-  bottom: 3px;
-  left: 45%;
+  position: relative;
+  margin: 20px auto;
+  display: flex;
   z-index: 3;
+  width: fit-content;
 }
 
 .for_mob_ham,
@@ -4387,7 +4391,8 @@ input[type="checkbox"]:before {
   background: #fff;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   border-radius: 16px;
-  padding: 20px;
+  padding: 12px;
+  max-width: 350px;
 }
 
 .popover-container button {

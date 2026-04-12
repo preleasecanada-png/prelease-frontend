@@ -17,6 +17,7 @@ const DestinationSelector = ({ id, activePopover, setActivePopover, Countries, s
 
     const handleDestinationSelect = (name) => {
         setSelectedDestination(name);
+        setActivePopover(null);
     };
 
     return (
@@ -37,7 +38,7 @@ const DestinationSelector = ({ id, activePopover, setActivePopover, Countries, s
             <div className={`popover-container`}>
                 <div className=" dir dir-ltr" id="locationInspirationsSectionID">
                     <div className="c1uycpqq atm_c8_km0zk7 atm_g3_18khvle atm_fr_1m9t47k atm_cs_19iasv6 atm_go_1ixj6vq atm_gy_1yuitx dir dir-ltr">
-                        Search by region
+                        Search by city
                     </div>
                     <div className="grid-destinations">
                         {Countries?.map((item, index) => {

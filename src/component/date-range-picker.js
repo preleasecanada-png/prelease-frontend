@@ -1,30 +1,24 @@
 import React, { useState } from "react";
-import { addMonths, format, isBefore, startOfDay, isEqual, subMonths } from "date-fns";
+import { addMonths, format, isBefore, startOfDay, subMonths } from "date-fns";
 
 function DateRangePicker({ id, activePopover, setActivePopover, dateRange: dateRangeProp, setDateRange: setDateRangeProp }) {
   const isOpen = activePopover === id;
   const [currentMonth, setCurrentMonth] = useState(new Date());
-  const [dateRangeInternal, setDateRangeInternal] = useState({
-    start_date: '',
-    end_date: ''
-  });
+  const [arrivalDateInternal, setArrivalDateInternal] = useState('');
 
-  const dateRange = dateRangeProp ?? dateRangeInternal;
-  const setDateRange = setDateRangeProp ?? setDateRangeInternal;
+  const arrivalDate = dateRangeProp?.start_date ?? arrivalDateInternal;
+  const setArrivalDate = (date) => {
+    if (setDateRangeProp) {
+      setDateRangeProp({ start_date: date, end_date: '' });
+    } else {
+      setArrivalDateInternal(date);
+    }
+  };
 
-  const onDateChange = (dates) => {
-    setDateRange(dates);
-  }
   const handleDateClick = (date) => {
     const selectedDate = startOfDay(date);
-
-    if (!dateRange.start_date || (dateRange.start_date && dateRange.end_date)) {
-      onDateChange({ start_date: selectedDate, end_date: undefined });
-    } else if (isBefore(selectedDate, new Date(dateRange.start_date))) {
-      onDateChange({ start_date: selectedDate, end_date: undefined });
-    } else {
-      onDateChange({ ...dateRange, end_date: selectedDate });
-    }
+    setArrivalDate(selectedDate);
+    setActivePopover(null);
   };
 
   const renderCalendar = (month) => {
@@ -39,16 +33,7 @@ function DateRangePicker({ id, activePopover, setActivePopover, dateRange: dateR
 
     for (let i = 1; i <= daysInMonth; i++) {
       const date = new Date(month.getFullYear(), month.getMonth(), i);
-      const isSelected =
-        (dateRange.start_date &&
-          new Date(dateRange.start_date).toDateString() === date.toDateString()) ||
-        (dateRange.end_date &&
-          new Date(dateRange.end_date).toDateString() === date.toDateString());
-      const isInRange =
-        dateRange.start_date &&
-        dateRange.end_date &&
-        date > new Date(dateRange.start_date) &&
-        date < new Date(dateRange.end_date);
+      const isSelected = arrivalDate && new Date(arrivalDate).toDateString() === date.toDateString();
       const isDisabled = isBefore(date, today);
 
       days.push(
@@ -56,8 +41,7 @@ function DateRangePicker({ id, activePopover, setActivePopover, dateRange: dateR
           type="button"
           key={i}
           onClick={() => !isDisabled && handleDateClick(date)}
-          className={`day-cell ${isDisabled ? "disabled" : ""} ${isSelected ? "selected" : isInRange ? "in-range" : "hoverable"
-            }`}
+          className={`day-cell ${isDisabled ? "disabled" : ""} ${isSelected ? "selected" : "hoverable"}`}
           disabled={isDisabled}
         >
           {i}
@@ -100,37 +84,13 @@ function DateRangePicker({ id, activePopover, setActivePopover, dateRange: dateR
         <div className="dropDown_area_button">
           <img className="form_icon" src="/images/checkin.png" alt="" />
           <div className="form_heads">
-            <h3>Check in</h3>
-            {dateRange?.start_date ? (
+            <h3>Arrival Date</h3>
+            {arrivalDate ? (
               <input
-                key={`${dateRange.start_date}`}
+                key={`${arrivalDate}`}
                 type="text"
                 placeholder="Add Date"
-                value={format(new Date(dateRange.start_date), "MMMM dd")}
-                readOnly
-                className="pointer-event-none"
-              />
-            ) : (
-              <input
-                type="text"
-                placeholder="Add Date"
-                readOnly
-                className="pointer-event-none"
-              />
-            )}
-          </div>
-        </div>
-
-        <div className="dropDown_area_button">
-          <img className="form_icon" src="/images/checkout.png" alt="" />
-          <div className="form_heads">
-            <h3>Check out</h3>
-            {dateRange?.end_date ? (
-              <input
-                key={`${dateRange.end_date}`}
-                type="text"
-                placeholder="Add Date"
-                value={format(new Date(dateRange.end_date), "MMMM dd")}
+                value={format(new Date(arrivalDate), "MMMM dd")}
                 readOnly
                 className="pointer-event-none"
               />
@@ -152,7 +112,7 @@ function DateRangePicker({ id, activePopover, setActivePopover, dateRange: dateR
               type="button"
               className="button_change"
               onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}
-              disabled={disablePreviousButton()} // Disable previous button if it's January
+              disabled={disablePreviousButton()}
             >
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l192 192c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L77.3 256 246.6 86.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-192 192z" /></svg>            
             </button>
@@ -166,7 +126,6 @@ function DateRangePicker({ id, activePopover, setActivePopover, dateRange: dateR
           </div>
           <div className="row_date_picker">
             {renderCalendar(currentMonth)}
-            {renderCalendar(addMonths(currentMonth, 1))}
           </div>
         </div>
       )}

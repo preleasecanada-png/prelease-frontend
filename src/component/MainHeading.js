@@ -19,17 +19,17 @@ const MainHeading = () => {
     }, []);
 
     return (
-        <h1 className="Mainheading text">
-            <div className='mainp'>
-                <img src="/images/half_leaf.png" alt="" />
-                <p>{locale?.home?.find_your_perfect_place_to} </p>
+        <h1 className="Mainheading text" style={{ flexDirection: 'column', gap: '0px', alignItems: 'center', textAlign: 'center' }}>
+            <div className='mainp' style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px' }}>
+                <img src="/images/half_leaf.png" alt="" style={{ height: '80px' }} />
+                <p style={{ margin: 0 }}>{locale?.home?.find_your_perfect_place_to} </p>
             </div>
-            <span className='change_text'>
-                <span className="word visible wisteria">Adventures</span>
-                <span className="word belize">{locale?.home?.experiences}</span>
-                <span className="word pomegranate">{locale?.home?.hospitality}</span>
-                <span className="word pomegranate">Culture</span>
-            </span>
+            <div className='change_text' style={{ position: 'relative', width: '100%', height: '1.2em', marginTop: '0px' }}>
+                <span className="word visible wisteria">{locale?.home?.arriving_soon}</span>
+                <span className="word belize">{locale?.home?.already_residing}</span>
+                <span className="word pomegranate">{locale?.home?.a_newcomer}</span>
+                <span className="word pomegranate">{locale?.home?.a_current_resident}</span>
+            </div>
         </h1>
     );
 };
