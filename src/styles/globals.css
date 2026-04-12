@@ -2629,6 +2629,32 @@ button[disabled] {
   .step-hero__stat { min-width: 80px; padding: 10px 14px; }
   .step-hero__stat-number { font-size: 18px; }
   .step-card { padding: 14px 16px; }
+
+  /* Fix search modal on mobile */
+  #searchModal {
+    z-index: 99999 !important;
+  }
+  #searchModal .modal-dialog {
+    margin: 0;
+    height: 100vh;
+    max-width: 100vw;
+  }
+  #searchModal .modal-content {
+    height: 100vh;
+    border-radius: 0;
+    overflow-y: auto;
+  }
+  #searchModal .modal-body {
+    height: 100vh;
+    overflow-y: auto;
+    padding: 0;
+  }
+  #searchModal .accordion-item {
+    border: none;
+  }
+  #searchModal .accordion-button {
+    font-size: 16px;
+  }
 }
 /* loader */
 
