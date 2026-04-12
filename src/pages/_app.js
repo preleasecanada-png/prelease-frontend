@@ -100,7 +100,7 @@ function App({ Component, pageProps }) {
             </GoogleOAuthProvider>
           </ChatProvider>
         </ContextApiState>
-        <FloatingChatWidget />
+        {pathname !== '/properties' && <FloatingChatWidget />}
         {pathname !== '/properties' && <AIAssistantWidget />}
         {pathname !== '/properties' && <OnboardingGuide />}
         <Toaster position="bottom-center" />
