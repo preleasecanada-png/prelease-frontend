@@ -9,6 +9,7 @@ import ImageGallery from 'react-image-gallery';
 import 'react-image-gallery/styles/css/image-gallery.css';
 import ChatPopup from '../chats-popup';
 import DateRangePicker from '@/component/calender';
+import VirtualTour3D from '@/component/VirtualTour3D';
 import Rating from '@/component/rating';
 import toast from 'react-hot-toast';
 import Pusher from "pusher-js";
@@ -120,6 +121,7 @@ const PropertyDetail = memo(() => {
 
     const [showSlider, setShowSlider] = useState(false);
     const [startIndex, setStartIndex] = useState(0);
+    const [showTour, setShowTour] = useState(false);
     // chat popup state
     const [showChatModal, setShowChatModal] = useState(false);
     const [expanded, setExpanded] = useState(false);
@@ -290,6 +292,12 @@ const PropertyDetail = memo(() => {
                                     </div>
 
                                     <div className='share_btn_Area'>
+                                        {placeDetail?.tour_video && (
+                                            <button onClick={() => setShowTour(true)} style={{ background: '#D80621', color: '#fff', border: 'none', borderRadius: '8px', padding: '8px 16px', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }}>
+                                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m22 8-6 4 6 4V8Z"/><rect width="14" height="12" x="2" y="6" rx="2" ry="2"/></svg>
+                                                3D Virtual Tour
+                                            </button>
+                                        )}
                                         <button>
                                             <img src="/images/share.webp" alt="" />
                                             Share
@@ -329,6 +337,14 @@ const PropertyDetail = memo(() => {
                                     onSlide={() => window.dispatchEvent(new Event('resize'))}
                                 />
                             </div>
+                        )}
+
+                        {showTour && placeDetail?.tour_video && (
+                            <VirtualTour3D
+                                videoUrl={imageBaseUrl(placeDetail.tour_video)}
+                                propertyTitle={placeDetail?.title}
+                                onClose={() => setShowTour(false)}
+                            />
                         )}
 
                         <section className="">
@@ -672,28 +688,38 @@ const PropertyDetail = memo(() => {
                                             )}
 
                                             <div className="propertyBookActionSection">
-                                                <div className="rl9oqx-0 bPqYRi">
-                                                    <button type="submit" disabled={showReserverButton} className="sc-1i8u282-0 sc-gzVnrw evBpSJ" _css="border-radius:,0.375rem,;background-color:,function(e){return e.theme.colors.heartRed},;font-family:,function(e){return e.theme.colors.primary},;text-transform:uppercase;letter-spacing:,0.0875rem,;line-height:,0.8125rem,;min-height:,3.5rem,;font-weight:,function(e){return e.theme.fonts.semiBoldWeight},;width:100%;font-size:,0.875rem,;border-color:,function(e){return e.theme.colors.heartRed},;,function(e){return e.disabled&amp;&amp;&quot;\n    background-color: &quot;.concat(e.theme.colors.alto,&quot;;\n    border-color: &quot;).concat(e.theme.colors.alto,&quot;;\n    pointer-events: none;\n    color: &quot;).concat(e.theme.colors.primaryText,&quot;;\n  &quot;)},:hover{background-color:,function(e){return e.theme.colors.burntUmber},;border-color:,function(e){return e.theme.colors.burntUmber},;}">
-                                                        <span className="sc-1c7wpmw-0 joHSzY">Reserve Now</span>
-                                                    </button>
-                                                    {!showReserverButton && (
-                                                        <Link href={`/apply/${placeDetail?.id}`} style={{ display: 'block', marginTop: '12px', textAlign: 'center', padding: '14px', borderRadius: '6px', border: '2px solid #D80621', color: '#D80621', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.0875rem', fontSize: '0.875rem', textDecoration: 'none', transition: 'all 0.2s' }}>
-                                                            Apply to Rent
-                                                        </Link>
-                                                    )}
-                                                    {!showReserverButton && isLoggedIn && (
+                                                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                                                    <Link href={`/apply/${placeDetail?.id}`} style={{
+                                                        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px',
+                                                        width: '100%', padding: '16px', borderRadius: '12px',
+                                                        background: 'linear-gradient(135deg, #D80621, #b8051c)',
+                                                        color: '#fff', fontWeight: '700', fontSize: '15px',
+                                                        letterSpacing: '0.5px', textDecoration: 'none',
+                                                        boxShadow: '0 4px 14px rgba(216,6,33,0.35)',
+                                                        transition: 'all 0.25s ease',
+                                                    }}>
+                                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/>
+                                                        </svg>
+                                                        Apply to Rent
+                                                    </Link>
+
+                                                    {isLoggedIn && (
                                                         <button type="button" onClick={(e) => { e.preventDefault(); setShowChatModal(true); }}
-                                                            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', width: '100%', marginTop: '12px', padding: '14px', borderRadius: '6px', border: '2px solid #1e293b', background: '#fff', color: '#1e293b', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.0875rem', fontSize: '0.875rem', cursor: 'pointer', transition: 'all 0.2s' }}>
-                                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                                                            style={{
+                                                                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px',
+                                                                width: '100%', padding: '16px', borderRadius: '12px',
+                                                                background: '#fff', color: '#1e293b',
+                                                                border: '2px solid #e2e8f0', fontWeight: '700', fontSize: '15px',
+                                                                letterSpacing: '0.5px', cursor: 'pointer',
+                                                                transition: 'all 0.25s ease',
+                                                            }}>
+                                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                                                            </svg>
                                                             Message Host
                                                         </button>
                                                     )}
-
-                                                    {/* <button type="submit" className="sc-1i8u282-0 sc-gzVnrw evBpSJ" _css="border-radius:,0.375rem,;background-color:,function(e){return e.theme.colors.heartRed},;font-family:,function(e){return e.theme.colors.primary},;text-transform:uppercase;letter-spacing:,0.0875rem,;line-height:,0.8125rem,;min-height:,3.5rem,;font-weight:,function(e){return e.theme.fonts.semiBoldWeight},;width:100%;font-size:,0.875rem,;border-color:,function(e){return e.theme.colors.heartRed},;,function(e){return e.disabled&amp;&amp;&quot;\n    background-color: &quot;.concat(e.theme.colors.alto,&quot;;\n    border-color: &quot;).concat(e.theme.colors.alto,&quot;;\n    pointer-events: none;\n    color: &quot;).concat(e.theme.colors.primaryText,&quot;;\n  &quot;)},:hover{background-color:,function(e){return e.theme.colors.burntUmber},;border-color:,function(e){return e.theme.colors.burntUmber},;}">
-                                                        <Link href='#'>
-                                                            <span className="sc-1c7wpmw-0 joHSzY">Reserve Now</span>
-                                                        </Link>
-                                                    </button> */}
                                                 </div>
                                             </div>
                                         </form>

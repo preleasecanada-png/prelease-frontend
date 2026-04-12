@@ -1,91 +1,76 @@
 import React, { useState } from 'react'
 
 const Discount = ({
-    newListingPromotion, setNewListingPromotion,
-    newListingPromotionValue, setNewListingPromotionValue,
-    monthlyDiscount, setMonthlyDiscount,
-    monthlyDiscountValue, setMonthlyDiscountValue,
-    yearlyDiscount, setYearlyDiscount,
-    yearlyDiscountValue, setYearlyDiscountValue
+    discount1Month, setDiscount1Month,
+    discount1MonthValue, setDiscount1MonthValue,
+    discount3Month, setDiscount3Month,
+    discount3MonthValue, setDiscount3MonthValue,
+    discount6Month, setDiscount6Month,
+    discount6MonthValue, setDiscount6MonthValue
 }) => {
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
+    const discounts = [
+        {
+            label: '1 Month',
+            description: 'Discount for leases of 1 month',
+            active: discount1Month,
+            toggle: () => setDiscount1Month(!discount1Month),
+            value: discount1MonthValue,
+            setValue: setDiscount1MonthValue,
+        },
+        {
+            label: '3 Months',
+            description: 'Discount for leases of 3 months',
+            active: discount3Month,
+            toggle: () => setDiscount3Month(!discount3Month),
+            value: discount3MonthValue,
+            setValue: setDiscount3MonthValue,
+        },
+        {
+            label: '6 Months',
+            description: 'Discount for leases of 6 months',
+            active: discount6Month,
+            toggle: () => setDiscount6Month(!discount6Month),
+            value: discount6MonthValue,
+            setValue: setDiscount6MonthValue,
+        },
+    ];
+
     return (
         <>
             <div className='discount-main'>
                 <h1 className="discount-hea">Add discounts</h1>
-                <p className="ab-place-hea-para">Help your place stand out to get booked faster and earn your first reviews.</p>
+                <p className="ab-place-hea-para">Offer discounts based on lease duration to attract more tenants.</p>
                 <div className='discount-btns'>
-                    <div className={`discount-btn ${newListingPromotion ? 'active' : ''}`} onClick={() => setNewListingPromotion(!newListingPromotion)}>
-                        <div>
-                            <h5>New listing promotion</h5>
-                            <p>Offer a discount off your first 3 bookings</p>
+                    {discounts.map((d, i) => (
+                        <div key={i} className={`discount-btn ${d.active ? 'active' : ''}`} onClick={d.toggle}>
+                            <div>
+                                <h5>{d.label}</h5>
+                                <p>{d.description}</p>
+                            </div>
+                            <div className='discount-persant'>
+                                <input
+                                    type="number"
+                                    min={0}
+                                    max={100}
+                                    value={d.value}
+                                    onChange={(e) => {
+                                        const val = e.target.value;
+                                        if (val === '') { d.setValue(''); return; }
+                                        const num = Math.max(0, Math.min(100, parseInt(val) || 0));
+                                        d.setValue(num);
+                                    }}
+                                    onClick={(e) => e.stopPropagation()}
+                                    style={{ width: '50px', border: 'none', background: 'transparent', textAlign: 'right', fontWeight: 'bold' }}
+                                />%
+                            </div>
                         </div>
-                        <div className='discount-persant'>
-                            <input
-                                type="number"
-                                min={0}
-                                max={100}
-                                value={newListingPromotionValue}
-                                onChange={(e) => {
-                                    const val = e.target.value;
-                                    if (val === '') { setNewListingPromotionValue(''); return; }
-                                    const num = Math.max(0, Math.min(100, parseInt(val) || 0));
-                                    setNewListingPromotionValue(num);
-                                }}
-                                onClick={(e) => e.stopPropagation()}
-                                style={{ width: '50px', border: 'none', background: 'transparent', textAlign: 'right', fontWeight: 'bold' }}
-                            />%
-                        </div>
-                    </div>
-                    <div className={`discount-btn ${monthlyDiscount ? 'active' : ''}`} onClick={() => setMonthlyDiscount(!monthlyDiscount)}>
-                        <div>
-                            <h5>Monthly discount</h5>
-                            <p>For stays of 28 nights or more</p>
-                        </div>
-                        <div className='discount-persant'>
-                            <input
-                                type="number"
-                                min={0}
-                                max={100}
-                                value={monthlyDiscountValue}
-                                onChange={(e) => {
-                                    const val = e.target.value;
-                                    if (val === '') { setMonthlyDiscountValue(''); return; }
-                                    const num = Math.max(0, Math.min(100, parseInt(val) || 0));
-                                    setMonthlyDiscountValue(num);
-                                }}
-                                onClick={(e) => e.stopPropagation()}
-                                style={{ width: '50px', border: 'none', background: 'transparent', textAlign: 'right', fontWeight: 'bold' }}
-                            />%
-                        </div>
-                    </div>
-                    <div className={`discount-btn ${yearlyDiscount ? 'active' : ''}`} onClick={() => setYearlyDiscount(!yearlyDiscount)}>
-                        <div>
-                            <h5>Yearly discount</h5>
-                            <p>For stays of 365 nights or more</p>
-                        </div>
-                        <div className='discount-persant'>
-                            <input
-                                type="number"
-                                min={0}
-                                max={100}
-                                value={yearlyDiscountValue}
-                                onChange={(e) => {
-                                    const val = e.target.value;
-                                    if (val === '') { setYearlyDiscountValue(''); return; }
-                                    const num = Math.max(0, Math.min(100, parseInt(val) || 0));
-                                    setYearlyDiscountValue(num);
-                                }}
-                                onClick={(e) => e.stopPropagation()}
-                                style={{ width: '50px', border: 'none', background: 'transparent', textAlign: 'right', fontWeight: 'bold' }}
-                            />%
-                        </div>
-                    </div>
+                    ))}
                 </div>
-                <p className='discount-about-pricing'>Only one discount will be applied per stay. <span className='discount-learn-more' onClick={handleShow}>Learn more</span></p>
+                <p className='discount-about-pricing'>The highest applicable discount will be applied based on the lease duration. <span className='discount-learn-more' onClick={handleShow}>Learn more</span></p>
             </div>
 
             {show && (
@@ -108,8 +93,13 @@ const Discount = ({
                                 </div>
 
                                 <div className="modal-body more-about-pricing">
-                                    <p>You choose your discount, and you can change it at any time.</p>
-                                    <p>Suggested discounts are based on the average for listings with discounts in your area (or the global average if not enough listings with discounts are in your area). Weekly discounts are for stays of 7 nights or more. Monthly discounts are for stays of 28 nights or more.</p>
+                                    <p>You choose your discount for each lease duration, and you can change it at any time.</p>
+                                    <p>Discounts are applied based on the length of the lease:</p>
+                                    <ul>
+                                        <li><strong>1 month:</strong> A small discount to encourage short-term tenants.</li>
+                                        <li><strong>3 months:</strong> A moderate discount for medium-term leases.</li>
+                                        <li><strong>6 months:</strong> The best discount for long-term tenants.</li>
+                                    </ul>
                                     <p>Visit the Discounts section of our Help Center to learn more.</p>
                                 </div>
                             </div>

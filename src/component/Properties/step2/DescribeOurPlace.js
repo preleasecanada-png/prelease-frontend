@@ -18,6 +18,12 @@ const DescribeOurPlace = ({ amenities, setAllAmenties }) => {
     setAllAmenties(updated);
   };
 
+  const getAmenityImageUrl = (imagePath) => {
+    if (!imagePath) return '';
+    const svgPath = imagePath.replace(/\.(webp|png|jpg|jpeg)$/i, '.svg');
+    return imageBaseUrl(svgPath);
+  };
+
   const renderAmenities = (start, end) => {
     return (
       amenities?.slice(start, end).map((amenity, index) => {
@@ -29,11 +35,12 @@ const DescribeOurPlace = ({ amenities, setAllAmenties }) => {
             onClick={() => toggleAmenity(amenity)}
           >
             <img
-              src={imageBaseUrl(amenity?.image)}
+              src={getAmenityImageUrl(amenity?.image)}
               alt={amenity.name}
               className='guest-favorites-svg'
               height="25"
               width="25"
+              onError={(e) => { e.target.src = imageBaseUrl(amenity?.image); }}
             />
             <div className='guest-favorites-name'>{stringSplit(amenity.name)}</div>
           </div>

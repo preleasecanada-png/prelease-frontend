@@ -15,11 +15,12 @@ import Publish from '@/component/Properties/step3/Publish';
 import Reservation from '@/component/Properties/step3/Reservation';
 import Review from '@/component/Properties/step3/Review';
 import SetPrice from '@/component/Properties/step3/SetPrice';
+import PropertyAIGuide from '@/component/PropertyAIGuide';
 import { CreateApiContext } from '@/ContextApi/CreateApiContext';
 import { authFetch } from '@/Helper/helper';
 import Link from 'next/link'
 import { useRouter } from 'next/router';
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 
 const Property = () => {
   const { fetchAmenities, amenities, fetchCountries, countries } = useContext(CreateApiContext);
@@ -32,20 +33,22 @@ const Property = () => {
   const [privateBathroom, setPrivateBathroom] = useState(0);
   const [dedicatedBathroom, setDedicatedBathroom] = useState(0);
   const [sharedBathroom, setSharedBathroom] = useState(0);
+  const [petsAllowed, setPetsAllowed] = useState(false);
   const [mightThere, setMightThere] = useState('');
   const [AllAmenities, setAllAmenties] = useState([]);
   const [uploadedImages, setUploadedImages] = useState([]);
+  const [tourVideo, setTourVideo] = useState(null);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState(19);
   const [reservationType, setReservationType] = useState('approve');
   const [guestServiceFee, setGuestServiceFee] = useState(3);
-  const [newListingPromotion, setNewListingPromotion] = useState(true);
-  const [newListingPromotionValue, setNewListingPromotionValue] = useState(20);
-  const [monthlyDiscount, setMonthlyDiscount] = useState(true);
-  const [monthlyDiscountValue, setMonthlyDiscountValue] = useState(10);
-  const [yearlyDiscount, setYearlyDiscount] = useState(true);
-  const [yearlyDiscountValue, setYearlyDiscountValue] = useState(10);
+  const [discount1Month, setDiscount1Month] = useState(true);
+  const [discount1MonthValue, setDiscount1MonthValue] = useState(10);
+  const [discount3Month, setDiscount3Month] = useState(true);
+  const [discount3MonthValue, setDiscount3MonthValue] = useState(20);
+  const [discount6Month, setDiscount6Month] = useState(true);
+  const [discount6MonthValue, setDiscount6MonthValue] = useState(30);
 
   const [addressData, setAddressData] = useState({
     country: '',
@@ -58,6 +61,7 @@ const Property = () => {
   });
   const [showSpecificLocation, setShowSpecificLocation] = useState(false);
   const [validationErrors, setValidationErrors] = useState([]);
+  const errorsRef = useRef(null);
 
   const getStepValidation = (s) => {
     switch (s) {
@@ -66,10 +70,10 @@ const Property = () => {
         break;
       case 5: {
         const errs = [];
-        if (!addressData.country) errs.push('Country is required.');
+        if (!addressData.country) errs.push('Please select a city.');
         if (!addressData.address) errs.push('Address is required.');
         if (!addressData.street) errs.push('Street is required.');
-        if (!addressData.city) errs.push('City is required.');
+        if (!addressData.city) errs.push('City / town is required.');
         return errs;
       }
       case 6: {
@@ -114,14 +118,18 @@ const Property = () => {
     const errors = getStepValidation(step);
     if (errors.length > 0) {
       setValidationErrors(errors);
+      setTimeout(() => errorsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
       return;
     }
     setValidationErrors([]);
     setStep(step + 1);
   };
 
+  const [submitting, setSubmitting] = useState(false);
+
   const handleSubmit = async (e) => {
-    if (e.target.textContent == 'Exit') {
+    const btnText = e?.target?.textContent || '';
+    if (btnText === 'Exit') {
       route.push('/');
       return;
     }
@@ -129,7 +137,8 @@ const Property = () => {
     if (!title.trim()) allErrors.push('Title is required.');
     if (!description.trim()) allErrors.push('Description is required.');
     if (!DescribePlaceName) allErrors.push('Property type is required.');
-    if (!addressData.city) allErrors.push('City is required.');
+    if (!addressData.country) allErrors.push('Please select a city.');
+    if (!addressData.city) allErrors.push('City / town is required.');
     if (guests < 1) allErrors.push('At least 1 guest is required.');
     if (bedrooms < 1) allErrors.push('At least 1 bedroom is required.');
     if (bathrooms < 1) allErrors.push('At least 1 bathroom is required.');
@@ -138,9 +147,11 @@ const Property = () => {
     if (price < 1) allErrors.push('Price must be at least $1.');
     if (allErrors.length > 0) {
       setValidationErrors(allErrors);
+      setTimeout(() => errorsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
       return;
     }
     setValidationErrors([]);
+    setSubmitting(true);
     const formData = new FormData();
     let user_id = window.localStorage.getItem('user_id');
     formData.append('title', title);
@@ -153,16 +164,17 @@ const Property = () => {
     formData.append('bathroom_avaiable_dedicated', dedicatedBathroom);
     formData.append('bathroom_avaiable_shared', sharedBathroom);
     formData.append('who_else_there', mightThere);
+    formData.append('pets_allowed', petsAllowed ? 1 : 0);
     formData.append('set_your_price', price);
     formData.append('user_id', user_id);
     formData.append('reservation_type', reservationType);
     formData.append('guest_service_fee', guestServiceFee);
-    formData.append('new_listing_promotion', newListingPromotion ? 1 : 0);
-    formData.append('new_listing_promotion_value', newListingPromotionValue);
-    formData.append('monthly_discount', monthlyDiscount ? 1 : 0);
-    formData.append('monthly_discount_value', monthlyDiscountValue);
-    formData.append('yearly_discount', yearlyDiscount ? 1 : 0);
-    formData.append('yearly_discount_value', yearlyDiscountValue);
+    formData.append('discount_1_month', discount1Month ? 1 : 0);
+    formData.append('discount_1_month_value', discount1MonthValue);
+    formData.append('discount_3_month', discount3Month ? 1 : 0);
+    formData.append('discount_3_month_value', discount3MonthValue);
+    formData.append('discount_6_month', discount6Month ? 1 : 0);
+    formData.append('discount_6_month_value', discount6MonthValue);
 
     formData.append('country', addressData.country);
     formData.append('address', addressData.address);
@@ -177,6 +189,9 @@ const Property = () => {
     uploadedImages.forEach((imageObj, index) => {
       formData.append(`property_images[]`, imageObj.file);
     });
+    if (tourVideo?.file) {
+      formData.append('tour_video', tourVideo.file);
+    }
     try {
       const response = await authFetch(`/property/create`, {
         method: 'POST',
@@ -184,13 +199,20 @@ const Property = () => {
       });
       const data = await response.json();
       if (response.status == 200) {
+        alert('Property created successfully!');
         route.push('/');
       } else if (response.status == 422 && data?.errors) {
         const serverErrors = Object.values(data.errors).flat();
         setValidationErrors(serverErrors);
+        setTimeout(() => errorsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
+      } else {
+        setValidationErrors([data?.message || 'Something went wrong. Please try again.']);
       }
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Create listing error:', error);
+      setValidationErrors([`Network error: ${error.message}. Please check your connection and try again.`]);
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -217,23 +239,23 @@ const Property = () => {
           {step === 3 && <DescribePlace DescribePlaceName={DescribePlaceName} setDescribePlaceName={setDescribePlaceName} />}
           {step === 4 && <Address />}
           {step === 5 && <AddressForm addressData={addressData} setAddressData={setAddressData} showSpecificLocation={showSpecificLocation} setShowSpecificLocation={setShowSpecificLocation} countries={countries} />}
-          {step === 6 && <StayPeople guests={guests} setGuests={setGuests} bedrooms={bedrooms} setBedrooms={setBedrooms} bathrooms={bathrooms} setBathrooms={setBathrooms} />}
+          {step === 6 && <StayPeople guests={guests} setGuests={setGuests} bedrooms={bedrooms} setBedrooms={setBedrooms} bathrooms={bathrooms} setBathrooms={setBathrooms} petsAllowed={petsAllowed} setPetsAllowed={setPetsAllowed} />}
           {step === 7 && <BathroomGuest privateBathroom={privateBathroom} setPrivateBathroom={setPrivateBathroom} dedicatedBathroom={dedicatedBathroom} setDedicatedBathroom={setDedicatedBathroom} sharedBathroom={sharedBathroom} setSharedBathroom={setSharedBathroom} />}
           {step === 8 && <MightThere mightThere={mightThere} setMightThere={setMightThere} />}
           {step === 9 && <PlaceStandOut />}
           {step === 10 && <DescribeOurPlace amenities={amenities} setAllAmenties={setAllAmenties} />}
-          {step === 11 && <PhotoHouse uploadedImages={uploadedImages} setUploadedImages={setUploadedImages} />}
+          {step === 11 && <PhotoHouse uploadedImages={uploadedImages} setUploadedImages={setUploadedImages} tourVideo={tourVideo} setTourVideo={setTourVideo} />}
           {step === 12 && <HouseDetail title={title} setTitle={setTitle} description={description} setDescription={setDescription} />}
           {step === 13 && <Publish />}
           {step === 14 && <Reservation reservationType={reservationType} setReservationType={setReservationType} />}
           {step === 15 && <SetPrice setPrice={setPrice} price={price} guestServiceFee={guestServiceFee} />}
           {step === 16 && <Discount
-            newListingPromotion={newListingPromotion} setNewListingPromotion={setNewListingPromotion}
-            newListingPromotionValue={newListingPromotionValue} setNewListingPromotionValue={setNewListingPromotionValue}
-            monthlyDiscount={monthlyDiscount} setMonthlyDiscount={setMonthlyDiscount}
-            monthlyDiscountValue={monthlyDiscountValue} setMonthlyDiscountValue={setMonthlyDiscountValue}
-            yearlyDiscount={yearlyDiscount} setYearlyDiscount={setYearlyDiscount}
-            yearlyDiscountValue={yearlyDiscountValue} setYearlyDiscountValue={setYearlyDiscountValue}
+            discount1Month={discount1Month} setDiscount1Month={setDiscount1Month}
+            discount1MonthValue={discount1MonthValue} setDiscount1MonthValue={setDiscount1MonthValue}
+            discount3Month={discount3Month} setDiscount3Month={setDiscount3Month}
+            discount3MonthValue={discount3MonthValue} setDiscount3MonthValue={setDiscount3MonthValue}
+            discount6Month={discount6Month} setDiscount6Month={setDiscount6Month}
+            discount6MonthValue={discount6MonthValue} setDiscount6MonthValue={setDiscount6MonthValue}
           />}
           {step === 17 && <Review />}
         </div>
@@ -263,12 +285,14 @@ const Property = () => {
             <button
               className='get-started-btn'
               onClick={step >= 17 ? handleSubmit : handleNext}
+              disabled={submitting}
+              style={submitting ? { opacity: 0.6, cursor: 'not-allowed' } : {}}
             >
-              {getButtonText()}
+              {submitting ? 'Creating...' : getButtonText()}
             </button>
           </div>
           {validationErrors.length > 0 && (
-            <div className='property-validation-errors'>
+            <div className='property-validation-errors' ref={errorsRef}>
               {validationErrors.map((err, i) => (
                 <div key={i} className='property-validation-error'>
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#D80621" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
@@ -280,6 +304,7 @@ const Property = () => {
           {step != 1 ? <div onClick={() => { setValidationErrors([]); setStep(step - 1); }} className="propertity-back-btn">Back</div> : ''}
         </div>
       </div>
+      <PropertyAIGuide currentStep={step} />
     </>
   )
 };

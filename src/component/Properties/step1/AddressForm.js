@@ -38,7 +38,7 @@ const AddressForm = ({ addressData, setAddressData, showSpecificLocation, setSho
                     <div className="group">
                         <div className="field field-select">
                             <label className={`label ${addressData.country ? 'labelFloating' : ''}`}>
-                                Country / region
+                                City
                             </label>
                             <select
                                 className="input"
@@ -48,12 +48,59 @@ const AddressForm = ({ addressData, setAddressData, showSpecificLocation, setSho
                                 onFocus={() => handleFocus('country')}
                                 onBlur={() => handleBlur('country')}
                             >
-                                <option value=""></option>
-                                {countries && countries.map((c) => (
-                                    <option key={c.code} value={`${c.name} - ${c.code.toUpperCase()}`}>
-                                        {c.name} - {c.code.toUpperCase()}
-                                    </option>
-                                ))}
+                                <option value="">Select a city</option>
+                                <optgroup label="Alberta">
+                                    <option value="Calgary, AB">Calgary</option>
+                                    <option value="Edmonton, AB">Edmonton</option>
+                                    <option value="Red Deer, AB">Red Deer</option>
+                                    <option value="Lethbridge, AB">Lethbridge</option>
+                                </optgroup>
+                                <optgroup label="British Columbia">
+                                    <option value="Vancouver, BC">Vancouver</option>
+                                    <option value="Victoria, BC">Victoria</option>
+                                    <option value="Surrey, BC">Surrey</option>
+                                    <option value="Burnaby, BC">Burnaby</option>
+                                    <option value="Kelowna, BC">Kelowna</option>
+                                </optgroup>
+                                <optgroup label="Manitoba">
+                                    <option value="Winnipeg, MB">Winnipeg</option>
+                                    <option value="Brandon, MB">Brandon</option>
+                                </optgroup>
+                                <optgroup label="New Brunswick">
+                                    <option value="Moncton, NB">Moncton</option>
+                                    <option value="Saint John, NB">Saint John</option>
+                                    <option value="Fredericton, NB">Fredericton</option>
+                                </optgroup>
+                                <optgroup label="Newfoundland and Labrador">
+                                    <option value="St. John's, NL">St. John&apos;s</option>
+                                </optgroup>
+                                <optgroup label="Nova Scotia">
+                                    <option value="Halifax, NS">Halifax</option>
+                                </optgroup>
+                                <optgroup label="Ontario">
+                                    <option value="Toronto, ON">Toronto</option>
+                                    <option value="Ottawa, ON">Ottawa</option>
+                                    <option value="Mississauga, ON">Mississauga</option>
+                                    <option value="Brampton, ON">Brampton</option>
+                                    <option value="Hamilton, ON">Hamilton</option>
+                                    <option value="London, ON">London</option>
+                                    <option value="Kitchener, ON">Kitchener</option>
+                                    <option value="Windsor, ON">Windsor</option>
+                                </optgroup>
+                                <optgroup label="Quebec">
+                                    <option value="Montreal, QC">Montreal</option>
+                                    <option value="Quebec City, QC">Quebec City</option>
+                                    <option value="Laval, QC">Laval</option>
+                                    <option value="Gatineau, QC">Gatineau</option>
+                                    <option value="Sherbrooke, QC">Sherbrooke</option>
+                                </optgroup>
+                                <optgroup label="Saskatchewan">
+                                    <option value="Saskatoon, SK">Saskatoon</option>
+                                    <option value="Regina, SK">Regina</option>
+                                </optgroup>
+                                <optgroup label="Prince Edward Island">
+                                    <option value="Charlottetown, PE">Charlottetown</option>
+                                </optgroup>
                             </select>
                         </div>
                     </div>

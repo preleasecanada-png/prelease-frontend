@@ -151,7 +151,7 @@ const SortableImage = ({ id, img, index, onSetCover, onDelete, onEdit }) => {
     );
 };
 
-const PhotoHouse = ({ uploadedImages, setUploadedImages }) => {
+const PhotoHouse = ({ uploadedImages, setUploadedImages, tourVideo, setTourVideo }) => {
     const [show, setShow] = useState(false);
     const [modalImages, setModalImages] = useState([]);
     const [showEditModal, setShowEditModal] = useState(false);
@@ -314,6 +314,94 @@ const PhotoHouse = ({ uploadedImages, setUploadedImages }) => {
                     </div>
                 )}
             </div>
+
+            <div className='photo-house-main mb-4' style={{ marginTop: '30px' }}>
+                <h1>3D Virtual Tour</h1>
+                <p className="ab-place-hea-para">Upload a video walkthrough of your property. It will be converted into an interactive 3D tour for potential tenants.</p>
+
+                {tourVideo ? (
+                    <div style={{ position: 'relative', borderRadius: '16px', overflow: 'hidden', border: '2px solid #e0e0e0', maxWidth: '600px' }}>
+                        <video
+                            src={tourVideo.preview}
+                            controls
+                            style={{ width: '100%', maxHeight: '350px', objectFit: 'cover', display: 'block' }}
+                        />
+                        <div style={{ padding: '16px', background: '#f9f9f9', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <div>
+                                <p style={{ margin: 0, fontWeight: '600', fontSize: '14px' }}>{tourVideo.file.name}</p>
+                                <p style={{ margin: 0, fontSize: '12px', color: '#717171' }}>{(tourVideo.file.size / (1024 * 1024)).toFixed(1)} MB</p>
+                            </div>
+                            <div style={{ display: 'flex', gap: '10px' }}>
+                                <span style={{ background: '#FFF3CD', color: '#856404', padding: '4px 12px', borderRadius: '20px', fontSize: '12px', fontWeight: '600' }}>
+                                    Pending 3D conversion
+                                </span>
+                                <button
+                                    onClick={() => setTourVideo(null)}
+                                    style={{ background: '#D80621', color: '#fff', border: 'none', borderRadius: '8px', padding: '6px 16px', cursor: 'pointer', fontSize: '13px', fontWeight: '600' }}
+                                >
+                                    Remove
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                ) : (
+                    <div
+                        style={{
+                            border: '2px dashed #ccc',
+                            borderRadius: '16px',
+                            padding: '40px',
+                            textAlign: 'center',
+                            cursor: 'pointer',
+                            maxWidth: '600px',
+                            transition: 'border-color 0.2s',
+                        }}
+                        onDragOver={(e) => { e.preventDefault(); e.currentTarget.style.borderColor = '#D80621'; }}
+                        onDragLeave={(e) => { e.currentTarget.style.borderColor = '#ccc'; }}
+                        onDrop={(e) => {
+                            e.preventDefault();
+                            e.currentTarget.style.borderColor = '#ccc';
+                            const file = e.dataTransfer.files[0];
+                            if (file && file.type.startsWith('video/')) {
+                                setTourVideo({ file, preview: URL.createObjectURL(file) });
+                            }
+                        }}
+                        onClick={() => document.getElementById('tour-video-input').click()}
+                    >
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#D80621" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '12px' }}>
+                            <path d="m22 8-6 4 6 4V8Z"/><rect width="14" height="12" x="2" y="6" rx="2" ry="2"/>
+                        </svg>
+                        <h3 style={{ fontSize: '18px', fontWeight: '600', margin: '8px 0 4px' }}>Upload a video walkthrough</h3>
+                        <p style={{ fontSize: '14px', color: '#717171', margin: '0 0 16px' }}>
+                            Record a slow walkthrough of every room. MP4, MOV or WEBM — max 500 MB.
+                        </p>
+                        <button
+                            type="button"
+                            style={{ background: '#D80621', color: '#fff', border: 'none', borderRadius: '8px', padding: '10px 24px', fontWeight: '600', cursor: 'pointer' }}
+                        >
+                            Choose Video
+                        </button>
+                        <input
+                            id="tour-video-input"
+                            type="file"
+                            accept="video/mp4,video/quicktime,video/webm"
+                            style={{ display: 'none' }}
+                            onChange={(e) => {
+                                const file = e.target.files[0];
+                                if (file) {
+                                    setTourVideo({ file, preview: URL.createObjectURL(file) });
+                                }
+                            }}
+                        />
+                    </div>
+                )}
+
+                <div style={{ marginTop: '16px', background: '#f0f7ff', border: '1px solid #cce0ff', borderRadius: '12px', padding: '14px 18px', maxWidth: '600px' }}>
+                    <p style={{ margin: 0, fontSize: '13px', color: '#333' }}>
+                        <strong>How it works:</strong> After you upload the video, our platform will automatically generate an interactive 3D model of your property. Potential tenants will be able to explore your home virtually before applying.
+                    </p>
+                </div>
+            </div>
+
             {/* {show && (
                 <>
                     <div style={{

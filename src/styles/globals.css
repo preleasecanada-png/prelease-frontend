@@ -225,16 +225,19 @@ button[disabled] {
 .propertity-back-btn {
   font-size: 15px;
   font-weight: 600;
-  border-bottom: 1px solid #333;
-  display: inline;
+  display: inline-block;
   margin-left: 35px;
   cursor: pointer;
   transition: all 0.2s ease;
-  color: #333;
+  color: #fff;
+  background: #333;
+  padding: 8px 20px;
+  border-radius: 8px;
+  border: none;
 }
 .propertity-back-btn:hover {
-  color: #D80621;
-  border-color: #D80621;
+  color: #fff;
+  background: #D80621;
 }
 .property-validation-errors {
   margin: 12px 35px 0;
@@ -8838,7 +8841,7 @@ select.input {
 .onb-tip {
   position: fixed;
   bottom: 20px;
-  left: 20px;
+  right: 20px;
   max-width: 340px;
   background: #fff;
   border-radius: 12px;
