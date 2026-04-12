@@ -195,12 +195,17 @@ const AdminUsers = () => {
                       {user.created_at ? new Date(user.created_at).toLocaleDateString('fr-CA') : 'N/A'}
                     </td>
                     <td style={{ padding: '12px 16px', textAlign: 'center' }}>
-                      <button
-                        onClick={() => deleteUser(user.id, user.email)}
-                        style={{ padding: '6px 14px', borderRadius: '6px', border: '1px solid #DC2626', color: '#DC2626', backgroundColor: '#fff', cursor: 'pointer', fontSize: '12px', fontWeight: '600' }}
-                      >
-                        Delete
-                      </button>
+                      <div style={{ display: 'flex', gap: '6px', justifyContent: 'center' }}>
+                        <Link href={`/admin/users/${user.id}`} style={{ padding: '6px 14px', borderRadius: '6px', border: '1px solid #3b82f6', color: '#3b82f6', backgroundColor: '#fff', fontSize: '12px', fontWeight: '600', textDecoration: 'none' }}>
+                          Details
+                        </Link>
+                        <button
+                          onClick={() => deleteUser(user.id, user.email)}
+                          style={{ padding: '6px 14px', borderRadius: '6px', border: '1px solid #DC2626', color: '#DC2626', backgroundColor: '#fff', cursor: 'pointer', fontSize: '12px', fontWeight: '600' }}
+                        >
+                          Delete
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}

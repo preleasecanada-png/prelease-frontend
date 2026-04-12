@@ -64,13 +64,21 @@ const AdminDashboard = () => {
           <h1 style={{ fontSize: '28px', fontWeight: '700', margin: 0, color: '#1e293b' }}>Admin Dashboard</h1>
           <p style={{ color: '#64748b', margin: '4px 0 0', fontSize: '14px' }}>Platform overview and management</p>
         </div>
-        <div style={{ display: 'flex', gap: '10px' }}>
-          <Link href="/admin/users" style={{ backgroundColor: '#D80621', color: '#fff', padding: '10px 20px', borderRadius: '8px', fontWeight: '600', textDecoration: 'none', fontSize: '14px' }}>
-            Manage Users
-          </Link>
-          <Link href="/admin/properties" style={{ backgroundColor: '#1e293b', color: '#fff', padding: '10px 20px', borderRadius: '8px', fontWeight: '600', textDecoration: 'none', fontSize: '14px' }}>
-            Manage Properties
-          </Link>
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+          {[
+            { href: '/admin/users', label: 'Users', bg: '#D80621' },
+            { href: '/admin/properties', label: 'Properties', bg: '#1e293b' },
+            { href: '/admin/applications', label: 'Applications', bg: '#8b5cf6' },
+            { href: '/admin/payments', label: 'Payments', bg: '#059669' },
+            { href: '/admin/leases', label: 'Leases', bg: '#3b82f6' },
+            { href: '/admin/support', label: 'Support', bg: '#f59e0b' },
+            { href: '/admin/verifications', label: 'Verifications', bg: '#06b6d4' },
+            { href: '/admin/maintenance', label: 'Maintenance', bg: '#DC2626' },
+          ].map(item => (
+            <Link key={item.href} href={item.href} style={{ backgroundColor: item.bg, color: '#fff', padding: '8px 16px', borderRadius: '8px', fontWeight: '600', textDecoration: 'none', fontSize: '13px' }}>
+              {item.label}
+            </Link>
+          ))}
         </div>
       </div>
 
