@@ -1,4 +1,4 @@
-import Link from 'next/link';
+﻿import Link from 'next/link';
 import React, { useContext, useEffect, useState } from 'react';
 import { useRouter } from "next/router";
 import { CreateApiContext } from '../ContextApi/CreateApiContext';
@@ -55,7 +55,7 @@ const Footer = () => {
                                         </Link>
                                     </li>
                                     <li>
-                                        <Link href="#!" className="l1ovpqvx atm_1he2i46_1k8pnbi_10saat9 atm_yxpdqi_1pv6nv4_10saat9 atm_1a0hdzc_w1h1e8_10saat9 atm_2bu6ew_929bqk_10saat9 atm_12oyo1u_73u7pn_10saat9 atm_fiaz40_1etamxe_10saat9 c1kblhex atm_1s_glywfm atm_26_1j28jx2 atm_3f_idpfg4 atm_9j_tlke0l atm_gi_idpfg4 atm_l8_idpfg4 atm_vb_1wugsn5 atm_rd_glywfm atm_c8_km0zk7 atm_g3_18khvle atm_fr_1m9t47k atm_7l_dezgoh atm_cs_6adqpa atm_kd_glywfm atm_9j_13gfvf7_1o5j5ji atm_rd_glywfm_1mj13j2_uv4tnr atm_rd_8stvzk_1nos8r atm_3f_glywfm_jo46a5 atm_l8_idpfg4_jo46a5 atm_gi_idpfg4_jo46a5 atm_3f_glywfm_1icshfk atm_kd_glywfm_19774hq atm_7l_1ulhtn1_pfnrn2 atm_rd_8stvzk_pfnrn2 atm_uc_ryfd4z_pfnrn2 atm_5j_yh40bf_pfnrn2 atm_70_pd3o52_pfnrn2 atm_uc_glywfm_pfnrn2_1rrf6b5 dir dir-ltr">
+                                        <Link href="/insurance" className="l1ovpqvx atm_1he2i46_1k8pnbi_10saat9 atm_yxpdqi_1pv6nv4_10saat9 atm_1a0hdzc_w1h1e8_10saat9 atm_2bu6ew_929bqk_10saat9 atm_12oyo1u_73u7pn_10saat9 atm_fiaz40_1etamxe_10saat9 c1kblhex atm_1s_glywfm atm_26_1j28jx2 atm_3f_idpfg4 atm_9j_tlke0l atm_gi_idpfg4 atm_l8_idpfg4 atm_vb_1wugsn5 atm_rd_glywfm atm_c8_km0zk7 atm_g3_18khvle atm_fr_1m9t47k atm_7l_dezgoh atm_cs_6adqpa atm_kd_glywfm atm_9j_13gfvf7_1o5j5ji atm_rd_glywfm_1mj13j2_uv4tnr atm_rd_8stvzk_1nos8r atm_3f_glywfm_jo46a5 atm_l8_idpfg4_jo46a5 atm_gi_idpfg4_jo46a5 atm_3f_glywfm_1icshfk atm_kd_glywfm_19774hq atm_7l_1ulhtn1_pfnrn2 atm_rd_8stvzk_pfnrn2 atm_uc_ryfd4z_pfnrn2 atm_5j_yh40bf_pfnrn2 atm_70_pd3o52_pfnrn2 atm_uc_glywfm_pfnrn2_1rrf6b5 dir dir-ltr">
                                             {locale?.footer?.precover}
                                         </Link>
                                     </li>
@@ -65,12 +65,12 @@ const Footer = () => {
                                         </Link>
                                     </li>
                                     <li>
-                                        <Link href="#!" className="l1ovpqvx atm_1he2i46_1k8pnbi_10saat9 atm_yxpdqi_1pv6nv4_10saat9 atm_1a0hdzc_w1h1e8_10saat9 atm_2bu6ew_929bqk_10saat9 atm_12oyo1u_73u7pn_10saat9 atm_fiaz40_1etamxe_10saat9 c1kblhex atm_1s_glywfm atm_26_1j28jx2 atm_3f_idpfg4 atm_9j_tlke0l atm_gi_idpfg4 atm_l8_idpfg4 atm_vb_1wugsn5 atm_rd_glywfm atm_c8_km0zk7 atm_g3_18khvle atm_fr_1m9t47k atm_7l_dezgoh atm_cs_6adqpa atm_kd_glywfm atm_9j_13gfvf7_1o5j5ji atm_rd_glywfm_1mj13j2_uv4tnr atm_rd_8stvzk_1nos8r atm_3f_glywfm_jo46a5 atm_l8_idpfg4_jo46a5 atm_gi_idpfg4_jo46a5 atm_3f_glywfm_1icshfk atm_kd_glywfm_19774hq atm_7l_1ulhtn1_pfnrn2 atm_rd_8stvzk_pfnrn2 atm_uc_ryfd4z_pfnrn2 atm_5j_yh40bf_pfnrn2 atm_70_pd3o52_pfnrn2 atm_uc_glywfm_pfnrn2_1rrf6b5 dir dir-ltr">
+                                        <Link href="/help-center" className="l1ovpqvx atm_1he2i46_1k8pnbi_10saat9 atm_yxpdqi_1pv6nv4_10saat9 atm_1a0hdzc_w1h1e8_10saat9 atm_2bu6ew_929bqk_10saat9 atm_12oyo1u_73u7pn_10saat9 atm_fiaz40_1etamxe_10saat9 c1kblhex atm_1s_glywfm atm_26_1j28jx2 atm_3f_idpfg4 atm_9j_tlke0l atm_gi_idpfg4 atm_l8_idpfg4 atm_vb_1wugsn5 atm_rd_glywfm atm_c8_km0zk7 atm_g3_18khvle atm_fr_1m9t47k atm_7l_dezgoh atm_cs_6adqpa atm_kd_glywfm atm_9j_13gfvf7_1o5j5ji atm_rd_glywfm_1mj13j2_uv4tnr atm_rd_8stvzk_1nos8r atm_3f_glywfm_jo46a5 atm_l8_idpfg4_jo46a5 atm_gi_idpfg4_jo46a5 atm_3f_glywfm_1icshfk atm_kd_glywfm_19774hq atm_7l_1ulhtn1_pfnrn2 atm_rd_8stvzk_pfnrn2 atm_uc_ryfd4z_pfnrn2 atm_5j_yh40bf_pfnrn2 atm_70_pd3o52_pfnrn2 atm_uc_glywfm_pfnrn2_1rrf6b5 dir dir-ltr">
                                             {locale?.footer?.disabled_support}
                                         </Link>
                                     </li>
                                     <li>
-                                        <Link href="#!" className="l1ovpqvx atm_1he2i46_1k8pnbi_10saat9 atm_yxpdqi_1pv6nv4_10saat9 atm_1a0hdzc_w1h1e8_10saat9 atm_2bu6ew_929bqk_10saat9 atm_12oyo1u_73u7pn_10saat9 atm_fiaz40_1etamxe_10saat9 c1kblhex atm_1s_glywfm atm_26_1j28jx2 atm_3f_idpfg4 atm_9j_tlke0l atm_gi_idpfg4 atm_l8_idpfg4 atm_vb_1wugsn5 atm_rd_glywfm atm_c8_km0zk7 atm_g3_18khvle atm_fr_1m9t47k atm_7l_dezgoh atm_cs_6adqpa atm_kd_glywfm atm_9j_13gfvf7_1o5j5ji atm_rd_glywfm_1mj13j2_uv4tnr atm_rd_8stvzk_1nos8r atm_3f_glywfm_jo46a5 atm_l8_idpfg4_jo46a5 atm_gi_idpfg4_jo46a5 atm_3f_glywfm_1icshfk atm_kd_glywfm_19774hq atm_7l_1ulhtn1_pfnrn2 atm_rd_8stvzk_pfnrn2 atm_uc_ryfd4z_pfnrn2 atm_5j_yh40bf_pfnrn2 atm_70_pd3o52_pfnrn2 atm_uc_glywfm_pfnrn2_1rrf6b5 dir dir-ltr">
+                                        <Link href="/help-center" className="l1ovpqvx atm_1he2i46_1k8pnbi_10saat9 atm_yxpdqi_1pv6nv4_10saat9 atm_1a0hdzc_w1h1e8_10saat9 atm_2bu6ew_929bqk_10saat9 atm_12oyo1u_73u7pn_10saat9 atm_fiaz40_1etamxe_10saat9 c1kblhex atm_1s_glywfm atm_26_1j28jx2 atm_3f_idpfg4 atm_9j_tlke0l atm_gi_idpfg4 atm_l8_idpfg4 atm_vb_1wugsn5 atm_rd_glywfm atm_c8_km0zk7 atm_g3_18khvle atm_fr_1m9t47k atm_7l_dezgoh atm_cs_6adqpa atm_kd_glywfm atm_9j_13gfvf7_1o5j5ji atm_rd_glywfm_1mj13j2_uv4tnr atm_rd_8stvzk_1nos8r atm_3f_glywfm_jo46a5 atm_l8_idpfg4_jo46a5 atm_gi_idpfg4_jo46a5 atm_3f_glywfm_1icshfk atm_kd_glywfm_19774hq atm_7l_1ulhtn1_pfnrn2 atm_rd_8stvzk_pfnrn2 atm_uc_ryfd4z_pfnrn2 atm_5j_yh40bf_pfnrn2 atm_70_pd3o52_pfnrn2 atm_uc_glywfm_pfnrn2_1rrf6b5 dir dir-ltr">
                                             {locale?.footer?.cancellation_options}
                                         </Link>
                                     </li>
@@ -93,32 +93,32 @@ const Footer = () => {
                                         </Link>
                                     </li>
                                     <li>
-                                        <Link href="#!" className="l1ovpqvx atm_1he2i46_1k8pnbi_10saat9 atm_yxpdqi_1pv6nv4_10saat9 atm_1a0hdzc_w1h1e8_10saat9 atm_2bu6ew_929bqk_10saat9 atm_12oyo1u_73u7pn_10saat9 atm_fiaz40_1etamxe_10saat9 c1kblhex atm_1s_glywfm atm_26_1j28jx2 atm_3f_idpfg4 atm_9j_tlke0l atm_gi_idpfg4 atm_l8_idpfg4 atm_vb_1wugsn5 atm_rd_glywfm atm_c8_km0zk7 atm_g3_18khvle atm_fr_1m9t47k atm_7l_dezgoh atm_cs_6adqpa atm_kd_glywfm atm_9j_13gfvf7_1o5j5ji atm_rd_glywfm_1mj13j2_uv4tnr atm_rd_8stvzk_1nos8r atm_3f_glywfm_jo46a5 atm_l8_idpfg4_jo46a5 atm_gi_idpfg4_jo46a5 atm_3f_glywfm_1icshfk atm_kd_glywfm_19774hq atm_7l_1ulhtn1_pfnrn2 atm_rd_8stvzk_pfnrn2 atm_uc_ryfd4z_pfnrn2 atm_5j_yh40bf_pfnrn2 atm_70_pd3o52_pfnrn2 atm_uc_glywfm_pfnrn2_1rrf6b5 dir dir-ltr">
+                                        <Link href="/insurance" className="l1ovpqvx atm_1he2i46_1k8pnbi_10saat9 atm_yxpdqi_1pv6nv4_10saat9 atm_1a0hdzc_w1h1e8_10saat9 atm_2bu6ew_929bqk_10saat9 atm_12oyo1u_73u7pn_10saat9 atm_fiaz40_1etamxe_10saat9 c1kblhex atm_1s_glywfm atm_26_1j28jx2 atm_3f_idpfg4 atm_9j_tlke0l atm_gi_idpfg4 atm_l8_idpfg4 atm_vb_1wugsn5 atm_rd_glywfm atm_c8_km0zk7 atm_g3_18khvle atm_fr_1m9t47k atm_7l_dezgoh atm_cs_6adqpa atm_kd_glywfm atm_9j_13gfvf7_1o5j5ji atm_rd_glywfm_1mj13j2_uv4tnr atm_rd_8stvzk_1nos8r atm_3f_glywfm_jo46a5 atm_l8_idpfg4_jo46a5 atm_gi_idpfg4_jo46a5 atm_3f_glywfm_1icshfk atm_kd_glywfm_19774hq atm_7l_1ulhtn1_pfnrn2 atm_rd_8stvzk_pfnrn2 atm_uc_ryfd4z_pfnrn2 atm_5j_yh40bf_pfnrn2 atm_70_pd3o52_pfnrn2 atm_uc_glywfm_pfnrn2_1rrf6b5 dir dir-ltr">
                                             {locale?.footer?.pre_cover_for_hosts}
                                         </Link>
                                     </li>
                                     <li>
-                                        <Link href="#!" className="l1ovpqvx atm_1he2i46_1k8pnbi_10saat9 atm_yxpdqi_1pv6nv4_10saat9 atm_1a0hdzc_w1h1e8_10saat9 atm_2bu6ew_929bqk_10saat9 atm_12oyo1u_73u7pn_10saat9 atm_fiaz40_1etamxe_10saat9 c1kblhex atm_1s_glywfm atm_26_1j28jx2 atm_3f_idpfg4 atm_9j_tlke0l atm_gi_idpfg4 atm_l8_idpfg4 atm_vb_1wugsn5 atm_rd_glywfm atm_c8_km0zk7 atm_g3_18khvle atm_fr_1m9t47k atm_7l_dezgoh atm_cs_6adqpa atm_kd_glywfm atm_9j_13gfvf7_1o5j5ji atm_rd_glywfm_1mj13j2_uv4tnr atm_rd_8stvzk_1nos8r atm_3f_glywfm_jo46a5 atm_l8_idpfg4_jo46a5 atm_gi_idpfg4_jo46a5 atm_3f_glywfm_1icshfk atm_kd_glywfm_19774hq atm_7l_1ulhtn1_pfnrn2 atm_rd_8stvzk_pfnrn2 atm_uc_ryfd4z_pfnrn2 atm_5j_yh40bf_pfnrn2 atm_70_pd3o52_pfnrn2 atm_uc_glywfm_pfnrn2_1rrf6b5 dir dir-ltr">
+                                        <Link href="/help-center" className="l1ovpqvx atm_1he2i46_1k8pnbi_10saat9 atm_yxpdqi_1pv6nv4_10saat9 atm_1a0hdzc_w1h1e8_10saat9 atm_2bu6ew_929bqk_10saat9 atm_12oyo1u_73u7pn_10saat9 atm_fiaz40_1etamxe_10saat9 c1kblhex atm_1s_glywfm atm_26_1j28jx2 atm_3f_idpfg4 atm_9j_tlke0l atm_gi_idpfg4 atm_l8_idpfg4 atm_vb_1wugsn5 atm_rd_glywfm atm_c8_km0zk7 atm_g3_18khvle atm_fr_1m9t47k atm_7l_dezgoh atm_cs_6adqpa atm_kd_glywfm atm_9j_13gfvf7_1o5j5ji atm_rd_glywfm_1mj13j2_uv4tnr atm_rd_8stvzk_1nos8r atm_3f_glywfm_jo46a5 atm_l8_idpfg4_jo46a5 atm_gi_idpfg4_jo46a5 atm_3f_glywfm_1icshfk atm_kd_glywfm_19774hq atm_7l_1ulhtn1_pfnrn2 atm_rd_8stvzk_pfnrn2 atm_uc_ryfd4z_pfnrn2 atm_5j_yh40bf_pfnrn2 atm_70_pd3o52_pfnrn2 atm_uc_glywfm_pfnrn2_1rrf6b5 dir dir-ltr">
                                             {locale?.footer?.hosting_resources}
                                         </Link>
                                     </li>
                                     <li>
-                                        <Link href="#!" className="l1ovpqvx atm_1he2i46_1k8pnbi_10saat9 atm_yxpdqi_1pv6nv4_10saat9 atm_1a0hdzc_w1h1e8_10saat9 atm_2bu6ew_929bqk_10saat9 atm_12oyo1u_73u7pn_10saat9 atm_fiaz40_1etamxe_10saat9 c1kblhex atm_1s_glywfm atm_26_1j28jx2 atm_3f_idpfg4 atm_9j_tlke0l atm_gi_idpfg4 atm_l8_idpfg4 atm_vb_1wugsn5 atm_rd_glywfm atm_c8_km0zk7 atm_g3_18khvle atm_fr_1m9t47k atm_7l_dezgoh atm_cs_6adqpa atm_kd_glywfm atm_9j_13gfvf7_1o5j5ji atm_rd_glywfm_1mj13j2_uv4tnr atm_rd_8stvzk_1nos8r atm_3f_glywfm_jo46a5 atm_l8_idpfg4_jo46a5 atm_gi_idpfg4_jo46a5 atm_3f_glywfm_1icshfk atm_kd_glywfm_19774hq atm_7l_1ulhtn1_pfnrn2 atm_rd_8stvzk_pfnrn2 atm_uc_ryfd4z_pfnrn2 atm_5j_yh40bf_pfnrn2 atm_70_pd3o52_pfnrn2 atm_uc_glywfm_pfnrn2_1rrf6b5 dir dir-ltr">
+                                        <Link href="/support" className="l1ovpqvx atm_1he2i46_1k8pnbi_10saat9 atm_yxpdqi_1pv6nv4_10saat9 atm_1a0hdzc_w1h1e8_10saat9 atm_2bu6ew_929bqk_10saat9 atm_12oyo1u_73u7pn_10saat9 atm_fiaz40_1etamxe_10saat9 c1kblhex atm_1s_glywfm atm_26_1j28jx2 atm_3f_idpfg4 atm_9j_tlke0l atm_gi_idpfg4 atm_l8_idpfg4 atm_vb_1wugsn5 atm_rd_glywfm atm_c8_km0zk7 atm_g3_18khvle atm_fr_1m9t47k atm_7l_dezgoh atm_cs_6adqpa atm_kd_glywfm atm_9j_13gfvf7_1o5j5ji atm_rd_glywfm_1mj13j2_uv4tnr atm_rd_8stvzk_1nos8r atm_3f_glywfm_jo46a5 atm_l8_idpfg4_jo46a5 atm_gi_idpfg4_jo46a5 atm_3f_glywfm_1icshfk atm_kd_glywfm_19774hq atm_7l_1ulhtn1_pfnrn2 atm_rd_8stvzk_pfnrn2 atm_uc_ryfd4z_pfnrn2 atm_5j_yh40bf_pfnrn2 atm_70_pd3o52_pfnrn2 atm_uc_glywfm_pfnrn2_1rrf6b5 dir dir-ltr">
                                             {locale?.footer?.community_forum}
                                         </Link>
                                     </li>
                                     <li>
-                                        <Link href="#!" className="l1ovpqvx atm_1he2i46_1k8pnbi_10saat9 atm_yxpdqi_1pv6nv4_10saat9 atm_1a0hdzc_w1h1e8_10saat9 atm_2bu6ew_929bqk_10saat9 atm_12oyo1u_73u7pn_10saat9 atm_fiaz40_1etamxe_10saat9 c1kblhex atm_1s_glywfm atm_26_1j28jx2 atm_3f_idpfg4 atm_9j_tlke0l atm_gi_idpfg4 atm_l8_idpfg4 atm_vb_1wugsn5 atm_rd_glywfm atm_c8_km0zk7 atm_g3_18khvle atm_fr_1m9t47k atm_7l_dezgoh atm_cs_6adqpa atm_kd_glywfm atm_9j_13gfvf7_1o5j5ji atm_rd_glywfm_1mj13j2_uv4tnr atm_rd_8stvzk_1nos8r atm_3f_glywfm_jo46a5 atm_l8_idpfg4_jo46a5 atm_gi_idpfg4_jo46a5 atm_3f_glywfm_1icshfk atm_kd_glywfm_19774hq atm_7l_1ulhtn1_pfnrn2 atm_rd_8stvzk_pfnrn2 atm_uc_ryfd4z_pfnrn2 atm_5j_yh40bf_pfnrn2 atm_70_pd3o52_pfnrn2 atm_uc_glywfm_pfnrn2_1rrf6b5 dir dir-ltr">
+                                        <Link href="/help-center" className="l1ovpqvx atm_1he2i46_1k8pnbi_10saat9 atm_yxpdqi_1pv6nv4_10saat9 atm_1a0hdzc_w1h1e8_10saat9 atm_2bu6ew_929bqk_10saat9 atm_12oyo1u_73u7pn_10saat9 atm_fiaz40_1etamxe_10saat9 c1kblhex atm_1s_glywfm atm_26_1j28jx2 atm_3f_idpfg4 atm_9j_tlke0l atm_gi_idpfg4 atm_l8_idpfg4 atm_vb_1wugsn5 atm_rd_glywfm atm_c8_km0zk7 atm_g3_18khvle atm_fr_1m9t47k atm_7l_dezgoh atm_cs_6adqpa atm_kd_glywfm atm_9j_13gfvf7_1o5j5ji atm_rd_glywfm_1mj13j2_uv4tnr atm_rd_8stvzk_1nos8r atm_3f_glywfm_jo46a5 atm_l8_idpfg4_jo46a5 atm_gi_idpfg4_jo46a5 atm_3f_glywfm_1icshfk atm_kd_glywfm_19774hq atm_7l_1ulhtn1_pfnrn2 atm_rd_8stvzk_pfnrn2 atm_uc_ryfd4z_pfnrn2 atm_5j_yh40bf_pfnrn2 atm_70_pd3o52_pfnrn2 atm_uc_glywfm_pfnrn2_1rrf6b5 dir dir-ltr">
                                             {locale?.footer?.hosting_responsibly}
                                         </Link>
                                     </li>
                                     <li>
-                                        <Link href="#!" className="l1ovpqvx atm_1he2i46_1k8pnbi_10saat9 atm_yxpdqi_1pv6nv4_10saat9 atm_1a0hdzc_w1h1e8_10saat9 atm_2bu6ew_929bqk_10saat9 atm_12oyo1u_73u7pn_10saat9 atm_fiaz40_1etamxe_10saat9 c1kblhex atm_1s_glywfm atm_26_1j28jx2 atm_3f_idpfg4 atm_9j_tlke0l atm_gi_idpfg4 atm_l8_idpfg4 atm_vb_1wugsn5 atm_rd_glywfm atm_c8_km0zk7 atm_g3_18khvle atm_fr_1m9t47k atm_7l_dezgoh atm_cs_6adqpa atm_kd_glywfm atm_9j_13gfvf7_1o5j5ji atm_rd_glywfm_1mj13j2_uv4tnr atm_rd_8stvzk_1nos8r atm_3f_glywfm_jo46a5 atm_l8_idpfg4_jo46a5 atm_gi_idpfg4_jo46a5 atm_3f_glywfm_1icshfk atm_kd_glywfm_19774hq atm_7l_1ulhtn1_pfnrn2 atm_rd_8stvzk_pfnrn2 atm_uc_ryfd4z_pfnrn2 atm_5j_yh40bf_pfnrn2 atm_70_pd3o52_pfnrn2 atm_uc_glywfm_pfnrn2_1rrf6b5 dir dir-ltr">
+                                        <Link href="/properties" className="l1ovpqvx atm_1he2i46_1k8pnbi_10saat9 atm_yxpdqi_1pv6nv4_10saat9 atm_1a0hdzc_w1h1e8_10saat9 atm_2bu6ew_929bqk_10saat9 atm_12oyo1u_73u7pn_10saat9 atm_fiaz40_1etamxe_10saat9 c1kblhex atm_1s_glywfm atm_26_1j28jx2 atm_3f_idpfg4 atm_9j_tlke0l atm_gi_idpfg4 atm_l8_idpfg4 atm_vb_1wugsn5 atm_rd_glywfm atm_c8_km0zk7 atm_g3_18khvle atm_fr_1m9t47k atm_7l_dezgoh atm_cs_6adqpa atm_kd_glywfm atm_9j_13gfvf7_1o5j5ji atm_rd_glywfm_1mj13j2_uv4tnr atm_rd_8stvzk_1nos8r atm_3f_glywfm_jo46a5 atm_l8_idpfg4_jo46a5 atm_gi_idpfg4_jo46a5 atm_3f_glywfm_1icshfk atm_kd_glywfm_19774hq atm_7l_1ulhtn1_pfnrn2 atm_rd_8stvzk_pfnrn2 atm_uc_ryfd4z_pfnrn2 atm_5j_yh40bf_pfnrn2 atm_70_pd3o52_pfnrn2 atm_uc_glywfm_pfnrn2_1rrf6b5 dir dir-ltr">
                                             {locale?.footer?.prelease_friendly_apartments}
                                         </Link>
                                     </li>
                                     <li>
-                                        <Link href="#!" className="l1ovpqvx atm_1he2i46_1k8pnbi_10saat9 atm_yxpdqi_1pv6nv4_10saat9 atm_1a0hdzc_w1h1e8_10saat9 atm_2bu6ew_929bqk_10saat9 atm_12oyo1u_73u7pn_10saat9 atm_fiaz40_1etamxe_10saat9 c1kblhex atm_1s_glywfm atm_26_1j28jx2 atm_3f_idpfg4 atm_9j_tlke0l atm_gi_idpfg4 atm_l8_idpfg4 atm_vb_1wugsn5 atm_rd_glywfm atm_c8_km0zk7 atm_g3_18khvle atm_fr_1m9t47k atm_7l_dezgoh atm_cs_6adqpa atm_kd_glywfm atm_9j_13gfvf7_1o5j5ji atm_rd_glywfm_1mj13j2_uv4tnr atm_rd_8stvzk_1nos8r atm_3f_glywfm_jo46a5 atm_l8_idpfg4_jo46a5 atm_gi_idpfg4_jo46a5 atm_3f_glywfm_1icshfk atm_kd_glywfm_19774hq atm_7l_1ulhtn1_pfnrn2 atm_rd_8stvzk_pfnrn2 atm_uc_ryfd4z_pfnrn2 atm_5j_yh40bf_pfnrn2 atm_70_pd3o52_pfnrn2 atm_uc_glywfm_pfnrn2_1rrf6b5 dir dir-ltr">
+                                        <Link href="/help-center" className="l1ovpqvx atm_1he2i46_1k8pnbi_10saat9 atm_yxpdqi_1pv6nv4_10saat9 atm_1a0hdzc_w1h1e8_10saat9 atm_2bu6ew_929bqk_10saat9 atm_12oyo1u_73u7pn_10saat9 atm_fiaz40_1etamxe_10saat9 c1kblhex atm_1s_glywfm atm_26_1j28jx2 atm_3f_idpfg4 atm_9j_tlke0l atm_gi_idpfg4 atm_l8_idpfg4 atm_vb_1wugsn5 atm_rd_glywfm atm_c8_km0zk7 atm_g3_18khvle atm_fr_1m9t47k atm_7l_dezgoh atm_cs_6adqpa atm_kd_glywfm atm_9j_13gfvf7_1o5j5ji atm_rd_glywfm_1mj13j2_uv4tnr atm_rd_8stvzk_1nos8r atm_3f_glywfm_jo46a5 atm_l8_idpfg4_jo46a5 atm_gi_idpfg4_jo46a5 atm_3f_glywfm_1icshfk atm_kd_glywfm_19774hq atm_7l_1ulhtn1_pfnrn2 atm_rd_8stvzk_pfnrn2 atm_uc_ryfd4z_pfnrn2 atm_5j_yh40bf_pfnrn2 atm_70_pd3o52_pfnrn2 atm_uc_glywfm_pfnrn2_1rrf6b5 dir dir-ltr">
                                             {locale?.footer?.join_free_hosting_class}
                                         </Link>
                                     </li>
@@ -131,17 +131,17 @@ const Footer = () => {
                                 </h3>
                                 <ul className="l1qzr284 atm_gi_idpfg4 atm_l8_idpfg4 atm_gb_glywfm atm_9s_11p5wf0 atm_cx_1gibeiw dir dir-ltr">
                                     <li>
-                                        <Link href="#!" className="l1ovpqvx atm_1he2i46_1k8pnbi_10saat9 atm_yxpdqi_1pv6nv4_10saat9 atm_1a0hdzc_w1h1e8_10saat9 atm_2bu6ew_929bqk_10saat9 atm_12oyo1u_73u7pn_10saat9 atm_fiaz40_1etamxe_10saat9 c1kblhex atm_1s_glywfm atm_26_1j28jx2 atm_3f_idpfg4 atm_9j_tlke0l atm_gi_idpfg4 atm_l8_idpfg4 atm_vb_1wugsn5 atm_rd_glywfm atm_c8_km0zk7 atm_g3_18khvle atm_fr_1m9t47k atm_7l_dezgoh atm_cs_6adqpa atm_kd_glywfm atm_9j_13gfvf7_1o5j5ji atm_rd_glywfm_1mj13j2_uv4tnr atm_rd_8stvzk_1nos8r atm_3f_glywfm_jo46a5 atm_l8_idpfg4_jo46a5 atm_gi_idpfg4_jo46a5 atm_3f_glywfm_1icshfk atm_kd_glywfm_19774hq atm_7l_1ulhtn1_pfnrn2 atm_rd_8stvzk_pfnrn2 atm_uc_ryfd4z_pfnrn2 atm_5j_yh40bf_pfnrn2 atm_70_pd3o52_pfnrn2 atm_uc_glywfm_pfnrn2_1rrf6b5 dir dir-ltr">
+                                        <Link href="/about-us" className="l1ovpqvx atm_1he2i46_1k8pnbi_10saat9 atm_yxpdqi_1pv6nv4_10saat9 atm_1a0hdzc_w1h1e8_10saat9 atm_2bu6ew_929bqk_10saat9 atm_12oyo1u_73u7pn_10saat9 atm_fiaz40_1etamxe_10saat9 c1kblhex atm_1s_glywfm atm_26_1j28jx2 atm_3f_idpfg4 atm_9j_tlke0l atm_gi_idpfg4 atm_l8_idpfg4 atm_vb_1wugsn5 atm_rd_glywfm atm_c8_km0zk7 atm_g3_18khvle atm_fr_1m9t47k atm_7l_dezgoh atm_cs_6adqpa atm_kd_glywfm atm_9j_13gfvf7_1o5j5ji atm_rd_glywfm_1mj13j2_uv4tnr atm_rd_8stvzk_1nos8r atm_3f_glywfm_jo46a5 atm_l8_idpfg4_jo46a5 atm_gi_idpfg4_jo46a5 atm_3f_glywfm_1icshfk atm_kd_glywfm_19774hq atm_7l_1ulhtn1_pfnrn2 atm_rd_8stvzk_pfnrn2 atm_uc_ryfd4z_pfnrn2 atm_5j_yh40bf_pfnrn2 atm_70_pd3o52_pfnrn2 atm_uc_glywfm_pfnrn2_1rrf6b5 dir dir-ltr">
                                             {locale?.home?.about_us}
                                         </Link>
                                     </li>
                                     <li>
-                                        <Link href="#!" className="l1ovpqvx atm_1he2i46_1k8pnbi_10saat9 atm_yxpdqi_1pv6nv4_10saat9 atm_1a0hdzc_w1h1e8_10saat9 atm_2bu6ew_929bqk_10saat9 atm_12oyo1u_73u7pn_10saat9 atm_fiaz40_1etamxe_10saat9 c1kblhex atm_1s_glywfm atm_26_1j28jx2 atm_3f_idpfg4 atm_9j_tlke0l atm_gi_idpfg4 atm_l8_idpfg4 atm_vb_1wugsn5 atm_rd_glywfm atm_c8_km0zk7 atm_g3_18khvle atm_fr_1m9t47k atm_7l_dezgoh atm_cs_6adqpa atm_kd_glywfm atm_9j_13gfvf7_1o5j5ji atm_rd_glywfm_1mj13j2_uv4tnr atm_rd_8stvzk_1nos8r atm_3f_glywfm_jo46a5 atm_l8_idpfg4_jo46a5 atm_gi_idpfg4_jo46a5 atm_3f_glywfm_1icshfk atm_kd_glywfm_19774hq atm_7l_1ulhtn1_pfnrn2 atm_rd_8stvzk_pfnrn2 atm_uc_ryfd4z_pfnrn2 atm_5j_yh40bf_pfnrn2 atm_70_pd3o52_pfnrn2 atm_uc_glywfm_pfnrn2_1rrf6b5 dir dir-ltr">
+                                        <Link href="/contact" className="l1ovpqvx atm_1he2i46_1k8pnbi_10saat9 atm_yxpdqi_1pv6nv4_10saat9 atm_1a0hdzc_w1h1e8_10saat9 atm_2bu6ew_929bqk_10saat9 atm_12oyo1u_73u7pn_10saat9 atm_fiaz40_1etamxe_10saat9 c1kblhex atm_1s_glywfm atm_26_1j28jx2 atm_3f_idpfg4 atm_9j_tlke0l atm_gi_idpfg4 atm_l8_idpfg4 atm_vb_1wugsn5 atm_rd_glywfm atm_c8_km0zk7 atm_g3_18khvle atm_fr_1m9t47k atm_7l_dezgoh atm_cs_6adqpa atm_kd_glywfm atm_9j_13gfvf7_1o5j5ji atm_rd_glywfm_1mj13j2_uv4tnr atm_rd_8stvzk_1nos8r atm_3f_glywfm_jo46a5 atm_l8_idpfg4_jo46a5 atm_gi_idpfg4_jo46a5 atm_3f_glywfm_1icshfk atm_kd_glywfm_19774hq atm_7l_1ulhtn1_pfnrn2 atm_rd_8stvzk_pfnrn2 atm_uc_ryfd4z_pfnrn2 atm_5j_yh40bf_pfnrn2 atm_70_pd3o52_pfnrn2 atm_uc_glywfm_pfnrn2_1rrf6b5 dir dir-ltr">
                                             Contact
                                         </Link>
                                     </li>
                                     <li>
-                                        <Link href="#!" className="l1ovpqvx atm_1he2i46_1k8pnbi_10saat9 atm_yxpdqi_1pv6nv4_10saat9 atm_1a0hdzc_w1h1e8_10saat9 atm_2bu6ew_929bqk_10saat9 atm_12oyo1u_73u7pn_10saat9 atm_fiaz40_1etamxe_10saat9 c1kblhex atm_1s_glywfm atm_26_1j28jx2 atm_3f_idpfg4 atm_9j_tlke0l atm_gi_idpfg4 atm_l8_idpfg4 atm_vb_1wugsn5 atm_rd_glywfm atm_c8_km0zk7 atm_g3_18khvle atm_fr_1m9t47k atm_7l_dezgoh atm_cs_6adqpa atm_kd_glywfm atm_9j_13gfvf7_1o5j5ji atm_rd_glywfm_1mj13j2_uv4tnr atm_rd_8stvzk_1nos8r atm_3f_glywfm_jo46a5 atm_l8_idpfg4_jo46a5 atm_gi_idpfg4_jo46a5 atm_3f_glywfm_1icshfk atm_kd_glywfm_19774hq atm_7l_1ulhtn1_pfnrn2 atm_rd_8stvzk_pfnrn2 atm_uc_ryfd4z_pfnrn2 atm_5j_yh40bf_pfnrn2 atm_70_pd3o52_pfnrn2 atm_uc_glywfm_pfnrn2_1rrf6b5 dir dir-ltr">
+                                        <Link href="/about-us" className="l1ovpqvx atm_1he2i46_1k8pnbi_10saat9 atm_yxpdqi_1pv6nv4_10saat9 atm_1a0hdzc_w1h1e8_10saat9 atm_2bu6ew_929bqk_10saat9 atm_12oyo1u_73u7pn_10saat9 atm_fiaz40_1etamxe_10saat9 c1kblhex atm_1s_glywfm atm_26_1j28jx2 atm_3f_idpfg4 atm_9j_tlke0l atm_gi_idpfg4 atm_l8_idpfg4 atm_vb_1wugsn5 atm_rd_glywfm atm_c8_km0zk7 atm_g3_18khvle atm_fr_1m9t47k atm_7l_dezgoh atm_cs_6adqpa atm_kd_glywfm atm_9j_13gfvf7_1o5j5ji atm_rd_glywfm_1mj13j2_uv4tnr atm_rd_8stvzk_1nos8r atm_3f_glywfm_jo46a5 atm_l8_idpfg4_jo46a5 atm_gi_idpfg4_jo46a5 atm_3f_glywfm_1icshfk atm_kd_glywfm_19774hq atm_7l_1ulhtn1_pfnrn2 atm_rd_8stvzk_pfnrn2 atm_uc_ryfd4z_pfnrn2 atm_5j_yh40bf_pfnrn2 atm_70_pd3o52_pfnrn2 atm_uc_glywfm_pfnrn2_1rrf6b5 dir dir-ltr">
                                             {locale?.footer?.careers}
                                         </Link>
                                     </li>
@@ -156,7 +156,7 @@ const Footer = () => {
                                         </Link>
                                     </li>
                                     <li>
-                                        <Link href="#!" className="l1ovpqvx atm_1he2i46_1k8pnbi_10saat9 atm_yxpdqi_1pv6nv4_10saat9 atm_1a0hdzc_w1h1e8_10saat9 atm_2bu6ew_929bqk_10saat9 atm_12oyo1u_73u7pn_10saat9 atm_fiaz40_1etamxe_10saat9 c1kblhex atm_1s_glywfm atm_26_1j28jx2 atm_3f_idpfg4 atm_9j_tlke0l atm_gi_idpfg4 atm_l8_idpfg4 atm_vb_1wugsn5 atm_rd_glywfm atm_c8_km0zk7 atm_g3_18khvle atm_fr_1m9t47k atm_7l_dezgoh atm_cs_6adqpa atm_kd_glywfm atm_9j_13gfvf7_1o5j5ji atm_rd_glywfm_1mj13j2_uv4tnr atm_rd_8stvzk_1nos8r atm_3f_glywfm_jo46a5 atm_l8_idpfg4_jo46a5 atm_gi_idpfg4_jo46a5 atm_3f_glywfm_1icshfk atm_kd_glywfm_19774hq atm_7l_1ulhtn1_pfnrn2 atm_rd_8stvzk_pfnrn2 atm_uc_ryfd4z_pfnrn2 atm_5j_yh40bf_pfnrn2 atm_70_pd3o52_pfnrn2 atm_uc_glywfm_pfnrn2_1rrf6b5 dir dir-ltr">
+                                        <Link href="/help-center" className="l1ovpqvx atm_1he2i46_1k8pnbi_10saat9 atm_yxpdqi_1pv6nv4_10saat9 atm_1a0hdzc_w1h1e8_10saat9 atm_2bu6ew_929bqk_10saat9 atm_12oyo1u_73u7pn_10saat9 atm_fiaz40_1etamxe_10saat9 c1kblhex atm_1s_glywfm atm_26_1j28jx2 atm_3f_idpfg4 atm_9j_tlke0l atm_gi_idpfg4 atm_l8_idpfg4 atm_vb_1wugsn5 atm_rd_glywfm atm_c8_km0zk7 atm_g3_18khvle atm_fr_1m9t47k atm_7l_dezgoh atm_cs_6adqpa atm_kd_glywfm atm_9j_13gfvf7_1o5j5ji atm_rd_glywfm_1mj13j2_uv4tnr atm_rd_8stvzk_1nos8r atm_3f_glywfm_jo46a5 atm_l8_idpfg4_jo46a5 atm_gi_idpfg4_jo46a5 atm_3f_glywfm_1icshfk atm_kd_glywfm_19774hq atm_7l_1ulhtn1_pfnrn2 atm_rd_8stvzk_pfnrn2 atm_uc_ryfd4z_pfnrn2 atm_5j_yh40bf_pfnrn2 atm_70_pd3o52_pfnrn2 atm_uc_glywfm_pfnrn2_1rrf6b5 dir dir-ltr">
                                             FAQ
                                         </Link>
                                     </li>
@@ -165,7 +165,7 @@ const Footer = () => {
 
                         </div>
                         <div className="f1n8x35d atm_lo_1ph3nq8 atm_le_1ph3nq8 atm_67_1vlbu9m dir dir-ltr last_line">
-                            <div className="_lldyhy" dir="ltr">© {currentDate.getFullYear()} {locale?.footer?.prelease},Inc.</div>
+                            <div className="_lldyhy" dir="ltr">Â© {currentDate.getFullYear()} {locale?.footer?.prelease},Inc.</div>
 
                             <div className="footer_row">
 
@@ -273,43 +273,43 @@ const Footer = () => {
                                                 </li>
                                                 <li className="_obr3yz">
                                                     <a className={`${langTab === 'fr' ? '_ci5ckgc' : '_5af8mpi'}`} onClick={(e) => hanleLanguageChange(e, 'fr')} role="button" href="#!">
-                                                        <div>Français</div>
+                                                        <div>FranÃ§ais</div>
                                                         <div className="_1w3y9kg">Canada</div>
                                                     </a>
                                                 </li>
                                                 <li className="_obr3yz">
                                                     <a className={`${langTab === 'es' ? '_ci5ckgc' : '_5af8mpi'}`} onClick={(e) => hanleLanguageChange(e, 'es')} role="button" href="#!">
-                                                        <div>Español</div>
+                                                        <div>EspaÃ±ol</div>
                                                         <div className="_1w3y9kg">Internacional</div>
                                                     </a>
                                                 </li>
                                                 <li className="_obr3yz">
                                                     <a className={`${langTab === 'ar' ? '_ci5ckgc' : '_5af8mpi'}`} onClick={(e) => hanleLanguageChange(e, 'ar')} role="button" href="#!">
-                                                        <div>العربية</div>
+                                                        <div>Ø§Ù„Ø¹Ø±Ø¨ÙŠØ©</div>
                                                         <div className="_1w3y9kg">Arabic</div>
                                                     </a>
                                                 </li>
                                                 <li className="_obr3yz">
                                                     <a className={`${langTab === 'zh' ? '_ci5ckgc' : '_5af8mpi'}`} onClick={(e) => hanleLanguageChange(e, 'zh')} role="button" href="#!">
-                                                        <div>中文 (简体)</div>
+                                                        <div>ä¸­æ–‡ (ç®€ä½“)</div>
                                                         <div className="_1w3y9kg">Chinese</div>
                                                     </a>
                                                 </li>
                                                 <li className="_obr3yz">
                                                     <a className={`${langTab === 'pt' ? '_ci5ckgc' : '_5af8mpi'}`} onClick={(e) => hanleLanguageChange(e, 'pt')} role="button" href="#!">
-                                                        <div>Português</div>
+                                                        <div>PortuguÃªs</div>
                                                         <div className="_1w3y9kg">Brasil</div>
                                                     </a>
                                                 </li>
                                                 <li className="_obr3yz">
                                                     <a className={`${langTab === 'hi' ? '_ci5ckgc' : '_5af8mpi'}`} onClick={(e) => hanleLanguageChange(e, 'hi')} role="button" href="#!">
-                                                        <div>हिन्दी</div>
+                                                        <div>à¤¹à¤¿à¤¨à¥à¤¦à¥€</div>
                                                         <div className="_1w3y9kg">Hindi</div>
                                                     </a>
                                                 </li>
                                                 <li className="_obr3yz">
                                                     <a className={`${langTab === 'pa' ? '_ci5ckgc' : '_5af8mpi'}`} onClick={(e) => hanleLanguageChange(e, 'pa')} role="button" href="#!">
-                                                        <div>ਪੰਜਾਬੀ</div>
+                                                        <div>à¨ªà©°à¨œà¨¾à¨¬à©€</div>
                                                         <div className="_1w3y9kg">Punjabi</div>
                                                     </a>
                                                 </li>
