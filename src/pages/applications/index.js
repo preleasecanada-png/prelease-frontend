@@ -29,7 +29,8 @@ const Applications = () => {
   useEffect(() => {
     const userRole = localStorage.getItem('role')
     if (userRole === 'host') setRole('landlord')
-    fetchApplications(userRole === 'host' ? 'landlord' : 'renter')
+    // Backend now determines role automatically, no need to pass role parameter
+    fetchApplications(null)
     fetchBgChecks()
   }, [])
 
@@ -91,7 +92,8 @@ const Applications = () => {
 
   const fetchApplications = async (r) => {
     try {
-      const res = await authFetch(`/applications?role=${r}`)
+      // Backend now determines role automatically based on user's database role
+      const res = await authFetch(`/applications`)
       if (res?.status === 200) {
         setApplications(res?.data?.data || res?.data || [])
       }
