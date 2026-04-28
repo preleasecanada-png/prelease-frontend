@@ -8,6 +8,7 @@ const ApplicationDetail = () => {
   const { id } = router.query
   const [app, setApp] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [viewerIsLandlord, setViewerIsLandlord] = useState(false)
   const [role, setRole] = useState('renter')
   const [statusNote, setStatusNote] = useState('')
   const [uploadFile, setUploadFile] = useState(null)
@@ -15,13 +16,8 @@ const ApplicationDetail = () => {
   const [uploading, setUploading] = useState(false)
 
   useEffect(() => {
-    const userRole = localStorage.getItem('role')
-    const userId = localStorage.getItem('user_id')
-    
-    if (userRole === 'host' || userRole === 'landlord' || (app && String(app.landlord_id) === String(userId))) {
-      setRole('landlord')
-    }
-  }, [app])
+    if (viewerIsLandlord) setRole('landlord')
+  }, [viewerIsLandlord])
 
   useEffect(() => {
     if (id) fetchApplication()
@@ -32,6 +28,7 @@ const ApplicationDetail = () => {
       const res = await authFetch(`/applications/${id}`)
       if (res?.status === 200) {
         setApp(res.data)
+        setViewerIsLandlord(!!res.viewer_is_landlord)
       }
     } catch (err) {
       console.error(err)
@@ -252,7 +249,7 @@ const ApplicationDetail = () => {
         </div>
 
         <div className="col-lg-4">
-          {role === 'landlord' && (app.status === 'submitted' || app.status === 'under_review') && (
+          {viewerIsLandlord && (app.status === 'submitted' || app.status === 'under_review') && (
             <div className="card mb-4">
               <div className="card-header"><h5 className="mb-0">Update Status</h5></div>
               <div className="card-body">
@@ -271,7 +268,7 @@ const ApplicationDetail = () => {
             </div>
           )}
 
-          {role === 'landlord' && app.status === 'approved' && (
+          {viewerIsLandlord && app.status === 'approved' && (
             <div className="card mb-4">
               <div className="card-header"><h5 className="mb-0">Finalize Lease</h5></div>
               <div className="card-body">
