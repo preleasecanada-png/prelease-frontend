@@ -35,6 +35,34 @@ const ApplicationDetail = () => {
     setLoading(false)
   }
 
+  const [showLeaseModal, setShowLeaseModal] = useState(false)
+  const [monthlyRent, setMonthlyRent] = useState(0)
+
+  const handleCreateLease = async (e) => {
+    e.preventDefault()
+    try {
+      const token = localStorage.getItem('token')
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_HOST}/leases/create-from-application`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ 
+          rental_application_id: id,
+          monthly_rent: monthlyRent,
+          special_conditions: '' 
+        }),
+      })
+      const data = await res.json()
+      if (data?.status === 200) {
+        toast.success('Lease agreement created!')
+        router.push('/leases')
+      } else {
+        toast.error(data?.message || 'Failed to create lease')
+      }
+    } catch (err) {
+      toast.error('Something went wrong')
+    }
+  }
+
   const handleStatusUpdate = async (newStatus) => {
     try {
       const token = localStorage.getItem('token')
@@ -235,6 +263,27 @@ const ApplicationDetail = () => {
                   <button className="btn btn-success" onClick={() => handleStatusUpdate('approved')}>Approve</button>
                   <button className="btn btn-danger" onClick={() => handleStatusUpdate('rejected')}>Reject</button>
                 </div>
+              </div>
+            </div>
+          )}
+
+          {role === 'landlord' && app.status === 'approved' && (
+            <div className="card mb-4">
+              <div className="card-header"><h5 className="mb-0">Finalize Lease</h5></div>
+              <div className="card-body">
+                <form onSubmit={handleCreateLease}>
+                  <div className="mb-3">
+                    <label className="form-label">Confirm Monthly Rent ($)</label>
+                    <input 
+                      type="number" 
+                      className="form-control" 
+                      value={monthlyRent} 
+                      onChange={(e) => setMonthlyRent(e.target.value)}
+                      required
+                    />
+                  </div>
+                  <button type="submit" className="btn btn-primary w-100">Create Lease Agreement</button>
+                </form>
               </div>
             </div>
           )}
