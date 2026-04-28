@@ -68,7 +68,12 @@ const FloatingChatWidget = () => {
 
     // Real-time Pusher subscription
     try {
-      const pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_APP_KEY, {
+      const pusherKey = process.env.NEXT_PUBLIC_PUSHER_APP_KEY;
+      if (!pusherKey) {
+        console.warn('Pusher app key not configured, skipping real-time updates');
+        return;
+      }
+      const pusher = new Pusher(pusherKey, {
         cluster: process.env.NEXT_PUBLIC_PUSHER_APP_CLUSTER || 'us2',
       });
       pusherRef.current = pusher;
