@@ -16,7 +16,7 @@ const ApplicationDetail = () => {
 
   useEffect(() => {
     const userRole = localStorage.getItem('role')
-    const userId = localStorage.getItem('userId')
+    const userId = localStorage.getItem('user_id')
     
     if (userRole === 'host' || userRole === 'landlord' || (app && String(app.landlord_id) === String(userId))) {
       setRole('landlord')
