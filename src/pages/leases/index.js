@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { authFetch } from '@/Helper/helper'
 import Link from 'next/link'
-import { EnhancedCard, AnimatedButton, LoadingSkeleton, AnimatedSection, StatCard } from '@/components'
+import { EnhancedCard, AnimatedButton, LoadingSkeleton, AnimatedSection } from '@/components'
 
 const Leases = () => {
   const [leases, setLeases] = useState([])
@@ -32,10 +32,6 @@ const Leases = () => {
     return map[s] || 'secondary'
   }
 
-  const activeCount = leases.filter(l => l.status === 'active').length
-  const pendingCount = leases.filter(l => l.status?.includes('pending')).length
-  const totalRent = leases.filter(l => l.status === 'active').reduce((s, l) => s + Number(l.monthly_rent || 0), 0)
-
   if (loading) {
     return (
       <section className="container py-5">
@@ -50,20 +46,6 @@ const Leases = () => {
         <div className="text-center mb-5">
           <h1 className="display-4 fw-bold text-gradient mb-3">Lease Agreements</h1>
           <p className="lead text-muted">{role === 'landlord' ? 'Leases for your properties' : 'Your active and past leases'}</p>
-        </div>
-      </AnimatedSection>
-
-      <AnimatedSection animation="fadeInUp" delay={200}>
-        <div className="row g-4 mb-5">
-          <div className="col-md-4">
-            <StatCard title="Active Leases" value={activeCount} color="success" />
-          </div>
-          <div className="col-md-4">
-            <StatCard title="Pending Signature" value={pendingCount} color="warning" />
-          </div>
-          <div className="col-md-4">
-            <StatCard title="Monthly Rent" value={`$${totalRent.toLocaleString()}`} color="primary" />
-          </div>
         </div>
       </AnimatedSection>
 
