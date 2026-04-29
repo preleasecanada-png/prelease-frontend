@@ -27,10 +27,14 @@ const Applications = () => {
   const [bgCheckType, setBgCheckType] = useState('credit')
 
   useEffect(() => {
-    const userRole = localStorage.getItem('role')
-    if (userRole === 'host') setRole('landlord')
+    const userRole = localStorage.getItem('role')?.toLowerCase()
+    if (userRole === 'host' || userRole === 'admin' || userRole === 'landlord') {
+      setRole('landlord')
+    } else {
+      setRole('renter')
+    }
     // Backend now determines role automatically, no need to pass role parameter
-    fetchApplications(null)
+    fetchApplications()
     fetchBgChecks()
   }, [])
 
