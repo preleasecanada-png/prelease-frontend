@@ -96,13 +96,19 @@ const Applications = () => {
 
   const fetchApplications = async (r) => {
     try {
+      console.log('Fetching applications...');
       // Backend now determines role automatically based on user's database role
       const res = await authFetch(`/applications`)
+      console.log('API Response:', res);
       if (res?.status === 200) {
-        setApplications(res?.data?.data || res?.data || [])
+        const data = res?.data?.data || res?.data || []
+        console.log('Setting applications:', data);
+        setApplications(data)
+      } else {
+        console.error('Failed to fetch applications:', res);
       }
     } catch (err) {
-      console.error(err)
+      console.error('Error fetching applications:', err)
     }
     setLoading(false)
   }
@@ -143,8 +149,10 @@ const Applications = () => {
 
   const filtered = useMemo(() => {
     let list = applications
+    console.log('Filtering applications, total:', list.length, 'activeTab:', activeTab, 'propertyFilter:', propertyFilter);
     if (activeTab !== 'all') list = list.filter(a => a.status === activeTab)
     if (propertyFilter !== 'all') list = list.filter(a => String(a.property?.id) === propertyFilter)
+    console.log('Filtered list size:', list.length);
     return list
   }, [applications, activeTab, propertyFilter])
 
