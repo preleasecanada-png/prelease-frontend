@@ -94,15 +94,25 @@ const Applications = () => {
     setActionLoading(null)
   }
 
-  const fetchApplications = async (r) => {
+  const fetchApplications = async () => {
     try {
+      const userRole = localStorage.getItem('role')
+      console.log('[Applications Debug] Role from localStorage:', userRole)
+      console.log('[Applications Debug] Fetching /applications...')
       // Backend now determines role automatically based on user's database role
       const res = await authFetch(`/applications`)
+      console.log('[Applications Debug] API response status:', res?.status)
+      console.log('[Applications Debug] API response data keys:', res ? Object.keys(res) : 'null')
+      console.log('[Applications Debug] Data length:', res?.data?.data?.length ?? res?.data?.length ?? 'N/A')
       if (res?.status === 200) {
-        setApplications(res?.data?.data || res?.data || [])
+        const apps = res?.data?.data || res?.data || []
+        console.log('[Applications Debug] Applications set:', apps.length, 'items')
+        setApplications(apps)
+      } else {
+        console.log('[Applications Debug] Non-200 status or error:', res)
       }
     } catch (err) {
-      console.error(err)
+      console.error('[Applications Debug] Fetch error:', err)
     }
     setLoading(false)
   }
