@@ -25,6 +25,7 @@ const Applications = () => {
   const [bgChecks, setBgChecks] = useState({})
   const [bgCheckModal, setBgCheckModal] = useState(null)
   const [bgCheckType, setBgCheckType] = useState('credit')
+  const [debugInfo, setDebugInfo] = useState('')
 
   useEffect(() => {
     const userRole = localStorage.getItem('role')?.toLowerCase()
@@ -97,22 +98,24 @@ const Applications = () => {
   const fetchApplications = async () => {
     try {
       const userRole = localStorage.getItem('role')
-      console.log('[Applications Debug] Role from localStorage:', userRole)
-      console.log('[Applications Debug] Fetching /applications...')
+      const token = localStorage.getItem('token')
+      const debug = `Role: ${userRole} | Token: ${token ? token.substring(0, 20) + '...' : 'NONE'} | URL: ${process.env.NEXT_PUBLIC_BASE_API_HOST}/applications`
+      console.log('[Applications Debug]', debug)
+      setDebugInfo(debug)
       // Backend now determines role automatically based on user's database role
       const res = await authFetch(`/applications`)
-      console.log('[Applications Debug] API response status:', res?.status)
-      console.log('[Applications Debug] API response data keys:', res ? Object.keys(res) : 'null')
-      console.log('[Applications Debug] Data length:', res?.data?.data?.length ?? res?.data?.length ?? 'N/A')
+      const debug2 = `${debug} | API Status: ${res?.status} | Data keys: ${res ? Object.keys(res).join(',') : 'null'} | Items: ${res?.data?.data?.length ?? res?.data?.length ?? 0}`
+      console.log('[Applications Debug]', debug2)
+      setDebugInfo(debug2)
       if (res?.status === 200) {
         const apps = res?.data?.data || res?.data || []
-        console.log('[Applications Debug] Applications set:', apps.length, 'items')
         setApplications(apps)
       } else {
-        console.log('[Applications Debug] Non-200 status or error:', res)
+        setDebugInfo(`${debug2} | ERROR: ${JSON.stringify(res).substring(0, 200)}`)
       }
     } catch (err) {
       console.error('[Applications Debug] Fetch error:', err)
+      setDebugInfo(`FETCH ERROR: ${err.message}`)
     }
     setLoading(false)
   }
@@ -190,6 +193,12 @@ const Applications = () => {
 
   return (
     <section className="container py-4">
+      {/* Debug Banner - remove after fixing */}
+      {debugInfo && (
+        <div style={{ background: '#fff3cd', border: '1px solid #ffc107', borderRadius: '8px', padding: '10px 16px', marginBottom: '16px', fontSize: '12px', fontFamily: 'monospace', wordBreak: 'break-all' }}>
+          <strong>Debug:</strong> {debugInfo}
+        </div>
+      )}
       <div className="mb-4">
         <h1 className="fw-bold" style={{ fontSize: '28px' }}>
           {role === 'landlord' ? 'Applications Dashboard' : 'My Applications'}
