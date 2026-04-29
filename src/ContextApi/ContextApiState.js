@@ -130,7 +130,6 @@ const ContextApiState = (props) => {
         setLoader(true);
 
         try {
-            console.log('filtersssss ', filters);
             const query = new URLSearchParams(filters).toString();
 
             const response = await fetch(
@@ -142,10 +141,10 @@ const ContextApiState = (props) => {
             if (data.status === 200) {
                 setProperties(data.data);
             } else {
-                console.log("API Error", data);
+                console.error("API Error", data);
             }
         } catch (error) {
-            console.log("Fetch Error", error);
+            console.error("Fetch Error", error);
         }
 
         setLoader(false);

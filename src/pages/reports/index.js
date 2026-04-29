@@ -9,8 +9,9 @@ const LandlordReports = () => {
   const router = useRouter()
 
   useEffect(() => {
-    const role = localStorage.getItem('role')
-    if (role !== 'host') {
+    const role = localStorage.getItem('role')?.toLowerCase()
+    const isLandlord = role === 'host' || role === 'admin' || role === 'landlord'
+    if (!isLandlord) {
       router.push('/')
       return
     }

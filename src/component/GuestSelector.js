@@ -17,8 +17,6 @@ const GuestSelector = ({ id, activePopover, setActivePopover, adultCount: adultC
     const setPetsCount = setPetsCountProp ?? setPetsCountInternal;
     const isOpen = activePopover === id;
 
-    console.log(childCount +" childCount "+ adultCount +" adultCount "+ infrontCount +" infrontCount "+ petsCount + " petsCount ");
-
     const toggleMoreLinks = () => {
         if (isOpen) {
             setActivePopover(null);

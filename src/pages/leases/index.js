@@ -18,8 +18,8 @@ const Leases = () => {
   const [activeTab, setActiveTab] = useState('all')
 
   useEffect(() => {
-    const userRole = localStorage.getItem('role')
-    const r = userRole === 'host' ? 'landlord' : 'renter'
+    const userRole = localStorage.getItem('role')?.toLowerCase()
+    const r = (userRole === 'host' || userRole === 'admin' || userRole === 'landlord') ? 'landlord' : 'renter'
     setRole(r)
     fetchLeases(r)
   }, [])

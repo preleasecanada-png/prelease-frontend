@@ -129,8 +129,16 @@ const Payments = () => {
   const overdueCount = pendingPayments.filter(p => p.due_date && new Date(p.due_date) < new Date()).length
 
   // Leases without existing payments (available for new payment)
+  // Filter to only show current user's leases (backend now returns all leases globally for visibility)
+  const currentUserId = typeof window !== 'undefined' ? Number(localStorage.getItem('user_id')) : null
   const paidLeaseIds = new Set(payments.filter(p => ['completed', 'processing', 'pending'].includes(p.status)).map(p => String(p.lease_agreement_id)))
-  const unpaidLeases = leases.filter(l => !paidLeaseIds.has(String(l.id)) && l.status === 'active')
+  const unpaidLeases = leases.filter(l => {
+    if (paidLeaseIds.has(String(l.id))) return false
+    if (!['active', 'pending_landlord_signature'].includes(l.status)) return false
+    // Renter can only initiate payment for their own leases
+    if (currentUserId && Number(l.renter_id) !== currentUserId) return false
+    return true
+  })
 
   if (loading) {
     return <section className="container py-5 text-center"><div className="spinner-border text-danger" /></section>

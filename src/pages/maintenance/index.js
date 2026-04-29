@@ -28,10 +28,12 @@ const Maintenance = () => {
   const [submitting, setSubmitting] = useState(false)
 
   useEffect(() => {
-    const r = localStorage.getItem('role')
-    setRole(r || '')
+    const r = localStorage.getItem('role')?.toLowerCase() || ''
+    setRole(r)
     fetchRequests()
-    if (r !== 'host') fetchLeases()
+    // Renters need to see their leases to submit maintenance requests
+    const isLandlord = r === 'host' || r === 'admin' || r === 'landlord'
+    if (!isLandlord) fetchLeases()
   }, [])
 
   const fetchRequests = async () => {
@@ -200,7 +202,7 @@ const Maintenance = () => {
         <div className="col-lg-10">
           <div className="d-flex justify-content-between align-items-center mb-4">
             <h1 style={{ fontSize: '28px', fontWeight: '700' }}>Maintenance Requests</h1>
-            {role !== 'host' && (
+            {!(role === 'host' || role === 'admin' || role === 'landlord') && (
               <button
                 onClick={() => setShowForm(!showForm)}
                 style={{ backgroundColor: '#D80621', color: '#fff', border: 'none', padding: '10px 20px', borderRadius: '8px', fontWeight: '600', cursor: 'pointer' }}
@@ -309,7 +311,7 @@ const Maintenance = () => {
               <div style={{ fontSize: '48px', marginBottom: '16px' }}>🔧</div>
               <h5 className="text-muted">No maintenance requests</h5>
               <p className="text-muted">
-                {role === 'host' ? 'No tenants have submitted maintenance requests yet' : 'Submit a request when you need something fixed'}
+                {(role === 'host' || role === 'admin' || role === 'landlord') ? 'No tenants have submitted maintenance requests yet' : 'Submit a request when you need something fixed'}
               </p>
             </div>
           ) : (
@@ -384,10 +386,10 @@ const Maintenance = () => {
 
                   <div className="d-flex justify-content-between align-items-center mt-3">
                     <span style={{ fontSize: '12px', color: '#9CA3AF' }}>
-                      {role === 'host' ? `Tenant: ${req.tenant?.first_name || 'N/A'} ${req.tenant?.last_name || ''}` : `Submitted: ${new Date(req.created_at).toLocaleDateString()}`}
+                      {(role === 'host' || role === 'admin' || role === 'landlord') ? `Tenant: ${req.tenant?.first_name || 'N/A'} ${req.tenant?.last_name || ''}` : `Submitted: ${new Date(req.created_at).toLocaleDateString()}`}
                       {req.resolved_at && ` | Resolved: ${new Date(req.resolved_at).toLocaleDateString()}`}
                     </span>
-                    {role === 'host' && req.status !== 'completed' && req.status !== 'cancelled' && (
+                    {(role === 'host' || role === 'admin' || role === 'landlord') && req.status !== 'completed' && req.status !== 'cancelled' && (
                       <div className="d-flex gap-2">
                         {req.status === 'pending' && (
                           <button onClick={() => updateStatus(req.id, 'in_progress', 'We are looking into this.')} className="maint-action-btn maint-action-progress">

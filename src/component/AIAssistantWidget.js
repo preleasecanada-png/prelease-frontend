@@ -95,7 +95,6 @@ const AIAssistantWidget = () => {
       });
 
       const data = await res.json();
-      console.log('AI response:', res.status, data);
 
       if (data?.reply) {
         setMessages(prev => [...prev, { role: 'assistant', content: data.reply }]);

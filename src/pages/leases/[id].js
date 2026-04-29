@@ -13,8 +13,8 @@ const LeaseDetail = () => {
   const [toggling, setToggling] = useState(false)
 
   useEffect(() => {
-    const userRole = localStorage.getItem('role')
-    if (userRole === 'host') setRole('landlord')
+    const userRole = localStorage.getItem('role')?.toLowerCase()
+    if (userRole === 'host' || userRole === 'admin' || userRole === 'landlord') setRole('landlord')
   }, [])
 
   useEffect(() => {

@@ -77,7 +77,6 @@ function App({ Component, pageProps }) {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-  console.log(process.env.CLIENT_ID,'iddddds');
   return (
     <>
     <AuthGuard>

@@ -44,8 +44,6 @@ const PlaceCard = memo((props) => {
         }
     };
 
-
-    console.log('properties :', props?.properties);
     return (
         <>
             {props?.loader ? (

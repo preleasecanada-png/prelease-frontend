@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 
 const protectedRoutes = {
-  "/properties": ["Landload", "host", "Landlord", "admin"],
+  "/properties": ["landlord", "host", "admin"],
 };
 
 const AuthGuard = ({ children }) => {
@@ -28,7 +28,7 @@ const AuthGuard = ({ children }) => {
     if (!mounted || !isReady) return;
 
     const token = localStorage.getItem("token");
-    const role = localStorage.getItem("role");
+    const role = (localStorage.getItem("role") || '').toLowerCase();
     const matchedRoute = getProtectedRoute(pathname);
 
     if (!matchedRoute) return; // route is public

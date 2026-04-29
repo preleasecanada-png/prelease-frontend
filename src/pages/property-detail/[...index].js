@@ -214,8 +214,6 @@ const PropertyDetail = memo(() => {
         }
     }, [placeDetail]);
 
-    console.log(placeDetail, 'placeDetail');
-
     const [reservationRequested, setReservationRequested] = useState(false);
 
     const { sendMessage, addSystemMessage } = useContext(ChatContext);
@@ -267,7 +265,6 @@ const PropertyDetail = memo(() => {
             }
         }
     };
-    console.log('property details', placeDetail);
 
     useEffect(() => {
         if (typeof window !== 'undefined') {
@@ -514,7 +511,6 @@ const PropertyDetail = memo(() => {
                                                                                         </button>
                                                                                         <div className="vqatjzs atm_mk_h2mmj6 atm_7l_1kw7nm4 atm_bx_1kw7nm4 atm_c8_1kw7nm4 atm_g3_1kw7nm4 dir dir-ltr">
                                                                                             <span aria-hidden="true" data-testid="stepper-adults-value">
-                                                                                                {console.log('checkadult Count', adultCount)}
                                                                                                 {adultCount}
                                                                                             </span>
                                                                                             <span className="vlastcb atm_fq_idpfg4 atm_3f_idpfg4 atm_7h_hxbz6r atm_7i_ysn8ba atm_e2_t94yts atm_ks_zryt35 atm_l8_idpfg4 atm_mk_stnw88 atm_vv_1q9ccgz atm_vy_t94yts dir dir-ltr">
