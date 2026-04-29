@@ -4,7 +4,6 @@ import { useRouter } from 'next/router'
 import toast from 'react-hot-toast'
 
 const ApplicationDetail = () => {
-  console.log("ApplicationDetail Build Version: 2026-04-28-v1")
   const router = useRouter()
   const { id } = router.query
   const [app, setApp] = useState(null)
