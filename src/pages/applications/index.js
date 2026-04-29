@@ -26,6 +26,8 @@ const Applications = () => {
   const [bgCheckModal, setBgCheckModal] = useState(null)
   const [bgCheckType, setBgCheckType] = useState('credit')
 
+  const [apiDebug, setApiDebug] = useState(null)
+
   useEffect(() => {
     const userRole = localStorage.getItem('role')?.toLowerCase()
     if (userRole === 'host' || userRole === 'admin' || userRole === 'landlord') {
@@ -100,6 +102,7 @@ const Applications = () => {
       // Backend now determines role automatically based on user's database role
       const res = await authFetch(`/applications`)
       console.log('API Response:', res);
+      setApiDebug(res);
       if (res?.status === 200) {
         const data = res?.data?.data || res?.data || []
         console.log('Setting applications:', data);
@@ -192,6 +195,13 @@ const Applications = () => {
         <h1 className="fw-bold" style={{ fontSize: '28px' }}>
           {role === 'landlord' ? 'Applications Dashboard' : 'My Applications'}
         </h1>
+        {apiDebug && (
+          <div className="alert alert-info py-2" style={{ fontSize: '11px' }}>
+            <strong>Debug Info:</strong> Status: {apiDebug.status} | 
+            Count: {Array.isArray(apiDebug.data) ? apiDebug.data.length : 'N/A'} |
+            HasDebug: {apiDebug.debug ? 'Yes' : 'No'}
+          </div>
+        )}
         <p className="text-muted mb-0">
           {role === 'landlord' ? 'Manage all applications received for your properties' : 'Track your rental applications'}
         </p>
