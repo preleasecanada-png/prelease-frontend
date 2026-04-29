@@ -94,26 +94,15 @@ const Applications = () => {
     setActionLoading(null)
   }
 
-  const fetchApplications = async () => {
+  const fetchApplications = async (r) => {
     try {
-      setLoading(true)
+      // Backend now determines role automatically based on user's database role
       const res = await authFetch(`/applications`)
-      
       if (res?.status === 200) {
-        // Robust extraction logic to handle different backend versions (paginated or flat)
-        let extractedData = []
-        if (Array.isArray(res.data)) {
-          extractedData = res.data
-        } else if (res.data?.data && Array.isArray(res.data.data)) {
-          extractedData = res.data.data
-        } else if (res.data?.applications && Array.isArray(res.data.applications)) {
-          extractedData = res.data.applications
-        }
-        
-        setApplications(extractedData)
+        setApplications(res?.data?.data || res?.data || [])
       }
     } catch (err) {
-      console.error('Error fetching applications:', err)
+      console.error(err)
     }
     setLoading(false)
   }
@@ -154,10 +143,8 @@ const Applications = () => {
 
   const filtered = useMemo(() => {
     let list = applications
-    console.log('Filtering applications, total:', list.length, 'activeTab:', activeTab, 'propertyFilter:', propertyFilter);
     if (activeTab !== 'all') list = list.filter(a => a.status === activeTab)
     if (propertyFilter !== 'all') list = list.filter(a => String(a.property?.id) === propertyFilter)
-    console.log('Filtered list size:', list.length);
     return list
   }, [applications, activeTab, propertyFilter])
 
