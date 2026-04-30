@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 
-const VirtualTour3D = ({ videoUrl, propertyTitle, onClose }) => {
+const VirtualTour3D = ({ videoUrl, propertyTitle, onClose, tourStatus = 'none', model3dUrl = null }) => {
     const videoRef = useRef(null);
     const containerRef = useRef(null);
     const [isPlaying, setIsPlaying] = useState(false);
@@ -138,6 +138,16 @@ const VirtualTour3D = ({ videoUrl, propertyTitle, onClose }) => {
 
     const progress = duration ? (currentTime / duration) * 100 : 0;
 
+    // If we have no walk-through video at all (rare edge case), show a clean placeholder.
+    if (!videoUrl) {
+        return (
+            <div style={{ position: 'fixed', inset: 0, zIndex: 10000, background: 'rgba(0,0,0,0.85)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 16, color: '#fff', padding: 24 }}>
+                <h3 style={{ margin: 0 }}>No tour video available yet.</h3>
+                <button onClick={onClose} style={{ background: '#D80621', color: '#fff', border: 'none', borderRadius: 8, padding: '10px 22px', fontWeight: 700, cursor: 'pointer' }}>Close</button>
+            </div>
+        );
+    }
+
     return (
         <div
             ref={containerRef}
@@ -162,11 +172,33 @@ const VirtualTour3D = ({ videoUrl, propertyTitle, onClose }) => {
                 display: 'flex', justifyContent: 'space-between', alignItems: 'center',
                 opacity: showControls ? 1 : 0, transition: 'opacity 0.3s',
             }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
                     <div style={{ background: '#D80621', padding: '6px 14px', borderRadius: '20px', fontSize: '12px', fontWeight: '700', color: '#fff', letterSpacing: '1px' }}>
                         3D TOUR
                     </div>
                     <h3 style={{ color: '#fff', margin: 0, fontSize: '18px', fontWeight: '600' }}>{propertyTitle}</h3>
+                    {tourStatus === 'processing' && (
+                        <span style={{ background: 'rgba(255, 193, 7, 0.95)', color: '#1a1a1a', padding: '6px 14px', borderRadius: '20px', fontSize: '12px', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <span style={{ display: 'inline-block', width: 8, height: 8, borderRadius: '50%', background: '#1a1a1a', animation: 'pulse 1.4s ease-in-out infinite' }} />
+                            Generating real 3D…
+                        </span>
+                    )}
+                    {tourStatus === 'ready' && model3dUrl && (
+                        <a
+                            href={model3dUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{ background: '#07A537', color: '#fff', padding: '6px 14px', borderRadius: '20px', fontSize: '12px', fontWeight: '700', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '6px' }}
+                        >
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                            Download Real 3D Model
+                        </a>
+                    )}
+                    {tourStatus === 'failed' && (
+                        <span style={{ background: 'rgba(216, 6, 33, 0.95)', color: '#fff', padding: '6px 14px', borderRadius: '20px', fontSize: '12px', fontWeight: '700' }}>
+                            3D conversion failed
+                        </span>
+                    )}
                 </div>
                 <button
                     onClick={onClose}

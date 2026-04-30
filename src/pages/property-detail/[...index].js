@@ -122,6 +122,13 @@ const PropertyDetail = memo(() => {
     const [showSlider, setShowSlider] = useState(false);
     const [startIndex, setStartIndex] = useState(0);
     const [showTour, setShowTour] = useState(false);
+    // 3D virtual tour live status (polled while KIRI Engine is processing)
+    const [tourInfo, setTourInfo] = useState({
+        tour_3d_status: 'none',
+        tour_3d_model_url: null,
+        tour_3d_error: null,
+        has_tour_video: false,
+    });
     // chat popup state
     const [showChatModal, setShowChatModal] = useState(false);
     const [expanded, setExpanded] = useState(false);
@@ -135,6 +142,33 @@ const PropertyDetail = memo(() => {
         const token = window.localStorage.getItem("token");
         setIsLoggedIn(!!token);
     }, []);
+
+    // Poll the 3D tour status while KIRI Engine is processing the upload.
+    // Stops polling automatically once the model is ready or has failed.
+    useEffect(() => {
+        const id = placeDetail?.id;
+        if (!id) return;
+
+        let cancelled = false;
+        let intervalId = null;
+
+        const fetchStatus = async () => {
+            try {
+                const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_HOST}/property/${id}/tour-status`);
+                const data = await res.json();
+                if (cancelled || data?.status !== 200) return;
+                setTourInfo(data.data || { tour_3d_status: 'none' });
+                if (['ready', 'failed', 'none'].includes(data.data?.tour_3d_status)) {
+                    if (intervalId) clearInterval(intervalId);
+                }
+            } catch (_) {}
+        };
+
+        fetchStatus();
+        // Poll every 30 s while a 3D conversion is in flight.
+        intervalId = setInterval(fetchStatus, 30000);
+        return () => { cancelled = true; if (intervalId) clearInterval(intervalId); };
+    }, [placeDetail?.id]);
 
     useEffect(() => {
         if (placeDetail?.id) {
@@ -289,10 +323,16 @@ const PropertyDetail = memo(() => {
                                     </div>
 
                                     <div className='share_btn_Area'>
-                                        {placeDetail?.tour_video && (
-                                            <button onClick={() => setShowTour(true)} style={{ background: '#D80621', color: '#fff', border: 'none', borderRadius: '8px', padding: '8px 16px', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }}>
+                                        {(placeDetail?.tour_video_path || tourInfo.has_tour_video) && (
+                                            <button onClick={() => setShowTour(true)} style={{ background: '#D80621', color: '#fff', border: 'none', borderRadius: '8px', padding: '8px 16px', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', position: 'relative' }} title={tourInfo.tour_3d_status === 'ready' ? '3D model ready' : tourInfo.tour_3d_status === 'processing' ? '3D model is being generated…' : '3D walk-through tour'}>
                                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m22 8-6 4 6 4V8Z"/><rect width="14" height="12" x="2" y="6" rx="2" ry="2"/></svg>
                                                 3D Virtual Tour
+                                                {tourInfo.tour_3d_status === 'ready' && (
+                                                    <span style={{ background: '#07A537', color: '#fff', fontSize: 10, fontWeight: 700, padding: '2px 6px', borderRadius: 8, marginLeft: 4 }}>3D</span>
+                                                )}
+                                                {tourInfo.tour_3d_status === 'processing' && (
+                                                    <span style={{ background: '#fff', color: '#D80621', fontSize: 10, fontWeight: 700, padding: '2px 6px', borderRadius: 8, marginLeft: 4 }}>…</span>
+                                                )}
                                             </button>
                                         )}
                                         <button>
@@ -336,10 +376,12 @@ const PropertyDetail = memo(() => {
                             </div>
                         )}
 
-                        {showTour && placeDetail?.tour_video && (
+                        {showTour && (placeDetail?.tour_video_path || tourInfo.has_tour_video) && (
                             <VirtualTour3D
-                                videoUrl={imageBaseUrl(placeDetail.tour_video)}
+                                videoUrl={placeDetail?.tour_video_path ? imageBaseUrl(placeDetail.tour_video_path) : null}
                                 propertyTitle={placeDetail?.title}
+                                tourStatus={tourInfo.tour_3d_status}
+                                model3dUrl={tourInfo.tour_3d_model_url}
                                 onClose={() => setShowTour(false)}
                             />
                         )}
