@@ -2,8 +2,7 @@ import { CreateApiContext } from '@/ContextApi/CreateApiContext';
 import React, { useContext, useEffect, useRef, useState, useCallback } from 'react';
 import toast from 'react-hot-toast';
 import { authFetch } from '@/Helper/helper';
-
-const POLL_INTERVAL = 3000; // poll every 3 seconds
+import Pusher from 'pusher-js';
 
 const Chat = () => {
     const { fetchUsersLists, users } = useContext(CreateApiContext);
@@ -21,10 +20,48 @@ const Chat = () => {
     const [audioUrl, setAudioUrl] = useState(null);
     const [searchQuery, setSearchQuery] = useState("");
     const [sending, setSending] = useState(false);
-    const pollRef = useRef(null);
+    const [conversations, setConversations] = useState([]);
+    const [loadingConversations, setLoadingConversations] = useState(false);
+    const pusherRef = useRef(null);
+    const selectedUserRef = useRef(null);
     const lastMsgIdRef = useRef(0);
 
-    const filteredUsers = users?.filter(item => item.id != userId && (item?.user_name?.toLowerCase().includes(searchQuery.toLowerCase()) || item?.first_name?.toLowerCase().includes(searchQuery.toLowerCase())));
+    // Keep selectedUserRef in sync (used inside the Pusher event handler)
+    useEffect(() => { selectedUserRef.current = selectedUser; }, [selectedUser]);
+
+    // The sidebar list:
+    //  - Default view: conversations (people you've actually talked to)
+    //  - When the user types a search: filtered list of all users (to start a new chat)
+    const conversationItems = conversations
+        .filter(c => !searchQuery || c.user?.first_name?.toLowerCase().includes(searchQuery.toLowerCase()) || c.user?.user_name?.toLowerCase().includes(searchQuery.toLowerCase()))
+        .map(c => ({
+            id: c.user.id,
+            user: c.user,
+            last_message: c.last_message,
+            unread_count: c.unread_count,
+        }));
+
+    const conversationUserIds = new Set(conversations.map(c => String(c.user?.id)));
+
+    const newContactItems = searchQuery
+        ? (users || [])
+            .filter(u => String(u.id) !== String(userId))
+            .filter(u => !conversationUserIds.has(String(u.id)))
+            .filter(u => u?.user_name?.toLowerCase().includes(searchQuery.toLowerCase()) || u?.first_name?.toLowerCase().includes(searchQuery.toLowerCase()))
+            .map(u => ({ id: u.id, user: u, last_message: null, unread_count: 0 }))
+        : [];
+
+    const fetchConversations = useCallback(async () => {
+        try {
+            setLoadingConversations(true);
+            const data = await authFetch('/chats/conversations');
+            if (data?.status === 200) setConversations(data.data || []);
+        } catch (err) {
+            // silent
+        } finally {
+            setLoadingConversations(false);
+        }
+    }, []);
 
     useEffect(() => {
         const uid = localStorage.getItem('user_id');
@@ -33,10 +70,12 @@ const Chat = () => {
         setUserId(uid);
         setUserName(name);
         setUserPicture(pic);
+        fetchConversations();
+        // Load full users list lazily (only used when the user types a search)
         if (users?.length === 0) {
             fetchUsersLists();
         }
-    }, [fetchUsersLists, users?.length]);
+    }, [fetchUsersLists, users?.length, fetchConversations]);
 
     useEffect(() => {
         document.body.style.height = "auto";
@@ -48,37 +87,58 @@ const Chat = () => {
         }
     }, [completeChats]);
 
-    // Poll for new messages when a user is selected
-    const pollMessages = useCallback(async () => {
-        if (!selectedUser?.id) return;
-        try {
-            const data = await authFetch(`/chats?user_id=${selectedUser.id}`);
-            if (data.status === 200 && Array.isArray(data.data)) {
-                const mapped = data.data.map(chat => ({
-                    ...chat,
-                    type: String(chat.sender_id) === String(userId) ? 'outgoing' : 'incoming',
-                    message_type: (chat.type === 'text' || chat.type === 'reservation_request') ? 'text' : 'voice',
-                }));
-                // Only update if there are new messages
-                const latestId = mapped.length > 0 ? Math.max(...mapped.map(m => m.id)) : 0;
-                if (latestId > lastMsgIdRef.current) {
-                    lastMsgIdRef.current = latestId;
-                    setCompleteChats(mapped);
-                }
-            }
-        } catch (err) {
-            // silent fail for polling
-        }
-    }, [selectedUser?.id, userId]);
-
+    // Pusher real-time subscription. Listens for any incoming message and either
+    //  - appends to the active conversation, or
+    //  - refreshes the conversations list to show the new unread count.
     useEffect(() => {
-        if (!selectedUser?.id) return;
-        // Start polling
-        pollRef.current = setInterval(pollMessages, POLL_INTERVAL);
+        const uid = localStorage.getItem('user_id');
+        if (!uid) return;
+        const pusherKey = process.env.NEXT_PUBLIC_PUSHER_APP_KEY;
+        if (!pusherKey) return; // no real-time, fall back to manual refresh
+        try {
+            const pusher = new Pusher(pusherKey, {
+                cluster: process.env.NEXT_PUBLIC_PUSHER_APP_CLUSTER || 'us2',
+            });
+            pusherRef.current = pusher;
+            const channel = pusher.subscribe(`chat-notify.${uid}`);
+            channel.bind('App\\Events\\ChatEvent', (data) => {
+                const senderId = String(data.message?.sender_id);
+                const current = selectedUserRef.current;
+                if (current && String(current.id) === senderId) {
+                    setCompleteChats(prev => {
+                        // de-dup by id
+                        if (prev.some(m => m.id === data.message.id)) return prev;
+                        return [...prev, {
+                            id: data.message.id,
+                            sender_id: data.message.sender_id,
+                            received_id: data.message.received_id,
+                            message: data.message.text,
+                            type: 'incoming',
+                            message_type: data.message.type === 'voice' ? 'voice' : 'text',
+                            created_at: data.message.created_at,
+                        }];
+                    });
+                    // mark messages from this user as read
+                    authFetch('/chats/mark-read', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ user_id: senderId }),
+                    }).catch(() => {});
+                } else {
+                    // refresh conversation list so unread count and last_message update
+                    fetchConversations();
+                }
+            });
+        } catch (e) {
+            // ignore: real-time disabled
+        }
         return () => {
-            if (pollRef.current) clearInterval(pollRef.current);
+            if (pusherRef.current) {
+                try { pusherRef.current.disconnect(); } catch (_) {}
+                pusherRef.current = null;
+            }
         };
-    }, [selectedUser?.id, pollMessages]);
+    }, [fetchConversations]);
 
     const handleMessageSend = async (e) => {
         e.preventDefault();
@@ -86,20 +146,19 @@ const Chat = () => {
             await sendVoiceMessage();
             return;
         }
-        if (message.trim() === "" || sending) return;
+        if (message.trim() === "" || sending || !selectedUser?.id) return;
 
         setSending(true);
-        const senderId = userId;
         const formData = new FormData();
-        formData.append('sender_id', senderId);
-        formData.append('received_id', selectedUser?.id);
+        formData.append('received_id', selectedUser.id);
         formData.append('message', message);
         formData.append('type', 'text');
 
+        const tempId = Date.now();
         const tempMessage = {
-            id: Date.now(),
-            sender_id: senderId,
-            received_id: selectedUser?.id,
+            id: tempId,
+            sender_id: userId,
+            received_id: selectedUser.id,
             message,
             type: 'outgoing',
             message_type: "text",
@@ -114,15 +173,19 @@ const Chat = () => {
             });
             if (data.status === 200) {
                 setCompleteChats(prev => prev.map(msg =>
-                    msg.id === tempMessage.id ? { ...data.data, type: 'outgoing', message_type: 'text' } : msg
+                    msg.id === tempId ? { ...data.data, type: 'outgoing', message_type: 'text' } : msg
                 ));
                 lastMsgIdRef.current = Math.max(lastMsgIdRef.current, data.data.id);
+                // refresh conversations so last_message updates
+                fetchConversations();
             } else {
                 toast.error(data.message || 'Something went wrong');
+                // remove the optimistic message on failure
+                setCompleteChats(prev => prev.filter(m => m.id !== tempId));
             }
         } catch (error) {
             toast.error('Server error. Please try again later.');
-            console.error('Chat error:', error);
+            setCompleteChats(prev => prev.filter(m => m.id !== tempId));
         } finally {
             setSending(false);
         }
@@ -132,7 +195,6 @@ const Chat = () => {
         setSelectedUser(null);
         setCompleteChats([]);
         lastMsgIdRef.current = 0;
-        if (pollRef.current) clearInterval(pollRef.current);
         try {
             const data = await authFetch(`/user-detail/${user_id}`);
             if (data.status === 200) {
@@ -158,11 +220,17 @@ const Chat = () => {
                     lastMsgIdRef.current = Math.max(...allMessages.map(m => m.id));
                 }
                 setCompleteChats(allMessages);
+                // mark this conversation as read on the server
+                authFetch('/chats/mark-read', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user_id }),
+                }).then(() => fetchConversations()).catch(() => {});
             } else {
                 toast.error('Failed to fetch user messages');
             }
         } catch (error) {
-            console.error("User detail fetch error:", error);
+            // silent
         }
     };
 
@@ -179,7 +247,6 @@ const Chat = () => {
         }]);
 
         const formData = new FormData();
-        formData.append('sender_id', userId);
         formData.append('received_id', selectedUser.id);
         formData.append('type', 'voice');
         formData.append('voice', audioBlob, `voice_${tempId}.webm`);
@@ -192,12 +259,14 @@ const Chat = () => {
             if (data?.data) {
                 setCompleteChats(prev => prev.map(m => m.id === tempId ? { ...data.data, type: 'outgoing', message_type: 'voice' } : m));
                 lastMsgIdRef.current = Math.max(lastMsgIdRef.current, data.data.id);
+                fetchConversations();
             } else {
                 toast.error('Failed to upload voice message');
+                setCompleteChats(prev => prev.filter(m => m.id !== tempId));
             }
         } catch (error) {
             toast.error('Server error. Please try again later.');
-            console.error('Voice send error:', error);
+            setCompleteChats(prev => prev.filter(m => m.id !== tempId));
         }
         clearRecordedAudio();
     };
@@ -264,33 +333,71 @@ const Chat = () => {
                 <div className="sidebar-header">
                     <div style={{ display: "flex", alignItems: "center" }}>
                         <img src={userPicture ? (userPicture.startsWith('http') ? userPicture : `${process.env.NEXT_PUBLIC_BASE_LOCAL_IMAGE_URL}/${userPicture}`) : `https://ui-avatars.com/api/?name=${encodeURIComponent(userName || 'U')}&background=D80621&color=fff`} alt="My Profile" className="profile-image" />
-                        <div className="status-dot online"></div>
                         <h4 className='mx-3'>{userName || 'Me'}</h4>
                     </div>
                 </div>
                 <div className="search-bar">
                     <input
                         type="text"
-                        placeholder="Search users..."
+                        placeholder="Search a user..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                     />
                 </div>
                 <div className="chat-list">
-                    {filteredUsers && filteredUsers?.map((user) => (
-                        <div
-                            className={`chat-user ${selectedUser?.id === user?.id ? 'active' : ''}`}
-                            key={user.id}
-                            onClick={() => handleUserDetail(user?.id)}
-                        >
-                            <img src={getUserAvatar(user)} alt={user?.user_name || user?.first_name} />
-                            <div className="text">
-                                <strong>{user?.first_name || user?.user_name}</strong>
-                            </div>
-                        </div>
-                    ))}
-                    {filteredUsers?.length === 0 && searchQuery && <p className="no-results">No users found.</p>}
-                    {users?.filter(item => item?.id != userId).length === 0 && !searchQuery && <p className="no-results">No other users available.</p>}
+                    {!searchQuery && conversationItems.length === 0 && !loadingConversations && (
+                        <p className="no-results">No conversations yet. Use search to start a new one.</p>
+                    )}
+
+                    {conversationItems.length > 0 && (
+                        <>
+                            {searchQuery && <div style={{ padding: '6px 12px', fontSize: 11, color: '#888', textTransform: 'uppercase', letterSpacing: 0.5 }}>Conversations</div>}
+                            {conversationItems.map(({ id, user, last_message, unread_count }) => (
+                                <div
+                                    className={`chat-user ${selectedUser?.id === id ? 'active' : ''}`}
+                                    key={`conv-${id}`}
+                                    onClick={() => handleUserDetail(id)}
+                                >
+                                    <img src={getUserAvatar(user)} alt={user?.user_name || user?.first_name} />
+                                    <div className="text" style={{ flex: 1, minWidth: 0 }}>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                            <strong>{user?.first_name || user?.user_name}</strong>
+                                            {unread_count > 0 && (
+                                                <span style={{ background: '#D80621', color: '#fff', fontSize: 11, fontWeight: 700, borderRadius: 10, padding: '2px 7px' }}>{unread_count}</span>
+                                            )}
+                                        </div>
+                                        {last_message && (
+                                            <div style={{ fontSize: 12, color: '#777', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                                {last_message?.type === 'voice' ? '🎤 Voice message' : (last_message?.message || '')}
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            ))}
+                        </>
+                    )}
+
+                    {searchQuery && newContactItems.length > 0 && (
+                        <>
+                            <div style={{ padding: '6px 12px', fontSize: 11, color: '#888', textTransform: 'uppercase', letterSpacing: 0.5, marginTop: 8 }}>New chat</div>
+                            {newContactItems.map(({ id, user }) => (
+                                <div
+                                    className={`chat-user ${selectedUser?.id === id ? 'active' : ''}`}
+                                    key={`new-${id}`}
+                                    onClick={() => handleUserDetail(id)}
+                                >
+                                    <img src={getUserAvatar(user)} alt={user?.user_name || user?.first_name} />
+                                    <div className="text">
+                                        <strong>{user?.first_name || user?.user_name}</strong>
+                                    </div>
+                                </div>
+                            ))}
+                        </>
+                    )}
+
+                    {searchQuery && conversationItems.length === 0 && newContactItems.length === 0 && (
+                        <p className="no-results">No users found.</p>
+                    )}
                 </div>
             </div>
 
@@ -301,7 +408,7 @@ const Chat = () => {
                             <img src={getUserAvatar(selectedUser)} alt={selectedUser?.user_name || selectedUser?.first_name} />
                             <div>
                                 <strong>{selectedUser?.first_name || selectedUser?.user_name}</strong><br />
-                                <small className="online-status">Online</small>
+                                <small style={{ color: '#888', textTransform: 'capitalize' }}>{selectedUser?.role || 'user'}</small>
                             </div>
                         </div>
 

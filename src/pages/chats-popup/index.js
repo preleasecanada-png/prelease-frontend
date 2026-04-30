@@ -86,7 +86,6 @@ const ChatPopup = ({ setShowChatModal, placeDetail }) => {
                 </div>
                 <div className="landlord_info">
                   <p className="landlord_name">{placeDetail?.user?.first_name || placeDetail?.user?.user_name} <span>host</span></p>
-                  <span className="landlord_status">Online Now</span>
                 </div>
               </div>
               <div className="landload_price">
