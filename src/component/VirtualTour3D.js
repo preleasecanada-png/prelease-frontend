@@ -1,6 +1,13 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
+import dynamic from 'next/dynamic';
+
+// Heavy WebGL splat viewer is loaded only when the user explicitly opens the
+// real 3D model. This keeps the property detail bundle lightweight.
+const Gaussian3DViewer = dynamic(() => import('./Gaussian3DViewer'), { ssr: false });
 
 const VirtualTour3D = ({ videoUrl, propertyTitle, onClose, tourStatus = 'none', model3dUrl = null }) => {
+    const [showRealSplat, setShowRealSplat] = useState(false);
+    const canRenderInline = !!model3dUrl && /\.(splat|ksplat|ply)(\?|$)/i.test(model3dUrl);
     const videoRef = useRef(null);
     const containerRef = useRef(null);
     const [isPlaying, setIsPlaying] = useState(false);
@@ -149,6 +156,14 @@ const VirtualTour3D = ({ videoUrl, propertyTitle, onClose, tourStatus = 'none', 
     }
 
     return (
+        <>
+        {showRealSplat && model3dUrl && (
+            <Gaussian3DViewer
+                splatUrl={model3dUrl}
+                title={propertyTitle}
+                onClose={() => setShowRealSplat(false)}
+            />
+        )}
         <div
             ref={containerRef}
             style={{
@@ -183,7 +198,16 @@ const VirtualTour3D = ({ videoUrl, propertyTitle, onClose, tourStatus = 'none', 
                             Generating real 3D…
                         </span>
                     )}
-                    {tourStatus === 'ready' && model3dUrl && (
+                    {tourStatus === 'ready' && model3dUrl && canRenderInline && (
+                        <button
+                            onClick={() => setShowRealSplat(true)}
+                            style={{ background: '#07A537', color: '#fff', padding: '6px 14px', borderRadius: '20px', fontSize: '12px', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '6px', border: 'none', cursor: 'pointer' }}
+                        >
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="m4.93 4.93 4.24 4.24"/><path d="m14.83 9.17 4.24-4.24"/><path d="m14.83 14.83 4.24 4.24"/><path d="m9.17 14.83-4.24 4.24"/><circle cx="12" cy="12" r="4"/></svg>
+                            Open Real 3D Model
+                        </button>
+                    )}
+                    {tourStatus === 'ready' && model3dUrl && !canRenderInline && (
                         <a
                             href={model3dUrl}
                             target="_blank"
@@ -354,6 +378,7 @@ const VirtualTour3D = ({ videoUrl, propertyTitle, onClose, tourStatus = 'none', 
                 </div>
             )}
         </div>
+        </>
     );
 };
 
