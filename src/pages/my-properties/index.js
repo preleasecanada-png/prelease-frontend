@@ -10,6 +10,41 @@ const MyProperties = () => {
   const [editForm, setEditForm] = useState({})
   const [newImages, setNewImages] = useState([])
   const [deletingImageId, setDeletingImageId] = useState(null)
+  const [savingId, setSavingId] = useState(null)
+
+  // Upload a single file directly to S3 via a presigned URL so we never hit the
+  // 10 MB API Gateway payload limit (matches the create flow in /properties).
+  const uploadFileToS3 = async (file, prefix) => {
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_API_HOST
+    const token = localStorage.getItem('token')
+    const presignRes = await fetch(`${baseUrl}/s3/presign`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        filename: file.name || 'upload.bin',
+        content_type: file.type || 'application/octet-stream',
+        size: file.size,
+        prefix,
+      }),
+    })
+    if (!presignRes.ok) throw new Error(`Could not get upload URL (${presignRes.status})`)
+    const presignJson = await presignRes.json()
+    const uploadUrl = presignJson?.data?.upload_url
+    const s3Key = presignJson?.data?.s3_key
+    if (!uploadUrl || !s3Key) throw new Error('Invalid presign response')
+
+    const putRes = await fetch(uploadUrl, {
+      method: 'PUT',
+      headers: { 'Content-Type': file.type || 'application/octet-stream' },
+      body: file,
+    })
+    if (!putRes.ok) throw new Error(`S3 upload failed (${putRes.status})`)
+    return s3Key
+  }
 
   useEffect(() => {
     fetchMyProperties()
@@ -108,37 +143,30 @@ const MyProperties = () => {
   }
 
   const saveEdit = async (id) => {
+    setSavingId(id)
     try {
       const token = localStorage.getItem('token')
-      let fetchOptions = {}
+      const payload = { ...editForm }
 
+      // Pre-upload any newly added photos directly to S3 so we never send a
+      // big multipart body through API Gateway (avoids 413 Payload Too Large).
       if (newImages.length > 0) {
-        const formData = new FormData()
-        Object.entries(editForm).forEach(([key, val]) => {
-          formData.append(key, val)
-        })
-        for (const file of newImages) {
-          const compressed = await compressImage(file)
-          formData.append('property_images[]', compressed)
-        }
-        fetchOptions = {
-          method: 'POST',
-          headers: { Authorization: `Bearer ${token}` },
-          body: formData,
-        }
-      } else {
-        fetchOptions = {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
-          },
-          body: JSON.stringify(editForm),
-        }
+        const compressedFiles = await Promise.all(newImages.map((f) => compressImage(f)))
+        const imageKeys = await Promise.all(
+          compressedFiles.map((file) => uploadFileToS3(file, 'images/place_gallery_images'))
+        )
+        payload.property_image_keys = imageKeys
       }
 
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_HOST}/property/${id}/update`, fetchOptions)
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_HOST}/property/${id}/update`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        body: JSON.stringify(payload),
+      })
       const data = await res.json()
       if (data?.status === 200) {
         toast.success('Property updated!')
@@ -150,7 +178,9 @@ const MyProperties = () => {
       }
     } catch (err) {
       console.error('Update error:', err)
-      toast.error('Something went wrong')
+      toast.error(err?.message ? `Update failed: ${err.message}` : 'Something went wrong')
+    } finally {
+      setSavingId(null)
     }
   }
 
@@ -289,10 +319,18 @@ const MyProperties = () => {
                       </div>
                       <textarea className="form-control form-control-sm" name="description" value={editForm.description} onChange={handleEditChange} rows="2" placeholder="Description" />
                       <div className="d-flex gap-2">
-                        <button onClick={() => saveEdit(property.id)} style={{ flex: 1, backgroundColor: '#059669', color: '#fff', border: 'none', padding: '8px', borderRadius: '6px', fontWeight: '600', cursor: 'pointer', fontSize: '13px' }}>
-                          Save
+                        <button
+                          onClick={() => saveEdit(property.id)}
+                          disabled={savingId === property.id}
+                          style={{ flex: 1, backgroundColor: '#059669', color: '#fff', border: 'none', padding: '8px', borderRadius: '6px', fontWeight: '600', cursor: savingId === property.id ? 'not-allowed' : 'pointer', fontSize: '13px', opacity: savingId === property.id ? 0.6 : 1 }}
+                        >
+                          {savingId === property.id ? (newImages.length > 0 ? `Uploading ${newImages.length}...` : 'Saving...') : 'Save'}
                         </button>
-                        <button onClick={() => setEditingId(null)} style={{ flex: 1, backgroundColor: '#6B7280', color: '#fff', border: 'none', padding: '8px', borderRadius: '6px', fontWeight: '600', cursor: 'pointer', fontSize: '13px' }}>
+                        <button
+                          onClick={() => setEditingId(null)}
+                          disabled={savingId === property.id}
+                          style={{ flex: 1, backgroundColor: '#6B7280', color: '#fff', border: 'none', padding: '8px', borderRadius: '6px', fontWeight: '600', cursor: 'pointer', fontSize: '13px' }}
+                        >
                           Cancel
                         </button>
                       </div>
