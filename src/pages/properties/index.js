@@ -126,6 +126,47 @@ const Property = () => {
   };
 
   const [submitting, setSubmitting] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState('');
+
+  // Upload a single file directly to S3 via a presigned URL.
+  // Bypasses API Gateway's 10 MB limit so large tour videos go straight to storage.
+  const uploadFileToS3 = async (file, prefix) => {
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_API_HOST;
+    const token = window.localStorage.getItem('token');
+    const presignRes = await fetch(`${baseUrl}/s3/presign`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        filename: file.name || 'upload.bin',
+        content_type: file.type || 'application/octet-stream',
+        size: file.size,
+        prefix,
+      }),
+    });
+    if (!presignRes.ok) {
+      throw new Error(`Could not get upload URL (${presignRes.status})`);
+    }
+    const presignJson = await presignRes.json();
+    const uploadUrl = presignJson?.data?.upload_url;
+    const s3Key = presignJson?.data?.s3_key;
+    if (!uploadUrl || !s3Key) {
+      throw new Error('Invalid presign response');
+    }
+
+    const putRes = await fetch(uploadUrl, {
+      method: 'PUT',
+      headers: { 'Content-Type': file.type || 'application/octet-stream' },
+      body: file,
+    });
+    if (!putRes.ok) {
+      throw new Error(`S3 upload failed (${putRes.status})`);
+    }
+    return s3Key;
+  };
 
   const handleSubmit = async (e) => {
     const btnText = e?.target?.textContent || '';
@@ -152,56 +193,68 @@ const Property = () => {
     }
     setValidationErrors([]);
     setSubmitting(true);
-    const formData = new FormData();
-    let user_id = window.localStorage.getItem('user_id');
-    formData.append('title', title);
-    formData.append('description', description);
-    formData.append('describe_your_place', DescribePlaceName);
-    formData.append('how_many_guests', guests);
-    formData.append('how_many_bedrooms', bedrooms);
-    formData.append('how_many_bathroom', bathrooms);
-    formData.append('bathroom_avaiable_private_and_attached', privateBathroom);
-    formData.append('bathroom_avaiable_dedicated', dedicatedBathroom);
-    formData.append('bathroom_avaiable_shared', sharedBathroom);
-    formData.append('who_else_there', mightThere);
-    formData.append('pets_allowed', petsAllowed ? 1 : 0);
-    formData.append('set_your_price', price);
-    formData.append('user_id', user_id);
-    formData.append('reservation_type', reservationType);
-    formData.append('guest_service_fee', guestServiceFee);
-    formData.append('discount_1_month', discount1Month ? 1 : 0);
-    formData.append('discount_1_month_value', discount1MonthValue);
-    formData.append('discount_3_month', discount3Month ? 1 : 0);
-    formData.append('discount_3_month_value', discount3MonthValue);
-    formData.append('discount_6_month', discount6Month ? 1 : 0);
-    formData.append('discount_6_month_value', discount6MonthValue);
-
-    formData.append('country', addressData.country);
-    formData.append('address', addressData.address);
-    formData.append('street', addressData.street);
-    formData.append('apt', addressData.apt);
-    formData.append('city', addressData.city);
-    formData.append('province', addressData.province);
-    formData.append('postal', addressData.postal);
-    AllAmenities.forEach((amenity, index) => {
-      formData.append(`amenities[${index}][id]`, amenity.id);
-    });
-    uploadedImages.forEach((imageObj, index) => {
-      formData.append(`property_images[]`, imageObj.file);
-    });
-    if (tourVideo?.file) {
-      formData.append('tour_video', tourVideo.file);
-    }
     try {
-      const response = await authFetch(`/property/create`, {
+      // 1. Upload all photos directly to S3 in parallel.
+      setUploadProgress(`Uploading ${uploadedImages.length} photo${uploadedImages.length > 1 ? 's' : ''}...`);
+      const imageKeys = await Promise.all(
+        uploadedImages.map((imageObj) => uploadFileToS3(imageObj.file, 'images/place_gallery_images'))
+      );
+
+      // 2. Upload the optional 3D tour video (may be hundreds of MB).
+      let tourVideoKey = null;
+      if (tourVideo?.file) {
+        setUploadProgress('Uploading 3D tour video... this may take a minute');
+        tourVideoKey = await uploadFileToS3(tourVideo.file, 'tour-videos');
+      }
+
+      // 3. Create the property with just the S3 keys (small JSON payload).
+      setUploadProgress('Finalizing your listing...');
+      const user_id = window.localStorage.getItem('user_id');
+      const payload = {
+        title,
+        description,
+        describe_your_place: DescribePlaceName,
+        how_many_guests: guests,
+        how_many_bedrooms: bedrooms,
+        how_many_bathroom: bathrooms,
+        bathroom_avaiable_private_and_attached: privateBathroom,
+        bathroom_avaiable_dedicated: dedicatedBathroom,
+        bathroom_avaiable_shared: sharedBathroom,
+        who_else_there: mightThere,
+        pets_allowed: petsAllowed ? 1 : 0,
+        set_your_price: price,
+        user_id,
+        reservation_type: reservationType,
+        guest_service_fee: guestServiceFee,
+        discount_1_month: discount1Month ? 1 : 0,
+        discount_1_month_value: discount1MonthValue,
+        discount_3_month: discount3Month ? 1 : 0,
+        discount_3_month_value: discount3MonthValue,
+        discount_6_month: discount6Month ? 1 : 0,
+        discount_6_month_value: discount6MonthValue,
+        country: addressData.country,
+        address: addressData.address,
+        street: addressData.street,
+        apt: addressData.apt,
+        city: addressData.city,
+        province: addressData.province,
+        postal: addressData.postal,
+        amenities: AllAmenities.map((a) => ({ id: a.id })),
+        property_image_keys: imageKeys,
+      };
+      if (tourVideoKey) {
+        payload.tour_video_key = tourVideoKey;
+      }
+
+      const data = await authFetch(`/property/create`, {
         method: 'POST',
-        body: formData,
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify(payload),
       });
-      const data = await response.json();
-      if (response.status == 200) {
+      if (data?.status === 200) {
         alert('Property created successfully!');
         route.push('/');
-      } else if (response.status == 422 && data?.errors) {
+      } else if (data?.errors) {
         const serverErrors = Object.values(data.errors).flat();
         setValidationErrors(serverErrors);
         setTimeout(() => errorsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
@@ -210,8 +263,9 @@ const Property = () => {
       }
     } catch (error) {
       console.error('Create listing error:', error);
-      setValidationErrors([`Network error: ${error.message}. Please check your connection and try again.`]);
+      setValidationErrors([`Upload failed: ${error.message}. Please try again.`]);
     } finally {
+      setUploadProgress('');
       setSubmitting(false);
     }
   };
@@ -288,7 +342,7 @@ const Property = () => {
               disabled={submitting}
               style={submitting ? { opacity: 0.6, cursor: 'not-allowed' } : {}}
             >
-              {submitting ? 'Creating...' : getButtonText()}
+              {submitting ? (uploadProgress || 'Creating...') : getButtonText()}
             </button>
           </div>
           {validationErrors.length > 0 && (
