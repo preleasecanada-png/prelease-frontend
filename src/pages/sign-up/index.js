@@ -44,6 +44,7 @@ const SignUp = memo(() => {
     const [loading, setLoading] = useState(false);
     const [step, setStep] = useState(0);
     const [selected, setSelected] = useState('Tenant');
+    const [referralCode, setReferralCode] = useState('');
 
     const togglePasswordVisibility = useCallback(() => {
         setIsPasswordVisible(!isPasswordVisible);
@@ -57,6 +58,13 @@ const SignUp = memo(() => {
         window.localStorage.setItem("email", '');
         window.localStorage.setItem("user_id", '');
     }, []);
+
+    // Capture referral code from URL ?ref=XXX (e.g. /sign-up?ref=PRL-ABC123)
+    useEffect(() => {
+        if (router.isReady && router.query?.ref) {
+            setReferralCode(String(router.query.ref).trim());
+        }
+    }, [router.isReady, router.query]);
 
 
     // useEffect(() => {
@@ -88,6 +96,9 @@ const SignUp = memo(() => {
             formData.append('password', password);
             formData.append('confirm_password', confirmPassword);
             formData.append('role', selected);
+            if (referralCode) {
+                formData.append('referral_code', referralCode);
+            }
             const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_HOST}/register`, {
                 method: 'POST',
                 body: formData,

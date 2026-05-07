@@ -196,6 +196,10 @@ const SideDrops = memo(() => {
                                                     <div className="l1xexnrd atm_am_1gtjylf dir dir-ltr">Maintenance</div>
                                                 </Link>
 
+                                                <Link href='/referrals' className="cd7h8km atm_1s_glywfm atm_26_1j28jx2 atm_3f_idpfg4 atm_9j_tlke0l atm_bx_1kw7nm4 atm_gi_idpfg4 atm_ks_ewfl5b atm_r3_1kw7nm4 atm_rd_glywfm atm_vb_1wugsn5 atm_kd_glywfm atm_c8_km0zk7 atm_g3_18khvle atm_fr_1m9t47k atm_7l_dezgoh atm_l8_11nx8fq atm_vv_1q9ccgz atm_vy_1osqo2v atm_cs_6adqpa atm_9s_1txwivl atm_h_1h6ojuz atm_3f_glywfm_jo46a5 atm_l8_idpfg4_jo46a5 atm_gi_idpfg4_jo46a5 atm_3f_glywfm_1icshfk atm_kd_glywfm_19774hq atm_2d_116dmco_1b5lzrw atm_uc_aaiy6o_1w3cfyq atm_70_cdw4us_1w3cfyq atm_uc_glywfm_1w3cfyq_1rrf6b5 atm_uc_aaiy6o_pfnrn2_1oszvuo atm_70_cdw4us_pfnrn2_1oszvuo atm_uc_glywfm_pfnrn2_1o31aam c11luhwk dir dir-ltr" >
+                                                    <div className="l1xexnrd atm_am_1gtjylf dir dir-ltr">Referrals</div>
+                                                </Link>
+
                                                 {(role === 'host' || role === 'landlord' || role === 'admin') && (
                                                 <Link href='/reports' className="cd7h8km atm_1s_glywfm atm_26_1j28jx2 atm_3f_idpfg4 atm_9j_tlke0l atm_bx_1kw7nm4 atm_gi_idpfg4 atm_ks_ewfl5b atm_r3_1kw7nm4 atm_rd_glywfm atm_vb_1wugsn5 atm_kd_glywfm atm_c8_km0zk7 atm_g3_18khvle atm_fr_1m9t47k atm_7l_dezgoh atm_l8_11nx8fq atm_vv_1q9ccgz atm_vy_1osqo2v atm_cs_6adqpa atm_9s_1txwivl atm_h_1h6ojuz atm_3f_glywfm_jo46a5 atm_l8_idpfg4_jo46a5 atm_gi_idpfg4_jo46a5 atm_3f_glywfm_1icshfk atm_kd_glywfm_19774hq atm_2d_116dmco_1b5lzrw atm_uc_aaiy6o_1w3cfyq atm_70_cdw4us_1w3cfyq atm_uc_glywfm_1w3cfyq_1rrf6b5 atm_uc_aaiy6o_pfnrn2_1oszvuo atm_70_cdw4us_pfnrn2_1oszvuo atm_uc_glywfm_pfnrn2_1o31aam c11luhwk dir dir-ltr" >
                                                     <div className="l1xexnrd atm_am_1gtjylf dir dir-ltr">Reports</div>
