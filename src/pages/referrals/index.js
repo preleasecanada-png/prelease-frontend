@@ -186,7 +186,7 @@ const Referrals = () => {
             <div className="p-4">
               <EnhancedTable
                 headers={['Code', 'Referred User', 'Status', 'Reward']}
-                rows={referrals.map((r) => [
+                data={referrals.map((r) => [
                   <code key="code" className="fw-bold">{r.referral_code}</code>,
                   r.referred ? `${r.referred.first_name} ${r.referred.last_name}` : 'Pending',
                   <span key="status" className={`badge-enhanced badge-${r.status === 'completed' ? 'success' : r.status === 'registered' ? 'info' : 'warning'}`}>
