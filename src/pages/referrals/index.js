@@ -5,6 +5,7 @@ import toast from 'react-hot-toast'
 
 const Referrals = () => {
   const [referralCode, setReferralCode] = useState('')
+  const [referralLink, setReferralLink] = useState('')
   const [applyCode, setApplyCode] = useState('')
   const [referrals, setReferrals] = useState([])
   const [stats, setStats] = useState({})
@@ -14,15 +15,26 @@ const Referrals = () => {
     fetchReferrals()
   }, [])
 
+  const buildLink = (code) => {
+    if (!code) return ''
+    const origin = typeof window !== 'undefined' ? window.location.origin : ''
+    return `${origin}/sign-up?ref=${code}`
+  }
+
   const fetchReferrals = async () => {
     try {
       const res = await authFetch('/referrals/my-referrals')
       if (res?.status === 200) {
         setReferrals(res.data?.referrals || [])
         setStats(res.data?.stats || {})
+        const existing = res.data?.current_referral_code
+        if (existing) {
+          setReferralCode(existing)
+          setReferralLink(buildLink(existing))
+        }
       }
     } catch (err) {
-      console.error(err)
+      console.error('fetchReferrals error', err)
     }
     setLoading(false)
   }
@@ -36,14 +48,23 @@ const Referrals = () => {
       })
       const data = await res.json()
       if (data?.status === 200) {
-        setReferralCode(data.data?.referral_code)
+        const code = data.data?.referral_code
+        setReferralCode(code)
+        setReferralLink(data.data?.referral_link || buildLink(code))
         toast.success('Referral code ready!')
+        fetchReferrals()
       } else {
         toast.error('Failed to generate code')
       }
     } catch (err) {
       toast.error('Something went wrong')
     }
+  }
+
+  const copyLink = () => {
+    if (!referralLink) return
+    navigator.clipboard.writeText(referralLink)
+    toast.success('Link copied!')
   }
 
   const handleApplyCode = async (e) => {
@@ -113,18 +134,28 @@ const Referrals = () => {
             <EnhancedCard className="h-100 p-4">
               <h5 className="fw-bold mb-4">Your Referral Code</h5>
               {referralCode ? (
-                <div className="d-flex gap-2 align-items-center">
-                  <input type="text" className="form-control form-control-enhanced form-control-lg text-center fw-bold" value={referralCode} readOnly />
-                  <AnimatedButton variant="outline" onClick={copyToClipboard}>
-                    Copy
-                  </AnimatedButton>
-                </div>
+                <>
+                  <div className="d-flex gap-2 align-items-center mb-3">
+                    <input type="text" className="form-control form-control-enhanced form-control-lg text-center fw-bold" value={referralCode} readOnly />
+                    <AnimatedButton variant="outline" onClick={copyToClipboard}>
+                      Copy
+                    </AnimatedButton>
+                  </div>
+                  {referralLink && (
+                    <div className="d-flex gap-2 align-items-center">
+                      <input type="text" className="form-control form-control-enhanced" value={referralLink} readOnly style={{ fontSize: '0.85rem' }} />
+                      <AnimatedButton variant="outline" onClick={copyLink}>
+                        Copy Link
+                      </AnimatedButton>
+                    </div>
+                  )}
+                </>
               ) : (
                 <AnimatedButton variant="primary" className="w-100" onClick={handleGenerateCode}>
                   Generate Referral Code
                 </AnimatedButton>
               )}
-              <p className="text-muted mt-3 mb-0">Share this code with friends. You'll earn a reward when they complete their first lease.</p>
+              <p className="text-muted mt-3 mb-0">Share this code or link with friends. You'll earn <strong>5%</strong> when they complete their first payment.</p>
             </EnhancedCard>
           </AnimatedSection>
         </div>
