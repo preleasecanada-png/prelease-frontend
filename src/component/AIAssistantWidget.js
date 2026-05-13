@@ -40,14 +40,30 @@ const AIAssistantWidget = () => {
   }, []);
 
   useEffect(() => {
-    if (isOpen && messages.length === 0 && isLoggedIn) {
+    if (isOpen && isLoggedIn) {
+      loadHistory();
       loadSuggestions();
-      setMessages([{
-        role: 'assistant',
-        content: "Hi! I'm **Prelease AI** 🏠\n\nI can help you find properties that match your budget, explain the rental process, and guide you through every step. How can I help you today?"
-      }]);
     }
   }, [isOpen, isLoggedIn]);
+
+  const loadHistory = async () => {
+    try {
+      const data = await authFetch('/ai-assistant/history');
+      if (data?.data && data.data.length > 0) {
+        setMessages(data.data.map(m => ({ role: m.role, content: m.content })));
+      } else {
+        setMessages([{
+          role: 'assistant',
+          content: "Hi! I'm **Prelease AI** 🏠\n\nI can help you find properties, submit applications, sign leases, and manage your rental — all in one conversation. How can I help you today?"
+        }]);
+      }
+    } catch (e) {
+      setMessages([{
+        role: 'assistant',
+        content: "Hi! I'm **Prelease AI** 🏠\n\nHow can I help you today?"
+      }]);
+    }
+  };
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -68,19 +84,12 @@ const AIAssistantWidget = () => {
     const msgText = text || input.trim();
     if (!msgText || loading) return;
 
-    const userMsg = { role: 'user', content: msgText };
-    const newMessages = [...messages, userMsg];
-    setMessages(newMessages);
+    setMessages(prev => [...prev, { role: 'user', content: msgText }]);
     setInput('');
     setLoading(true);
     setSuggestions([]);
 
     try {
-      const conversation = newMessages
-        .filter(m => m.role !== 'system')
-        .slice(-20)
-        .map(m => ({ role: m.role, content: m.content }));
-
       const token = localStorage.getItem('token');
       const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_HOST}/ai-assistant/chat`, {
         method: 'POST',
@@ -88,10 +97,7 @@ const AIAssistantWidget = () => {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          message: msgText,
-          conversation: conversation.slice(0, -1),
-        }),
+        body: JSON.stringify({ message: msgText }),
       });
 
       const data = await res.json();
@@ -107,7 +113,7 @@ const AIAssistantWidget = () => {
     } finally {
       setLoading(false);
     }
-  }, [input, messages, loading]);
+  }, [input, loading]);
 
   const handleKeyDown = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -116,10 +122,13 @@ const AIAssistantWidget = () => {
     }
   };
 
-  const clearChat = () => {
+  const clearChat = async () => {
+    try {
+      await authFetch('/ai-assistant/history', { method: 'DELETE' });
+    } catch (e) { /* silent */ }
     setMessages([{
       role: 'assistant',
-      content: "Chat cleared! How can I help you?"
+      content: "Chat cleared! How can I help you with Prelease Canada?"
     }]);
     loadSuggestions();
   };
