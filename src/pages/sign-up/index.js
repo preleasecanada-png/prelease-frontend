@@ -95,7 +95,12 @@ const SignUp = memo(() => {
             formData.append('date_of_birth', dateOfBirth);
             formData.append('password', password);
             formData.append('confirm_password', confirmPassword);
-            formData.append('role', selected);
+            
+            let backendRole = 'renter';
+            if (selected === 'Tenant') backendRole = 'renter';
+            if (selected === 'Landlord') backendRole = 'landlord';
+            formData.append('role', backendRole);
+            
             if (referralCode) {
                 formData.append('referral_code', referralCode);
             }
