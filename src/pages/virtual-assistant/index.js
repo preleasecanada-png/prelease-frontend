@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
 import { MessageCircle, Send, X, Phone, MessageSquare, Settings, MoreVertical } from 'lucide-react';
-import axios from 'axios';
+import { authFetch } from '@/Helper/helper';
 
 const VirtualAssistant = () => {
   const router = useRouter();
@@ -29,17 +29,16 @@ const VirtualAssistant = () => {
 
   const initializeConversation = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/virtual-assistant/start`,
-        { channel: 'chat' },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      const response = await authFetch('/virtual-assistant/start', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ channel: 'chat' }),
+      });
 
-      if (response.data.success) {
-        setConversationId(response.data.conversation_id);
-        if (response.data.conversation?.messages) {
-          setMessages(response.data.conversation.messages);
+      if (response?.success) {
+        setConversationId(response.conversation_id);
+        if (response.conversation?.messages) {
+          setMessages(response.conversation.messages);
         }
       }
     } catch (error) {
@@ -49,14 +48,10 @@ const VirtualAssistant = () => {
 
   const loadSettings = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/virtual-assistant/settings`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      const response = await authFetch('/virtual-assistant/settings');
 
-      if (response.data.success) {
-        setSettings(response.data.settings);
+      if (response?.success) {
+        setSettings(response.settings);
       }
     } catch (error) {
       console.error('Error loading settings:', error);
@@ -72,23 +67,22 @@ const VirtualAssistant = () => {
     setIsLoading(true);
 
     try {
-      const token = localStorage.getItem('token');
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/virtual-assistant/send-message`,
-        { conversation_id: conversationId, message: userMessage },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      const response = await authFetch('/virtual-assistant/send-message', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ conversation_id: conversationId, message: userMessage }),
+      });
 
-      if (response.data.success) {
+      if (response?.success) {
         setMessages(prev => [...prev, { 
           sender: 'assistant', 
-          message: response.data.message,
+          message: response.message,
           is_ai_generated: true
         }]);
       } else {
         setMessages(prev => [...prev, { 
           sender: 'assistant', 
-          message: response.data.message || 'Sorry, I encountered an error. Please try again.' 
+          message: response?.message || 'Sorry, I encountered an error. Please try again.' 
         }]);
       }
     } catch (error) {
@@ -113,13 +107,10 @@ const VirtualAssistant = () => {
     if (!conversationId) return;
 
     try {
-      const token = localStorage.getItem('token');
-      await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/virtual-assistant/conversations/${conversationId}/close`,
-        {},
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      router.push('/dashboard');
+      await authFetch(`/virtual-assistant/conversations/${conversationId}/close`, {
+        method: 'POST',
+      });
+      router.push('/');
     } catch (error) {
       console.error('Error closing conversation:', error);
     }

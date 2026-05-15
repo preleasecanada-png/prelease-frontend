@@ -323,7 +323,7 @@ const Chat = () => {
 
     const getUserAvatar = (user) => {
         if (user?.picture && user.picture.startsWith('http')) return user.picture;
-        if (user?.picture) return `${process.env.NEXT_PUBLIC_BASE_LOCAL_IMAGE_URL}/${user.picture}`;
+        if (user?.picture) return `${process.env.NEXT_PUBLIC_BASE_LOCAL_IMAGE_HOST}/${user.picture}`;
         return `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.first_name || user?.user_name || 'U')}&background=D80621&color=fff`;
     };
 
@@ -332,7 +332,7 @@ const Chat = () => {
             <div className="sidebar">
                 <div className="sidebar-header">
                     <div style={{ display: "flex", alignItems: "center" }}>
-                        <img src={userPicture ? (userPicture.startsWith('http') ? userPicture : `${process.env.NEXT_PUBLIC_BASE_LOCAL_IMAGE_URL}/${userPicture}`) : `https://ui-avatars.com/api/?name=${encodeURIComponent(userName || 'U')}&background=D80621&color=fff`} alt="My Profile" className="profile-image" />
+                        <img src={userPicture ? (userPicture.startsWith('http') ? userPicture : `${process.env.NEXT_PUBLIC_BASE_LOCAL_IMAGE_HOST}/${userPicture}`) : `https://ui-avatars.com/api/?name=${encodeURIComponent(userName || 'U')}&background=D80621&color=fff`} alt="My Profile" className="profile-image" />
                         <h4 className='mx-3'>{userName || 'Me'}</h4>
                     </div>
                 </div>

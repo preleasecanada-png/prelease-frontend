@@ -140,6 +140,8 @@ const ApplyForProperty = () => {
                     <select className="form-select" name="desired_lease_duration" value={form.desired_lease_duration} onChange={handleChange} required>
                       <option value="3_month">3 Months</option>
                       <option value="6_month">6 Months</option>
+                      <option value="12_month">12 Months</option>
+                      <option value="month_to_month">Month-to-Month</option>
                     </select>
                   </div>
                   <div className="col-12">

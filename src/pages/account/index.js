@@ -32,23 +32,35 @@ const Account = () => {
 
   const handleLogout = async (e) => {
     e.preventDefault();
+    const token = window.localStorage.getItem('token');
+    const userEmail = window.localStorage.getItem('email') || email;
     try {
       const formData = new FormData();
-      formData.append('email', email);
+      formData.append('email', userEmail);
       const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_HOST}/logout`, {
         method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
         body: formData,
       });
-      if (res.status == 200) {
-        window.localStorage.removeItem('token');
-        window.localStorage.removeItem('email');
-        router.push('/login');
-      } else {
-        console.log('error');
+      if (res.status !== 200 && res.status !== 401) {
+        console.error('Logout API warning:', res.status, await res.text().catch(() => ''));
       }
     } catch (error) {
-      console.log(error);
+      console.error('Logout API error:', error);
     }
+    // Always clear client-side session regardless of API result
+    window.localStorage.removeItem('token');
+    window.localStorage.removeItem('email');
+    window.localStorage.removeItem('user_picture');
+    window.localStorage.removeItem('user_name');
+    window.localStorage.removeItem('user_id');
+    window.localStorage.removeItem('role');
+    document.cookie = 'token=; path=/; max-age=0';
+    document.cookie = 'role=; path=/; max-age=0';
+    window.dispatchEvent(new Event('logout'));
+    router.push('/login');
   }
   return (
     <>
@@ -59,7 +71,7 @@ const Account = () => {
         <div className='account-session-profile'>
           <div className='account-session-profile-image'>
             {host?.picture ? (
-              <img src={host.picture.startsWith('http') ? host.picture : `${process.env.NEXT_PUBLIC_BASE_LOCAL_IMAGE_URL}/${host.picture}`} alt="Profile" style={{ objectFit: 'cover', borderRadius: '50%' }} />
+              <img src={host.picture.startsWith('http') ? host.picture : `${process.env.NEXT_PUBLIC_BASE_LOCAL_IMAGE_HOST}/${host.picture}`} alt="Profile" style={{ objectFit: 'cover', borderRadius: '50%' }} />
             ) : (
               <div style={{ width: '80px', height: '80px', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#D80621', color: '#fff', fontSize: '36px', fontWeight: '600', borderRadius: '50%' }}>
                 {host?.first_name?.charAt(0)?.toUpperCase() || '?'}

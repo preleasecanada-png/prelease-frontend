@@ -163,7 +163,7 @@ const Applications = () => {
 
   const getRenterAvatar = (renter) => {
     if (renter?.picture && renter.picture.startsWith('http')) return renter.picture
-    if (renter?.picture) return `${process.env.NEXT_PUBLIC_BASE_LOCAL_IMAGE_URL}/${renter.picture}`
+    if (renter?.picture) return `${process.env.NEXT_PUBLIC_BASE_LOCAL_IMAGE_HOST}/${renter.picture}`
     return `https://ui-avatars.com/api/?name=${encodeURIComponent((renter?.first_name || 'U') + ' ' + (renter?.last_name || ''))}&background=D80621&color=fff&size=80`
   }
 

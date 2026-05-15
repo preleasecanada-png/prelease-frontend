@@ -64,7 +64,7 @@ const PersonalInfo = () => {
         if (host?.picture) {
             return host.picture.startsWith('http')
                 ? host.picture
-                : `${process.env.NEXT_PUBLIC_BASE_LOCAL_IMAGE_URL}/${host.picture}`;
+                : `${process.env.NEXT_PUBLIC_BASE_LOCAL_IMAGE_HOST}/${host.picture}`;
         }
         return null;
     };

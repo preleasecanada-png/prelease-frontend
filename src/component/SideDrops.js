@@ -13,17 +13,26 @@ const SideDrops = memo(() => {
     const { locale } = useContext(CreateApiContext);
 
     useEffect(() => {
-        const token = localStorage.getItem('token');
-        const email = localStorage.getItem('email');
-        const role = (localStorage.getItem('role') || '').toLowerCase();
-        const picture = localStorage.getItem('user_picture');
-        const name = localStorage.getItem('user_name');
-        setToken(token);
-        setEmail(email);
-        setRole(role);
-        setUserPicture(picture || '');
-        setUserName(name || '');
-    });
+        const syncLocalStorage = () => {
+            const token = localStorage.getItem('token');
+            const email = localStorage.getItem('email');
+            const role = (localStorage.getItem('role') || '').toLowerCase();
+            const picture = localStorage.getItem('user_picture');
+            const name = localStorage.getItem('user_name');
+            setToken(token);
+            setEmail(email);
+            setRole(role);
+            setUserPicture(picture || '');
+            setUserName(name || '');
+        };
+        syncLocalStorage();
+        window.addEventListener('storage', syncLocalStorage);
+        window.addEventListener('logout', syncLocalStorage);
+        return () => {
+            window.removeEventListener('storage', syncLocalStorage);
+            window.removeEventListener('logout', syncLocalStorage);
+        };
+    }, []);
 
     const handleLogout = useCallback((e) => {
         e.preventDefault();
@@ -31,31 +40,41 @@ const SideDrops = memo(() => {
     }, [email]);
 
     const logoutUser = async () => {
+        const token = window.localStorage.getItem('token');
+        const userEmail = window.localStorage.getItem('email') || email;
         try {
             const formData = new FormData();
-            formData.append('email', email);
+            formData.append('email', userEmail);
             const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_HOST}/logout`, {
                 method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
                 body: formData,
             });
-            if (res.status === 200) {
-                window.localStorage.removeItem('token');
-                window.localStorage.removeItem('email');
-                window.localStorage.removeItem('user_picture');
-                window.localStorage.removeItem('user_name');
-                window.localStorage.removeItem('user_id');
-                window.localStorage.removeItem('role');
-                window.dispatchEvent(new Event('logout'));
-                setToken('');
-                setUserPicture('');
-                setUserName('');
-                router.push('/login');
+            if (res.status === 200 || res.status === 401) {
+                // 401 means token already invalid/expired — still clear local session
             } else {
-                console.log('error');
+                console.error('Logout API warning:', res.status, await res.text().catch(() => ''));
             }
-        } catch (error) {
-            console.log(error);
+        } catch (err) {
+            console.error('Logout API error:', err);
         }
+        // Always clear client-side session regardless of API result
+        window.localStorage.removeItem('token');
+        window.localStorage.removeItem('email');
+        window.localStorage.removeItem('user_picture');
+        window.localStorage.removeItem('user_name');
+        window.localStorage.removeItem('user_id');
+        window.localStorage.removeItem('role');
+        document.cookie = 'token=; path=/; max-age=0';
+        document.cookie = 'role=; path=/; max-age=0';
+        window.dispatchEvent(new Event('logout'));
+        setToken('');
+        setUserPicture('');
+        setUserName('');
+        setEmail('');
+        router.push('/login');
     }
 
     return (
@@ -95,7 +114,7 @@ const SideDrops = memo(() => {
 
                             <div className="fs7xov7 atm_7l_1esdqks atm_am_sfpmae atm_e2_x4u3u4 atm_gz_1qdqwt3 atm_ks_15vqwwr atm_mk_h2mmj6 atm_vy_x4u3u4 atm_wq_kb7nvz dir dir-ltr header-profile-avatar">
                                 {token && userPicture ? (
-                                    <img src={userPicture.startsWith('http') ? userPicture : `${process.env.NEXT_PUBLIC_BASE_LOCAL_IMAGE_URL}/${userPicture}`} alt="Profile" />
+                                    <img src={userPicture.startsWith('http') ? userPicture : `${process.env.NEXT_PUBLIC_BASE_LOCAL_IMAGE_HOST}/${userPicture}`} alt="Profile" />
                                 ) : token && userName ? (
                                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', width: '100%', backgroundColor: '#D80621', color: '#fff', fontSize: '14px', fontWeight: '600' }}>
                                         {userName.charAt(0).toUpperCase()}
@@ -111,7 +130,7 @@ const SideDrops = memo(() => {
                         <div className="dropdown-menu p-0 border-0" aria-labelledby="sideDrop">
 
                                     <div className="c3i7glo atm_26_1p8m8iw atm_5j_kitwna atm_70_8oykxz atm_7l_dezgoh atm_l8_brf0ql atm_tk_1ssbidh atm_n3_idpfg4 atm_iy_1aa3ab3 atm_l1_1wugsn5 atm_wq_cs5v99 atm_jb_ghg70p c39hl9j atm_9s_1ulexfb dir dir-ltr" tabIndex="-1" id="simple-header-profile-menu" data-testid="simple-header-profile-menu">
-                                        {!token && !token ?
+                                        {!token ?
                                             <>
                                                 <Link href='/sign-up' className="c1ql0u4u atm_1s_glywfm atm_26_1j28jx2 atm_3f_idpfg4 atm_9j_tlke0l atm_bx_1kw7nm4 atm_gi_idpfg4 atm_ks_ewfl5b atm_r3_1kw7nm4 atm_rd_glywfm atm_vb_1wugsn5 atm_kd_glywfm atm_c8_km0zk7 atm_g3_18khvle atm_fr_1m9t47k atm_7l_dezgoh atm_l8_11nx8fq atm_vv_1q9ccgz atm_vy_1osqo2v atm_cs_10d11i2 atm_9s_1txwivl atm_h_1h6ojuz atm_3f_glywfm_jo46a5 atm_l8_idpfg4_jo46a5 atm_gi_idpfg4_jo46a5 atm_3f_glywfm_1icshfk atm_kd_glywfm_19774hq atm_2d_116dmco_1b5lzrw atm_uc_aaiy6o_1w3cfyq atm_70_cdw4us_1w3cfyq atm_uc_glywfm_1w3cfyq_1rrf6b5 atm_uc_aaiy6o_pfnrn2_1oszvuo atm_70_cdw4us_pfnrn2_1oszvuo atm_uc_glywfm_pfnrn2_1o31aam c138yemz dir dir-ltr" >
                                                     <div className="lgh3vnd atm_am_1gtjylf dir dir-ltr">{locale?.home?.sign_up}</div>
@@ -135,6 +154,10 @@ const SideDrops = memo(() => {
                                         </Link>
                                         {token && token != null ?
                                             <>
+
+                                                <Link href='/dashboard' className="cd7h8km atm_1s_glywfm atm_26_1j28jx2 atm_3f_idpfg4 atm_9j_tlke0l atm_bx_1kw7nm4 atm_gi_idpfg4 atm_ks_ewfl5b atm_r3_1kw7nm4 atm_rd_glywfm atm_vb_1wugsn5 atm_kd_glywfm atm_c8_km0zk7 atm_g3_18khvle atm_fr_1m9t47k atm_7l_dezgoh atm_l8_11nx8fq atm_vv_1q9ccgz atm_vy_1osqo2v atm_cs_6adqpa atm_9s_1txwivl atm_h_1h6ojuz atm_3f_glywfm_jo46a5 atm_l8_idpfg4_jo46a5 atm_gi_idpfg4_jo46a5 atm_3f_glywfm_1icshfk atm_kd_glywfm_19774hq atm_2d_116dmco_1b5lzrw atm_uc_aaiy6o_1w3cfyq atm_70_cdw4us_1w3cfyq atm_uc_glywfm_1w3cfyq_1rrf6b5 atm_uc_aaiy6o_pfnrn2_1oszvuo atm_70_cdw4us_pfnrn2_1oszvuo atm_uc_glywfm_pfnrn2_1o31aam c11luhwk dir dir-ltr" >
+                                                    <div className="l1xexnrd atm_am_1gtjylf dir dir-ltr">Dashboard</div>
+                                                </Link>
 
                                                 {role === 'admin' && (
                                                     <Link href='/admin' className="cd7h8km atm_1s_glywfm atm_26_1j28jx2 atm_3f_idpfg4 atm_9j_tlke0l atm_bx_1kw7nm4 atm_gi_idpfg4 atm_ks_ewfl5b atm_r3_1kw7nm4 atm_rd_glywfm atm_vb_1wugsn5 atm_kd_glywfm atm_c8_km0zk7 atm_g3_18khvle atm_fr_1m9t47k atm_7l_dezgoh atm_l8_11nx8fq atm_vv_1q9ccgz atm_vy_1osqo2v atm_cs_6adqpa atm_9s_1txwivl atm_h_1h6ojuz atm_3f_glywfm_jo46a5 atm_l8_idpfg4_jo46a5 atm_gi_idpfg4_jo46a5 atm_3f_glywfm_1icshfk atm_kd_glywfm_19774hq atm_2d_116dmco_1b5lzrw atm_uc_aaiy6o_1w3cfyq atm_70_cdw4us_1w3cfyq atm_uc_glywfm_1w3cfyq_1rrf6b5 atm_uc_aaiy6o_pfnrn2_1oszvuo atm_70_cdw4us_pfnrn2_1oszvuo atm_uc_glywfm_pfnrn2_1o31aam c11luhwk dir dir-ltr" style={{ color: '#D80621', fontWeight: '600' }}>

@@ -35,33 +35,30 @@ function App({ Component, pageProps }) {
 
   useEffect(() => {
     const email = window.localStorage.getItem('email');
-    if (email) {
-      try {
-        const formData = new FormData();
-        formData.append('email', email);
-        fetch(`${process.env.NEXT_PUBLIC_BASE_API_HOST}/token-save`, {
-          method: 'POST',
-          body: formData,
+    const token = window.localStorage.getItem('token');
+    // Only refresh token if user is logged in (has email + token)
+    if (!email || !token) return;
+    try {
+      const formData = new FormData();
+      formData.append('email', email);
+      fetch(`${process.env.NEXT_PUBLIC_BASE_API_HOST}/token-save`, {
+        method: 'POST',
+        body: formData,
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data?.user?.verify_status === 1) {
+            window?.localStorage?.setItem('token', data?.token);
+            window?.localStorage?.setItem('role', data?.user?.role);
+            window?.localStorage?.setItem('user_picture', data?.user?.picture || '');
+            window?.localStorage?.setItem('user_name', data?.user?.first_name || '');
+          }
         })
-          .then((response) => response.json())
-          .then((data) => {
-            if (data?.user?.verify_status === 1) {
-              window?.localStorage?.setItem('token', data?.token);
-              window?.localStorage?.setItem('role', data?.user?.role);
-              window?.localStorage?.setItem('user_picture', data?.user?.picture || '');
-              window?.localStorage?.setItem('user_name', data?.user?.first_name || '');
-            } else {
-              console.error('API Error:', data);
-            }
-          })
-          .catch((err) => {
-            console.error('API Fetch Error:', err);
-          });
-      } catch (error) {
-        console.log(error);
-      }
-    } else {
-      console.error('Email not found in localStorage');
+        .catch((err) => {
+          console.error('Token refresh error:', err);
+        });
+    } catch (error) {
+      console.log(error);
     }
   }, []);
 
@@ -97,11 +94,12 @@ function App({ Component, pageProps }) {
           </div>
           {pathname !== '/properties' && pathname !== '/chats' ? <Footer /> : ''}
             </GoogleOAuthProvider>
+
+          {pathname !== '/properties' && <FloatingChatWidget />}
+          {pathname !== '/properties' && <AIAssistantWidget />}
+          {pathname !== '/properties' && <OnboardingGuide />}
           </ChatProvider>
         </ContextApiState>
-        {pathname !== '/properties' && <FloatingChatWidget />}
-        {pathname !== '/properties' && <AIAssistantWidget />}
-        {pathname !== '/properties' && <OnboardingGuide />}
         <Toaster position="bottom-center" />
       </main>
       </AuthGuard>

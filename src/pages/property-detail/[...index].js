@@ -944,7 +944,7 @@ const PropertyDetail = memo(() => {
                             <div className="host-avatar-wrap">
                                 <img
                                     src={placeDetail?.user?.picture
-                                        ? (placeDetail.user.picture.startsWith('http') ? placeDetail.user.picture : `${process.env.NEXT_PUBLIC_BASE_LOCAL_IMAGE_URL}/${placeDetail.user.picture}`)
+                                        ? (placeDetail.user.picture.startsWith('http') ? placeDetail.user.picture : `${process.env.NEXT_PUBLIC_BASE_LOCAL_IMAGE_HOST}/${placeDetail.user.picture}`)
                                         : `https://ui-avatars.com/api/?name=${encodeURIComponent((placeDetail?.user?.first_name || 'H') + ' ' + (placeDetail?.user?.last_name || ''))}&background=D80621&color=fff&size=150`}
                                     alt={placeDetail?.user?.first_name || 'Host'}
                                 />

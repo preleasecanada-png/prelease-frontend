@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import axios from 'axios';
+import { authFetch } from '@/Helper/helper';
 import { 
   Settings, 
   Save, 
@@ -26,14 +26,10 @@ const AdminVirtualAssistant = () => {
 
   const loadSettings = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/virtual-assistant/settings`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      const response = await authFetch('/virtual-assistant/settings');
 
-      if (response.data.success) {
-        setSettings(response.data.settings);
+      if (response?.success) {
+        setSettings(response.settings);
       }
     } catch (error) {
       console.error('Error loading settings:', error);
@@ -56,7 +52,6 @@ const AdminVirtualAssistant = () => {
   const saveSettings = async () => {
     setSaving(true);
     try {
-      const token = localStorage.getItem('token');
       const settingsArray = Object.entries(settings).map(([key, data]) => ({
         key,
         value: data.value,
@@ -64,13 +59,13 @@ const AdminVirtualAssistant = () => {
         description: data.description
       }));
 
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/virtual-assistant/settings`,
-        { settings: settingsArray },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      const response = await authFetch('/virtual-assistant/settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ settings: settingsArray }),
+      });
 
-      if (response.data.success) {
+      if (response?.success) {
         showNotification('Paramètres sauvegardés avec succès', 'success');
       }
     } catch (error) {

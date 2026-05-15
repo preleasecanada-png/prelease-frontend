@@ -231,7 +231,7 @@ const FloatingChatWidget = () => {
 
   const getUserAvatar = (user) => {
     if (user?.picture && user.picture.startsWith('http')) return user.picture;
-    if (user?.picture) return `${process.env.NEXT_PUBLIC_BASE_LOCAL_IMAGE_URL}/${user.picture}`;
+    if (user?.picture) return `${process.env.NEXT_PUBLIC_BASE_LOCAL_IMAGE_HOST}/${user.picture}`;
     return `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.first_name || 'U')}&background=D80621&color=fff`;
   };
 

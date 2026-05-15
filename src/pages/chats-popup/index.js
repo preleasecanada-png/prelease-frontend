@@ -14,7 +14,7 @@ const ChatPopup = ({ setShowChatModal, placeDetail }) => {
 
   const getAvatarUrl = (picture, name) => {
     if (picture && picture.startsWith('http')) return picture;
-    if (picture) return `${process.env.NEXT_PUBLIC_BASE_LOCAL_IMAGE_URL}/${picture}`;
+    if (picture) return `${process.env.NEXT_PUBLIC_BASE_LOCAL_IMAGE_HOST}/${picture}`;
     return `https://ui-avatars.com/api/?name=${encodeURIComponent(name || 'U')}&background=D80621&color=fff`;
   };
 

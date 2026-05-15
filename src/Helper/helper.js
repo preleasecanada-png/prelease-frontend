@@ -1,8 +1,8 @@
 export const imageBaseUrl = (fileName) => {
-    if (fileName != '') {
-        let fileBaseUrl = `${process.env.NEXT_PUBLIC_BASE_LOCAL_IMAGE_HOST}/${fileName}`;
-        return fileBaseUrl;
+    if (fileName && fileName !== '') {
+        return `${process.env.NEXT_PUBLIC_BASE_LOCAL_IMAGE_HOST}/${fileName}`;
     }
+    return '';
 }
 
 export const stringSplit = (str, maxLength = 12) => {
@@ -22,5 +22,18 @@ export const authFetch = async (url, options = {}) => {
         ...options,
         headers,
     });
+    if (response.status === 401) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('email');
+        localStorage.removeItem('role');
+        localStorage.removeItem('user_picture');
+        localStorage.removeItem('user_name');
+        localStorage.removeItem('user_id');
+        window.dispatchEvent(new Event('logout'));
+        if (typeof window !== 'undefined') {
+            window.location.href = '/login';
+        }
+        return null;
+    }
     return response.json();
 };

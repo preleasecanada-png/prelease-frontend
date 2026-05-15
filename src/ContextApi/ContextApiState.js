@@ -26,6 +26,7 @@ const ContextApiState = (props) => {
         }
     };
     const [loader, setLoader] = useState(false);
+    const [propertiesLoading, setPropertiesLoading] = useState(false);
     const [destinations, setDestinations] = useState([]);
     const [placeDetail, setPlaceDetail] = useState({});
     const [hostVerification, setHostVerification] = useState({});
@@ -127,6 +128,7 @@ const ContextApiState = (props) => {
     //     }
     // }
     const fetchProperties = async (filters = {}) => {
+        setPropertiesLoading(true);
         setLoader(true);
 
         try {
@@ -147,6 +149,7 @@ const ContextApiState = (props) => {
             console.error("Fetch Error", error);
         }
 
+        setPropertiesLoading(false);
         setLoader(false);
     };
 
@@ -201,7 +204,7 @@ const ContextApiState = (props) => {
 
     return (
         <>
-            <CreateApiContext.Provider value={{ loader, setLoader, locale, setLocale: handleSetLocale, fetchDestination, destinations, fetchPlaceDetail, placeDetail, hostVerification, hostReviewStats, bookedDates, fetchAmenities, amenities, properties, fetchProperties, fetchWishLists, wishLists, fetchUsersLists, users, fetchCountries, countries, addressData, setAddressData, }}>
+            <CreateApiContext.Provider value={{ loader, setLoader, propertiesLoading, locale, setLocale: handleSetLocale, fetchDestination, destinations, fetchPlaceDetail, placeDetail, hostVerification, hostReviewStats, bookedDates, fetchAmenities, amenities, properties, fetchProperties, fetchWishLists, wishLists, fetchUsersLists, users, fetchCountries, countries, addressData, setAddressData, }}>
                 {props.children}
             </CreateApiContext.Provider>
         </>
