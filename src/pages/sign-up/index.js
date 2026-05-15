@@ -143,6 +143,7 @@ const SignUp = memo(() => {
         localStorage.setItem("user_name", data.user.first_name || '');
         document.cookie = `token=${data.token}; path=/; max-age=86400`;
         document.cookie = `role=${data.user.role}; path=/; max-age=86400`;
+        window.dispatchEvent(new Event('login'));
         router.push('/');
     };
 

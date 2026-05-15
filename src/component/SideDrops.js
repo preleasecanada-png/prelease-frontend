@@ -28,9 +28,11 @@ const SideDrops = memo(() => {
         syncLocalStorage();
         window.addEventListener('storage', syncLocalStorage);
         window.addEventListener('logout', syncLocalStorage);
+        window.addEventListener('login', syncLocalStorage);
         return () => {
             window.removeEventListener('storage', syncLocalStorage);
             window.removeEventListener('logout', syncLocalStorage);
+            window.removeEventListener('login', syncLocalStorage);
         };
     }, []);
 

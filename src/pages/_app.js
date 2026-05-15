@@ -52,6 +52,7 @@ function App({ Component, pageProps }) {
             window?.localStorage?.setItem('role', data?.user?.role);
             window?.localStorage?.setItem('user_picture', data?.user?.picture || '');
             window?.localStorage?.setItem('user_name', data?.user?.first_name || '');
+            window.dispatchEvent(new Event('login'));
           }
         })
         .catch((err) => {
